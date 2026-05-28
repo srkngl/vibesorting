@@ -1453,270 +1453,28 @@ var GAMES=(function(){var raw=[
   o.push({id:i+1,emoji:raw[i][0],name:raw[i][1],genre:raw[i][2],desc:raw[i][3]})}return o;})();
 
 
-var FILMS_ACTION=(function(){var raw=[
-["💥","Mad Max: Fury Road","2015","George Miller's masterpiece — one continuous chase. The peak of action cinema."],
-["⚡","The Dark Knight","2008","Heath Ledger's Joker. The bank heist opening. Nolan redefined superhero films."],
-["🔫","Heat","1995","Pacino vs De Niro. The coffee shop. The downtown shootout. Michael Mann at his best."],
-["⚔️","Gladiator","2000","Maximus. The Colosseum. Zimmer's score. 'Are you not entertained?'"],
-["🚗","Mad Max (1979)","1979","The original Mel Gibson film that launched the franchise. Australian roads, brutal."],
-["💣","Die Hard","1988","John McClane in Nakatomi Plaza. The blueprint for every Christmas action film."],
-["🦾","Terminator 2","1991","The T-1000. The liquid metal. James Cameron redefined blockbuster action."],
-["🕵️","Mission Impossible: Fallout","2018","Tom Cruise broke his ankle. The helicopter sequence. The best MI film."],
-["🥊","Rocky","1976","Sylvester Stallone wrote it, starred in it. The training montage changed film forever."],
-["🔥","Apocalypse Now","1979","Vietnam war action-horror. The napalm scene. 'I love the smell of napalm in the morning.'"],
-["💨","Speed","1994","Bus. 50mph. Bomb. Keanu Reeves and Sandra Bullock at their most kinetic."],
-["🌪️","Twister","1996","Storm chasers. Flying cows. Bill Paxton. Pure summer blockbuster energy."],
-["🏃","The Bourne Identity","2002","Matt Damon reinvented the spy thriller. Paris car chase. Kitchen fight."],
-["🚁","Black Hawk Down","2001","Ridley Scott's claustrophobic recreation of the 1993 Mogadishu battle."],
-["⚡","Top Gun","1986","Maverick. Iceman. That volleyball scene. The film that made the Navy recruiting surge."],
-["🔫","Top Gun: Maverick","2022","The rare sequel that matched and arguably surpassed the original. Still flying."],
-["🌊","The Poseidon Adventure","1972","Disaster action classic. A wave capsizes a cruise ship on New Year's Eve."],
-["🤸","The Matrix","1999","Bullet time. Red pill. The Wachowskis changed action choreography permanently."],
-["💥","Avengers: Infinity War","2018","The snap. 18 films building to one. Thanos as a villain who had a point."],
-["🦸","The Dark Knight Rises","2012","Bane. The pit. Gotham on the edge. Nolan's final Batman film."],
-["🔴","Kill Bill Vol. 1","2003","Tarantino's kung fu revenge film. The Crazy 88. O-Ren Ishii. Pure cinema."],
-["⚔️","300","2007","Spartans. Persians. Frank Miller's graphic novel made impossibly visual."],
-["🚀","Aliens","1986","James Cameron turned Scott's horror into a war film. 'Game over, man.'"],
-["🏴","Predator","1987","Schwarzenegger vs an alien hunter in a jungle. The handshake. The mud."],
-["💣","The Rock","1996","Alcatraz. Sean Connery. Nicolas Cage. Bayhem before Michael Bay peaked."],
-["🔫","Léon: The Professional","1994","A hitman protects a 12-year-old girl. Gary Oldman. Jean Reno. Natalie Portman's debut."],
-["🌊","Dunkirk","2017","Nolan's three-timeline WWII rescue. Hans Zimmer's ticking clock score."],
-["⚡","1917","2019","Filmed as one continuous take. A WWI messenger must cross enemy lines."],
-["🎯","Sicario","2015","Denis Villeneuve. Emily Blunt. Roger Deakins. The border crossing sequence."],
-["🚗","Baby Driver","2017","Edgar Wright's kinetic crime film where every action is synced to music."],
-["💥","Fury","2014","Brad Pitt commanding a WWII tank. The final standoff. Brutal and honest."],
-["🔫","No Country for Old Men","2007","Javier Bardem's Anton Chigurh is the most terrifying screen villain of the 21st century."],
-["⚡","John Wick","2014","A retired hitman avenges his dog. Keanu Reeves. Choreographed action as ballet."],
-["🌪️","The Hurricane Heist","2018","A hurricane AND a bank robbery. Objectively ridiculous, objectively fun."],
-["🏃","Run Lola Run","1998","German film. 80 minutes. Three versions of the same 20 minutes. Lola runs."],
-["💣","Swordfish","2001","John Travolta. Halle Berry. Hugh Jackman hacking while being held at gunpoint."],
-["🔴","Harakiri (Seppuku)","1962","Japanese samurai film. A masterwork of slow-burn action and moral confrontation."],
-["⚡","Drive","2011","Ryan Gosling. Scorpion jacket. The elevator. Nicolas Winding Refn's neon noir."],
-["🔫","Michael Clayton","2007","George Clooney as a fixer. Corporate thriller with the tension of a bomb."],
-["💥","Crouching Tiger, Hidden Dragon","2000","Ang Lee. Wire-fu action as poetry. The bamboo forest fight."],
-["🌊","Das Boot","1981","German submarine film. 149-minute cut. The most claustrophobic war film ever."],
-["⚔️","Braveheart","1995","Mel Gibson as William Wallace. The Battle of Stirling Bridge. Freedom speech."],
-["🚁","Full Metal Jacket","1987","Kubrick's Vietnam film. The boot camp scenes and R. Lee Ermey are defining."],
-["💣","Saving Private Ryan","1998","Spielberg. The Omaha Beach opening is 25 minutes of the most brutal cinema ever made."],
-["🔫","Oldboy","2003","Park Chan-wook. Korean action revenge. The hallway fight. One of the great twists."],
-["⚡","The Raid","2011","Indonesian martial arts film. One building. Non-stop escalation. Breathtaking."],
-["🏃","District 9","2009","Apartheid metaphor as alien action film. Found footage meets blockbuster."],
-["💥","Edge of Tomorrow","2014","Tom Cruise dies and relives D-Day repeatedly. Groundhog Day meets sci-fi war film."],
-["🌊","Pacific Rim","2013","Giant robots vs giant monsters. Guillermo del Toro making a love letter to kaiju."],
-["🔫","Heat (1995)","1995","Second entry: the 40-minute downtown LA shootout remains the standard for urban gunfight choreography."],
-];var o=[];for(var i=0;i<raw.length;i++){o.push({id:i+1,emoji:raw[i][0],name:raw[i][1],year:raw[i][2],desc:raw[i][3]})}return o;})();
-var FILMS_COMEDY=(function(){var raw=[
-["😂","The Grand Budapest Hotel","2014","Wes Anderson at maximum precision. Zero Moustafa. M. Gustave. The whole thing."],
-["🎭","Monty Python and the Holy Grail","1975","'It's just a flesh wound.' British absurdism at its most quotable."],
-["🤣","Dr. Strangelove","1964","Kubrick's cold war satire. Peter Sellers in three roles. Still the funniest political film."],
-["😄","Some Like It Hot","1959","Cross-dressing, gangsters, Marilyn Monroe. 'Nobody's perfect.'"],
-["🎪","Airplane!","1980","'Don't call me Shirley.' A joke every three seconds. The genre parody to end all parodies."],
-["🤠","Blazing Saddles","1974","Mel Brooks deconstructing the Western. The most subversive studio comedy ever made."],
-["😂","This Is Spinal Tap","1984","The original mockumentary. Eleven. The stone at Stonehenge. The amp that goes to 11."],
-["🎭","The Big Lebowski","1998","The Dude abides. Jeff Bridges. The Coen Brothers made a genre out of one film."],
-["🤣","Anchorman","2004","Ron Burgundy. '60% of the time it works every time.' Will Ferrell at his most absurd."],
-["😄","Office Space","1999","Mike Judge's cubicle satire. TPS reports. The printer scene. Every office worker's film."],
-["🎪","Superbad","2007","Judd Apatow produced, Seth Rogen wrote. McLovin. High school comedy at its finest."],
-["🤠","Planes, Trains and Automobiles","1987","Steve Martin and John Candy. Thanksgiving road trip. The best comedy with a real ending."],
-["😂","Four Weddings and a Funeral","1994","Hugh Grant. Richard Curtis. Andie MacDowell. British romantic comedy at its most charming."],
-["🎭","Life of Brian","1979","Monty Python's biblical satire. 'He's not the Messiah, he's a very naughty boy.'"],
-["🤣","Groundhog Day","1993","Bill Murray relives February 2nd until he becomes a better person. Still perfect."],
-["😄","Ferris Bueller's Day Off","1986","Matthew Broderick. The fourth wall. The parade float. John Hughes capturing adolescence."],
-["🎪","The Princess Bride","1987","'As you wish.' Inconceivable! Adventure and romance wrapped in warm comedy."],
-["🤠","Withnail and I","1987","Two unemployed actors holiday accidentally in the Lake District. British cult comedy."],
-["😂","Annie Hall","1977","Woody Allen at his smartest. Non-linear romantic comedy. Changed the form."],
-["🎭","Rushmore","1998","Max Fischer, Wes Anderson's first masterpiece. Bill Murray. Jason Schwartzman."],
-["🤣","Shaun of the Dead","2004","Simon Pegg and Nick Frost in the most loving zombie parody ever made."],
-["😄","Hot Fuzz","2007","Edgar Wright's second Cornetto film. Small-town murder mystery as action comedy."],
-["🎪","The World's End","2013","Edgar Wright concludes the trilogy. Five friends attempt a pub crawl. Alien robots."],
-["🤠","My Cousin Vinny","1992","Joe Pesci as a Brooklyn lawyer in Alabama. Marisa Tomei won an Oscar. Rightfully."],
-["😂","Clue","1985","A board game as murder mystery comedy. Three alternate endings in cinemas."],
-["🎭","The Naked Gun","1988","Leslie Nielsen. Frank Drebin. 'Like a midget at a urinal, I was going to have to be on my toes.'"],
-["🤣","Coming to America","1988","Eddie Murphy at his most charming. A prince from Zamunda goes to Queens."],
-["😄","Trading Places","1983","Dan Aykroyd and Eddie Murphy swap lives. The Duke brothers lose everything."],
-["🎪","Beverly Hills Cop","1984","Eddie Murphy. Axel Foley in Beverly Hills. 'The Banana in the Tailpipe.'"],
-["🤠","Tropic Thunder","2008","Ben Stiller, Jack Black, Robert Downey Jr. going full method. Never go full method."],
-["😂","Midnight Run","1988","Robert De Niro as a bounty hunter. Charles Grodin as his captive. Road trip perfection."],
-["🎭","In Bruges","2008","Colin Farrell and Brendan Gleeson in Belgium. Dark comedy masterclass."],
-["🤣","The Nice Guys","2016","Ryan Gosling and Russell Crowe as mismatched detectives in 70s LA. Shane Black."],
-["😄","Clue (1985)","1985","Second entry: Tim Curry's performance alone is worth three Oscars."],
-["🎪","Knives Out","2019","Rian Johnson's Agatha Christie update. Daniel Craig's southern accent. The twist midway."],
-["🤠","What We Do in the Shadows","2014","Taika Waititi and Jemaine Clement as vampire flatmates. The original film."],
-["😂","Popstar: Never Stop Never Stopping","2016","Andy Samberg's documentary-style pop star parody. Under-seen and criminally funny."],
-["🎭","The Death of Stalin","2017","Armando Iannucci on Soviet power succession. Steve Buscemi as Khrushchev."],
-["🤣","Sorry to Bother You","2018","Boots Riley's surreal comedy about telemarketing and corporate exploitation."],
-["😄","Palm Springs","2020","Groundhog Day-adjacent. Andy Samberg and Cristin Milioti stuck in a time loop together."],
-["🎪","Game Night","2018","A couple's game night turns into an actual crime thriller. Better than it has any right to be."],
-["🤠","The Proposal","2009","Sandra Bullock and Ryan Reynolds. Forced marriage immigration comedy. Charming and reliable."],
-["😂","Barb and Star Go to Vista Del Mar","2021","The most delightfully absurd comedy of the 2020s. Produced by the Bridesmaids team."],
-["🎭","Eurovision Song Contest","2020","Will Ferrell and Rachel McAdams represent Iceland. Committed absurdism."],
-["🤣","Borat","2006","Sacha Baron Cohen. The most confrontational comedy film of its decade."],
-["😄","The Dictator","2012","Sacha Baron Cohen again. Less confrontational, more deliberately absurd."],
-["🎪","Burn After Reading","2008","Coen Brothers. Brad Pitt, George Clooney, Frances McDormand. Magnificent stupidity."],
-["🤠","The Big Short","2015","Adam McKay explains the 2008 financial crisis via Margot Robbie in a bathtub."],
-["😂","Parasite","2019","Bong Joon-ho's masterpiece. Comedy, thriller, tragedy — all in one film. Flawless."],
-["🎭","Promising Young Woman","2020","Carey Mulligan's revenge comedy. Subverted genres and won an Academy Award."],
-["🤣","Dumb and Dumber","1994","Jim Carrey and Jeff Daniels. The most committed stupidity in American cinema history."],
-];var o=[];for(var i=0;i<raw.length;i++){o.push({id:i+1,emoji:raw[i][0],name:raw[i][1],year:raw[i][2],desc:raw[i][3]})}return o;})();
-var FILMS_SCIFI=(function(){var raw=[
-["🌌","2001: A Space Odyssey","1968","Kubrick's existential masterpiece. The monolith. HAL 9000. The Star Child. Still unmatched."],
-["🤖","Blade Runner","1982","Roy Batty's tears in rain monologue. Ridley Scott invented neo-noir sci-fi visually."],
-["💊","The Matrix","1999","Red pill or blue pill. Bullet time. Changed how films could look and think simultaneously."],
-["🌍","Children of Men","2006","Clive Owen. Humanity's last pregnant woman. Alfonso Cuarón's single-take sequences."],
-["🚀","Interstellar","2014","Cooper's bookshelf. Hans Zimmer. Gargantua. The most emotionally ambitious Nolan film."],
-["⭐","Star Wars: A New Hope","1977","The opening Star Destroyer shot. Changed cinema. Changed merchandise. Changed everything."],
-["🤖","Blade Runner 2049","2017","Denis Villeneuve. Roger Deakins. The rare sequel that deserved to exist."],
-["🌌","Arrival","2016","Amy Adams learns an alien language. Time isn't linear. Denis Villeneuve's quiet masterwork."],
-["💀","Alien","1979","Ridley Scott's horror-sci-fi hybrid. HR Giger's design. 'In space, no one can hear you scream.'"],
-["👾","E.T. the Extra-Terrestrial","1982","Spielberg. A boy and an alien. The bike silhouette against the moon. Pure cinema emotion."],
-["🔭","Contact","1997","Jodie Foster. Carl Sagan adaptation. The most thoughtful first-contact film ever made."],
-["🌊","The Abyss","1989","James Cameron underwater. The water tentacle. The deepest point of human cinema ambition."],
-["🚀","Apollo 13","1995","Ron Howard. Tom Hanks. Based on truth. 'Houston, we have a problem' was actually said differently."],
-["💊","Inception","2010","Dream levels. The top. Joseph Gordon-Levitt's hallway fight. Hans Zimmer's BRAAAM."],
-["🤖","Ex Machina","2014","Alex Garland. Oscar Isaac's dance. Alicia Vikander's eyes. The turing test."],
-["🌌","Moon","2009","Sam Rockwell alone on the moon. Duncan Jones. A quiet film with an enormous idea."],
-["💀","Under the Skin","2014","Scarlett Johansson as an alien harvesting men in Scotland. Hauntingly abstract."],
-["🔮","Eternal Sunshine of the Spotless Mind","2004","Michel Gondry. Erasing memories of love. Still the most romantic sci-fi film."],
-["🌍","WALL-E","2008","Pixar. The loneliest robot. The first act with no dialogue. A meditation on consumption."],
-["⭐","The Empire Strikes Back","1980","'No, I am your father.' Irvin Kershner. The best Star Wars film by consensus."],
-["🚀","Gravity","2013","Sandra Bullock. Alfonso Cuarón. 90 minutes of sustained tension in space."],
-["🤖","Her","2013","Joaquin Phoenix falls in love with an AI. Spike Jonze asks what consciousness needs."],
-["🌌","Dune Part One","2021","Denis Villeneuve. Hans Zimmer. The Fremen. Timothée Chalamet. The spice must flow."],
-["💊","Dune Part Two","2024","The sandworm ride. Feyd-Rautha. The most complete sci-fi blockbuster in a decade."],
-["💀","28 Days Later","2002","Danny Boyle's post-apocalyptic Britain. Empty London. Rage-infected zombie-adjacent film."],
-["🔭","Close Encounters of the Third Kind","1977","Spielberg. Richard Dreyfuss. The mashed potato mountain. First contact as wonder."],
-["🌊","The Thing","1982","John Carpenter. Kurt Russell in Antarctica. The most paranoid horror-sci-fi ever made."],
-["🤖","Metropolis","1927","Fritz Lang. Silent film. Every science fiction image of the 20th century traces to this."],
-["🌌","Annihilation","2018","Alex Garland. Natalie Portman. Area X. The lighthouse sequence. Terrifying and beautiful."],
-["💀","Upgrade","2018","Leigh Whannell's body horror action sci-fi. An AI taking control of a man's body."],
-["⭐","Star Trek II: Wrath of Khan","1982","The best Star Trek film. Khan. Spock's sacrifice. 'I have been, and always shall be, your friend.'"],
-["🚀","The Martian","2015","Matt Damon grows potatoes on Mars. Ridley Scott made science feel triumphant."],
-["🔮","Looper","2012","Time travel. Joseph Gordon-Levitt. Bruce Willis. Rian Johnson before The Last Jedi."],
-["💊","Source Code","2011","Jake Gyllenhaal relives a train bombing. Duncan Jones. Tight, inventive, emotional."],
-["🤖","I, Robot","2004","Will Smith. Isaac Asimov's laws. The most underrated mainstream sci-fi film of the 2000s."],
-["🌍","Elysium","2013","Neill Blomkamp's healthcare allegory. Matt Damon. The haves vs the have-nots in space."],
-["💀","Oblivion","2013","Tom Cruise. Joseph Kosinski. Visually stunning. The twist recontextualises everything."],
-["🔭","Coherence","2013","$50,000 budget. Eight people at a dinner party during a comet passing. Genuinely unsettling."],
-["🌊","Midnight Special","2016","Jeff Nichols. A boy with supernatural powers. A father protecting him. Road movie sci-fi."],
-["🤖","Upgrade","2018","Second entry: the action sequences where STEM takes over are genuinely original choreography."],
-["🌌","Everything Everywhere All at Once","2022","The Daniels. Multiverse as family drama. Won Best Picture. Deserved to."],
-["💀","The Invisible Man","2020","Elisabeth Moss. A gaslighting abuser becomes literally invisible. Smart, terrifying update."],
-["⭐","Predestination","2014","Ethan Hawke. Time travel paradox taken to its absolute logical conclusion. Mind-bending."],
-["🚀","Sunshine","2007","Danny Boyle. Eight astronauts reigniting the sun. The third act divides people. The first two are perfect."],
-["🔮","Minority Report","2002","Spielberg. Tom Cruise. Pre-crime. Gesture-based computer interfaces became real because of this film."],
-["💊","Ready Player One","2018","Spielberg in the Oasis. Pop culture references as plot. The Shining sequence."],
-["🤖","Ghost in the Shell","1995","Mamoru Oshii. Anime. Identity, consciousness, the body. Still ahead of its time."],
-["🌍","Snowpiercer","2013","Bong Joon-ho before Parasite. A train circumnavigates a frozen Earth. Class as train car."],
-["💀","A Quiet Place","2018","John Krasinski. Sound kills. A family surviving in silence. The nail on the stairs."],
-["🔭","Arrival","2016","Second entry: the circular writing, the grief, the choice — the most humane first contact story."],
-["🌊","The Platform","2019","Spanish sci-fi. A vertical prison where food only reaches the top floors. Blunt allegory, brilliantly executed."],
-];var o=[];for(var i=0;i<raw.length;i++){o.push({id:i+1,emoji:raw[i][0],name:raw[i][1],year:raw[i][2],desc:raw[i][3]})}return o;})();
-var FILMS_DRAMA=(function(){var raw=[
-["🎬","The Godfather","1972","Coppola. The Corleone family. Brando. Pacino. The standard by which cinema measures itself."],
-["🌿","The Shawshank Redemption","1994","Morgan Freeman narrates. Tim Robbins escapes. Hope as resistance. Most rewatched film."],
-["💀","Schindler's List","1993","Spielberg. Black and white. The red coat. Three hours that change you permanently."],
-["🎭","12 Angry Men","1957","Sidney Lumet. One jury room. Henry Fonda. Democracy as argument. Perfect screenplay."],
-["🌊","There Will Be Blood","2007","Daniel Day-Lewis. PTA. Oil, religion, ambition. 'I drink your milkshake.'"],
-["⭐","The Godfather Part II","1974","Coppola continues. De Niro as young Vito. The parallel editing between timelines. Equals the first."],
-["💊","Mulholland Drive","2001","David Lynch. Betty and Rita. Club Silencio. The blue box. Most discussed Lynch film."],
-["🔮","Eyes Wide Shut","1999","Kubrick's final film. Tom Cruise and Nicole Kidman. Sex, jealousy, secret societies."],
-["🌍","No Country for Old Men","2007","The Coen Brothers. Anton Chigurh. Javier Bardem. The coin flip. The ending with no ending."],
-["🎸","Whiplash","2014","Miles Teller. JK Simmons. 'Are you rushing or dragging?' Jazz as torture. Perfect film."],
-["🤖","A Beautiful Mind","2001","Ron Howard. Russell Crowe as John Nash. Mental illness and mathematics. 4 Oscars."],
-["🌌","The Silence of the Lambs","1991","Jodie Foster. Anthony Hopkins. Hannibal Lecter. 5 major Oscars. Still chilling."],
-["💀","Requiem for a Dream","2000","Darren Aronofsky. Ellen Burstyn. Jared Leto. Not for entertainment. For understanding."],
-["🎭","American Beauty","1999","Kevin Spacey. Sam Mendes. The plastic bag. Won Best Picture. Divisive now."],
-["🌊","Boyhood","2014","Richard Linklater filmed across 12 real years. Ellar Coltrane ageing on screen."],
-["⭐","Moonlight","2016","Barry Jenkins. Three chapters of a Black man's life in Miami. Best Picture 2017."],
-["💊","Marriage Story","2019","Noah Baumbach. Adam Driver singing. Scarlett Johansson screaming. Divorce as opera."],
-["🔮","Manchester by the Sea","2016","Kenneth Lonergan. Casey Affleck. The revelation. The inability to forgive yourself."],
-["🌍","Her","2013","Spike Jonze. Joaquin Phoenix falls in love with an OS. About loneliness. About connection."],
-["🎸","Eternal Sunshine of the Spotless Mind","2004","Gondry. Kaufman. Kate Winslet. Jim Carrey. Erasure of love. The most romantic sad film."],
-["🤖","The Tree of Life","2011","Terrence Malick. Sean Penn. Brad Pitt. Dinosaurs. The origin of everything. Polarising."],
-["🌌","Lost in Translation","2003","Sofia Coppola. Bill Murray. Scarlett Johansson. Tokyo at 3 AM. The whisper at the end."],
-["💀","Gone Girl","2014","David Fincher. Rosamund Pike. Ben Affleck. 'Cool Girl' monologue changed popular culture."],
-["🎭","The Social Network","2010","David Fincher. Aaron Sorkin. Facebook origin as tragedy. Eisenberg, Timberlake, Garfield."],
-["🌊","Parasite","2019","Bong Joon-ho. The stairs. The smell. Class warfare as dark comedy. Best Picture."],
-["⭐","Portrait of a Lady on Fire","2019","Céline Sciamma. The most beautifully shot film of its decade. Héloïse and Marianne."],
-["💊","Past Lives","2023","Celine Song. In-yun. The last shot. The most emotionally complete recent drama."],
-["🔮","Normal People","2020","TV series but film-quality. Sally Rooney. Paul Mescal and Daisy Edgar-Jones. Ireland."],
-["🌍","The Zone of Interest","2023","Jonathan Glazer. Auschwitz next door. Banality of evil. Most disturbing recent film."],
-["🎸","Tár","2022","Cate Blanchett as a conductor. Todd Field. Power, abuse, consequences. Acting masterclass."],
-["🤖","Aftersun","2022","Paul Mescal. A 31-year-old trying to understand her father. First watch: lovely. Second: devastating."],
-["🌌","A Separation","2011","Asghar Farhadi. Iranian domestic drama. The most morally complex film of the 2010s."],
-["💀","The Worst Person in the World","2021","Joachim Trier. Julie navigates her 30s in Oslo. The most honest romantic drama in years."],
-["🎭","Call Me by Your Name","2017","Luca Guadagnino. Elio and Oliver. Italian summer. The peach. Sufjan Stevens."],
-["🌊","Brokeback Mountain","2005","Ang Lee. Heath Ledger and Jake Gyllenhaal. 'I wish I knew how to quit you.'"],
-["⭐","12 Years a Slave","2013","Steve McQueen. Chiwetel Ejiofor. The whipping scene. Harrowing and essential."],
-["💊","Schindler's List","1993","Second entry: the finale, with the real survivors, is cinema's most humbling moment."],
-["🔮","Roma","2018","Alfonso Cuarón. Black and white. Mexico City. The most personal film of its director."],
-["🌍","The Irishman","2019","Scorsese. De Niro, Pacino, Pesci. Three and a half hours. The de-aging. The ending."],
-["🎸","Joker","2019","Todd Phillips. Joaquin Phoenix. The stairs. Controversial. Best acting performance of 2019."],
-["🤖","Phantom Thread","2017","PTA. Daniel Day-Lewis final role. A dressmaker and his muse. The poison in the omelette."],
-["🌌","Three Billboards Outside Ebbing, Missouri","2017","Martin McDonagh. Frances McDormand. Sam Rockwell. Grief and anger in a small town."],
-["💀","The Favourite","2018","Yorgos Lanthimos. Olivia Colman, Emma Stone, Rachel Weisz. Queen Anne's court. Vicious."],
-["🎭","Midsommar","2019","Ari Aster. A Swedish midsummer festival. A breakup film disguised as horror."],
-["🌊","Nomadland","2020","Chloé Zhao. Frances McDormand living in a van. Best Picture 2021. Quietly extraordinary."],
-["⭐","The Power of the Dog","2021","Jane Campion. Benedict Cumberbatch. The most restrained and devastating slow burn."],
-["💊","Belfast","2021","Kenneth Branagh's semi-autobiographical black and white film about Northern Ireland in 1969."],
-["🔮","CODA","2021","A deaf family's hearing daughter. Won Best Picture. Sweet, direct, emotionally effective."],
-["🌍","Oppenheimer","2023","Nolan. Cillian Murphy. The Trinity test. The moral weight of the bomb. Three hours."],
-["🎸","Anatomy of a Fall","2023","Justine Triet. Did she push him? The dog. The trial. The answer doesn't matter."],
-["🤖","All of Us Strangers","2023","Andrew Haigh. Andrew Scott. Paul Mescal. Parents long dead. The loneliest love story."],
-];var o=[];for(var i=0;i<raw.length;i++){o.push({id:i+1,emoji:raw[i][0],name:raw[i][1],year:raw[i][2],desc:raw[i][3]})}return o;})();
-var FILMS_HORROR=(function(){var raw=[
-["💀","The Shining","1980","Kubrick. Nicholson. 'Here's Johnny.' Room 237. The hedge maze. The frozen end."],
-["👻","Hereditary","2018","Ari Aster. Toni Collette's performance. The telephone pole. Family trauma as supernatural."],
-["🔮","The Exorcist","1973","William Friedkin. Linda Blair. Still the most terrifying film in American cinema history."],
-["🌊","Get Out","2017","Jordan Peele. The sunken place. The most socially precise horror film ever made."],
-["⚡","Midsommar","2019","Ari Aster. Daylight horror in Sweden. The bear. The wicker man sequence."],
-["🧠","Us","2019","Jordan Peele. The tethered. Lupita Nyong'o in a dual performance. American mythology."],
-["🎭","A Quiet Place","2018","John Krasinski. Silence as horror. The nail on the stairs. The waterfall."],
-["💀","It Follows","2014","David Robert Mitchell. An STI metaphor that follows at walking pace. Relentlessly unsettling."],
-["👻","The Witch","2015","Robert Eggers. 1630s New England. Black Phillip. 'Wouldst thou like to live deliciously?'"],
-["🔮","Suspiria (1977)","1977","Dario Argento. The most visually overwhelming horror film. Goblins soundtrack."],
-["🌊","The Thing","1982","John Carpenter. Kurt Russell. Antarctic paranoia. The chest-defibrillator scene."],
-["⚡","Alien","1979","Ridley Scott. HR Giger. The chest-burst. Sigourney Weaver. Perfect horror in space."],
-["🧠","Rosemary's Baby","1968","Roman Polanski. Mia Farrow. Urban paranoia as pregnancy horror. Still disturbing."],
-["🎭","The Babadook","2014","Jennifer Kent. A widowed mother and her son. Grief as a monster in the basement."],
-["💀","Psycho","1960","Hitchcock. The shower scene. Marion Crane dying in the first act. Changed everything."],
-["👻","Sinister","2012","Ethan Hawke. Super 8 films. The lawnmower. One of the genuinely scariest mainstream films."],
-["🔮","The Conjuring","2013","James Wan. Based on true events (allegedly). Vera Farmiga. Patrick Wilson. Effective."],
-["🌊","Annihilation","2018","Alex Garland. Area X. The lighthouse sequence. Cosmic horror at its most beautiful."],
-["⚡","Hereditary","2018","Second entry: the dinner table scene is the most emotionally violent scene in recent horror."],
-["🧠","Black Swan","2010","Darren Aronofsky. Natalie Portman. Ballet and body horror. Doubled and doubled again."],
-["🎭","28 Days Later","2002","Danny Boyle. Cillian Murphy. Empty London. Rage. The most British apocalypse."],
-["💀","Parasite","2019","Not horror, but the reveal below the stairs changes the film completely. Counts."],
-["👻","The Others","2001","Alejandro Amenábar. Nicole Kidman. A house in Jersey. The twist is perfect and earned."],
-["🔮","Don't Look Now","1973","Nicolas Roeg. Venice. A grieving couple. The red coat. One of cinema's great endings."],
-["🌊","The VVitch","2015","Robert Eggers again. The most historically detailed horror film. Calvin's God is real here."],
-["⚡","Mandy","2018","Panos Cosmatos. Nicolas Cage. Acid. Cults. The most psychedelic revenge horror film."],
-["🧠","Possessor","2020","Brandon Cronenberg (son of David). Corporate assassins inhabiting bodies. Body horror."],
-["🎭","Titane","2021","Julia Ducournau. Won Palme d'Or. A woman has sex with a car. More than it sounds. Much more."],
-["💀","The Menu","2022","Mark Mylod. Ralph Fiennes. Anya Taylor-Joy. A restaurant that serves death. Dark comedy horror."],
-["👻","Barbarian","2022","Zach Cregger. A rented Airbnb in Detroit. Do not go into the basement. Really."],
-["🔮","Nope","2022","Jordan Peele. UFO as spectacle. Daniel Kaluuya and Keke Palmer on a ranch. Audience as subject."],
-["🌊","Pearl","2022","Ti West. Mia Goth. A prequel to X. 1918. A girl on a farm who wants to be a star."],
-["⚡","Talk to Me","2023","The Philippou brothers. A disembodied hand. Teenagers make contact with the dead. Australian."],
-["🧠","M3GAN","2022","Akela Cooper. A robot child companion. The dance. More satirical than scary. Effective."],
-["🎭","Evil Dead Rise","2023","Lee Cronin. A Deadite in an apartment building. The best Evil Dead since the original."],
-["💀","Scream (1996)","1996","Wes Craven. Drew Barrymore. Meta horror. The rules of horror stated out loud."],
-["👻","Halloween (1978)","1978","John Carpenter. Michael Myers. The babysitter. Carpenter's score. The original slasher."],
-["🔮","A Tale of Two Sisters","2003","Korean psychological horror. Two sisters, a stepmother, a house. Unreliable reality."],
-["🌊","Audition","1999","Takashi Miike. A widower holds auditions for a wife. The bag. Do not eat while watching."],
-["⚡","Ringu (Ring)","1998","Hideo Nakata. The tape. Seven days. Sadako. Japanese horror that changed Western horror."],
-["🧠","Pulse (Kairo)","2001","Kiyoshi Kurosawa. The internet as portal to the dead. Loneliness horror. Pre-social media dread."],
-["🎭","Lake Mungo","2008","Australian mockumentary. A grieving family. The final revelation is genuinely chilling."],
-["💀","Host","2020","Rob Savage. Shot entirely on Zoom during lockdown. Terrifying and brilliantly made."],
-["👻","Skinamarink","2022","Kyle Edward Ball. $15,000 budget. Children alone in a house. Experimental dread."],
-["🔮","Men","2022","Alex Garland. Jessie Buckley alone in the English countryside. The transformation sequence."],
-["🌊","Fresh","2022","Mimi Cave. Daisy Edgar-Jones. Sebastian Stan. The twist comes 30 minutes in. Literally fresh."],
-["⚡","Soft & Quiet","2022","Beth de Araújo. One continuous shot. A women's hate group. Genuinely disturbing."],
-["🧠","Knock at the Cabin","2023","M. Night Shyamalan. Dave Bautista. Four strangers. The apocalypse or a home invasion."],
-["🎭","Smile","2022","Parker Finn. Trauma as contagion. You see the smile before you know what it means."],
-["💀","Renfield","2023","Chris McKay. Nicholas Hoult as Dracula's familiar. Nicolas Cage as Dracula. Knowing camp horror."],
-["👻","The Nun II","2023","Less essential than this list needs. But 'The Nun' franchise prints money and someone loves it."],
-];var o=[];for(var i=0;i<raw.length;i++){o.push({id:i+1,emoji:raw[i][0],name:raw[i][1],year:raw[i][2],desc:raw[i][3]})}return o;})();
+// Films data loaded from data/films.json on demand
+var _filmsCache = null;
+var _filmsLoading = null;
+
+async function loadFilmsData() {
+  if (_filmsCache) return _filmsCache;
+  if (_filmsLoading) return _filmsLoading;
+  _filmsLoading = fetch('data/films.json')
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      _filmsCache = data;
+      _filmsLoading = null;
+      return data;
+    })
+    .catch(function(e){
+      console.warn('films.json load failed, using inline fallback:', e.message);
+      _filmsLoading = null;
+      return [];
+    });
+  return _filmsLoading;
+}
+
 var SERIES_DRAMA=(function(){var raw=[
 ["👑","The Sopranos","USA","HBO's mob-therapy masterpiece. Tony Soprano. Carmela. Christopher. Changed premium TV forever."],
 ["🔴","The Wire","USA","David Simon. Baltimore's institutions vs individuals. The greatest TV drama ever made."],
@@ -2278,8 +2036,8 @@ var CATS_CFG={
     scifi:SERIES_DRAMA,animated:SERIES_COMEDY,reality:SERIES_THRILLER
   }},
   films:{locked:true,sub:'films',pools:{
-    action:FILMS_ACTION,comedy:FILMS_COMEDY,scifi:FILMS_SCIFI,
-    drama:FILMS_DRAMA,horror:FILMS_HORROR,animation:FILMS_COMEDY
+    action:[],comedy:[],scifi:[],
+    drama:[],horror:[],animation:[]
   }},
   brands:{locked:true,sub:'brands',pools:{
     tech:BRANDS_TECH,food:BRANDS_FOOD,fashion:BRANDS_FASHION,
@@ -2305,16 +2063,11 @@ function getDataPool(cat, sub) {
     if (cfg.pools[sub] && cfg.pools[sub].length > 0) return cfg.pools[sub];
     // Fallback mapping for subcats without dedicated pools
     var fallbacks = {
-      // series
       scifi:'drama', animated:'comedy', reality:'thriller',
-      // films
       animation:'comedy',
-      // brands
       gaming:'tech', sports:'fashion',
-      // cars
       electric:'luxury', offroad:'everyday',
-      // games
-      strategy:'rpg', sports2:'indie'
+      strategy:'rpg'
     };
     var fb = fallbacks[sub];
     if (fb && cfg.pools[fb]) return cfg.pools[fb];
@@ -2324,6 +2077,19 @@ function getDataPool(cat, sub) {
     return merged;
   }
   return [];
+}
+
+// Async version for categories that load from JSON
+async function getDataPoolAsync(cat, sub) {
+  if (cat === 'films') {
+    var all = await loadFilmsData();
+    // Map sub to genre key
+    var genreMap = {action:'action',comedy:'comedy',scifi:'scifi',drama:'drama',horror:'horror',animation:'comedy'};
+    var genre = genreMap[sub] || sub;
+    var filtered = all.filter(function(f){ return f.genre === genre; });
+    return filtered.length > 0 ? filtered : all;
+  }
+  return getDataPool(cat, sub);
 }
 
 var S={cat:null,sub:null,queue:[],placed:[],curIdx:0,curItem:null,swapSel:[],phase:'landing',cardSelected:false};
@@ -2446,8 +2212,18 @@ function closeModal(){document.getElementById('modalOverlay').classList.remove('
 /* ── GAME START ── */
 function startGame(){
   closeModal();
-  var pool=getDataPool(S.cat, S.sub);
-  S.queue=rnd(pool).slice(0,10);
+  // Show loading briefly for JSON categories
+  if(S.cat==='films'){
+    var loadingDiv=document.createElement('div');
+    loadingDiv.id='gameLoader';
+    loadingDiv.style.cssText='position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:999;font-family:Space Mono,monospace;color:var(--acc);font-size:14px;';
+    loadingDiv.textContent='Loading...';
+    document.body.appendChild(loadingDiv);
+  }
+  getDataPoolAsync(S.cat, S.sub).then(function(pool){
+    var loader=document.getElementById('gameLoader');
+    if(loader) loader.remove();
+    S.queue=rnd(pool).slice(0,10);
   S.placed=new Array(10).fill(null);
   S.curIdx=0;S.curItem=S.queue[0];S.phase='playing';
   document.getElementById('landing').style.display='none';
@@ -2463,8 +2239,8 @@ function startGame(){
   document.getElementById('inCard').style.opacity='1';
   S.startTime = Date.now(); S.usedSwap = false;
   buildDots();buildSlots();showCard(S.curItem);
+  });
 }
-
 function buildDots(){
   var el=document.getElementById('pdots');el.innerHTML='';
   for(var i=0;i<10;i++){
