@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VibeSorting — Blind Rankings</title>
+<!-- v2.1 -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -16,6 +17,12 @@ body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;min-
 .tb-logo{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;background:linear-gradient(135deg,var(--acc),var(--acc3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;cursor:pointer}
 .tb-right{display:flex;align-items:center;gap:10px}
 .lang-bar{display:flex;gap:6px}
+.lang-dropdown{position:relative}
+.lang-sel-btn{background:var(--sur2);border:1px solid var(--bor);border-radius:8px;padding:5px 12px;font-size:12px;font-family:'Space Mono',monospace;color:var(--acc);cursor:pointer;transition:all .2s;display:flex;align-items:center}
+.lang-sel-btn:hover{border-color:var(--acc)}
+.lang-menu{position:absolute;top:calc(100% + 6px);right:0;background:var(--sur);border:1px solid var(--bor);border-radius:10px;padding:6px;display:flex;flex-direction:column;gap:3px;z-index:200;min-width:100px;box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.lang-menu button{background:transparent;border:none;color:var(--mut);font-family:'Space Mono',monospace;font-size:12px;padding:6px 10px;border-radius:7px;cursor:pointer;text-align:left;transition:all .15s}
+.lang-menu button:hover{background:var(--sur2);color:var(--acc)}
 .lang-btn{background:transparent;border:1px solid var(--bor);border-radius:7px;padding:4px 10px;font-size:11px;font-family:'Space Mono',monospace;color:var(--mut);cursor:pointer;transition:all .2s}
 .lang-btn:hover,.lang-btn.active{border-color:var(--acc);color:var(--acc)}
 .login-btn{display:flex;align-items:center;gap:7px;padding:7px 14px;border-radius:9px;border:1px solid var(--bor);background:var(--sur2);color:var(--txt);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
@@ -31,7 +38,7 @@ body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;min-
 @keyframes pulse{0%,100%{box-shadow:0 0 30px rgba(232,255,71,.3)}50%{box-shadow:0 0 60px rgba(232,255,71,.6)}}
 .logo-text{font-family:'Bebas Neue',sans-serif;font-size:42px;letter-spacing:2px;background:linear-gradient(135deg,var(--acc),var(--acc3));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .tagline{font-size:13px;color:var(--mut);letter-spacing:3px;text-transform:uppercase;margin-bottom:44px;font-family:'Space Mono',monospace}
-.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:940px;width:100%;margin-bottom:40px}
+.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:1040px;width:100%;margin-bottom:40px}
 .cat-card{background:var(--sur);border:1px solid var(--bor);border-radius:16px;padding:24px 16px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden;text-align:left}
 .cat-card:hover:not(.locked-cat){transform:translateY(-4px);border-color:var(--acc)}
 .cat-card.locked-cat{cursor:pointer}
@@ -80,7 +87,7 @@ body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;min-
 .login-note{font-size:11px;color:var(--mut);font-family:'Space Mono',monospace}
 /* GAME */
 #game{display:none;flex-direction:column}
-.g-head{display:flex;align-items:center;justify-content:space-between;padding:13px 24px;border-bottom:1px solid var(--bor);background:var(--sur);position:sticky;top:57px;z-index:50;flex-shrink:0}
+.g-head{display:flex;align-items:center;justify-content:space-between;padding:13px 24px;border-bottom:1px solid var(--bor);background:var(--sur);position:sticky;top:0;z-index:50;flex-shrink:0}
 .g-logo{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;background:linear-gradient(135deg,var(--acc),var(--acc3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;cursor:pointer}
 .g-pill{font-size:11px;font-family:'Space Mono',monospace;padding:4px 11px;border-radius:20px;background:var(--sur2);border:1px solid var(--bor);color:var(--mut)}
 .pdots{display:flex;gap:5px;align-items:center}
@@ -91,7 +98,12 @@ body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;min-
 .left-panel{width:300px;flex-shrink:0;border-right:1px solid var(--bor);background:var(--sur);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px 18px;gap:14px}
 .in-label{font-size:10px;font-family:'Space Mono',monospace;letter-spacing:3px;color:var(--mut);text-transform:uppercase}
 .in-card{width:100%;background:var(--sur2);border:1px solid var(--bor);border-radius:18px;padding:20px 16px 16px;text-align:center;cursor:grab;transition:border-color .2s,box-shadow .2s;user-select:none;box-shadow:0 8px 32px rgba(0,0,0,.3)}
-.in-card:hover{border-color:rgba(232,255,71,.4)}
+.in-card:hover{border-color:rgba(232,255,71,.4);cursor:pointer}
+.in-card.selected{border-color:var(--acc)!important;box-shadow:0 0 0 3px rgba(232,255,71,.3),0 16px 48px rgba(0,0,0,.4)!important;cursor:pointer;animation:none;}
+.in-card.selected .c-name{color:var(--acc)}
+.in-card.selected .c-emoji{transform:scale(1.1);transition:transform .2s}
+.slot.slot-hover{border-style:solid!important;border-color:var(--acc)!important;background:rgba(232,255,71,.09)!important;transform:scaleX(1.01);transition:all .1s!important}
+.slot{transition:border-color .1s,background .1s}
 .in-card.fly{animation:flyIn .4s cubic-bezier(.34,1.56,.64,1)}
 @keyframes flyIn{from{transform:translateX(-50px) scale(.88);opacity:0}to{transform:none;opacity:1}}
 .c-emoji{font-size:44px;margin-bottom:11px;line-height:1}
@@ -194,12 +206,17 @@ footer{background:var(--sur);border-top:1px solid var(--bor);padding:40px 32px;m
 <nav class="top-bar">
   <div class="tb-logo" onclick="goHome()">⚡ VibeSorting</div>
   <div class="tb-right">
-    <div class="lang-bar" id="langBar">
-      <button class="lang-btn active" onclick="setLang('en')">EN</button>
-      <button class="lang-btn" onclick="setLang('es')">ES</button>
-      <button class="lang-btn" onclick="setLang('tr')">TR</button>
-      <button class="lang-btn" onclick="setLang('fr')">FR</button>
-      <button class="lang-btn" onclick="setLang('ru')">RU</button>
+    <div class="lang-dropdown" id="langDropdown">
+      <button class="lang-sel-btn" onclick="toggleLangMenu(event)" id="langSelBtn">
+        <span id="langSelTxt">🇬🇧 EN</span><span style="font-size:9px;margin-left:5px;opacity:.6">▾</span>
+      </button>
+      <div class="lang-menu" id="langMenu" style="display:none">
+        <button onclick="setLang('en')">🇬🇧 EN</button>
+        <button onclick="setLang('es')">🇪🇸 ES</button>
+        <button onclick="setLang('tr')">🇹🇷 TR</button>
+        <button onclick="setLang('fr')">🇫🇷 FR</button>
+        <button onclick="setLang('ru')">🇷🇺 RU</button>
+      </div>
     </div>
     <div id="authArea">
       <button class="login-btn" onclick="openLogin()">
@@ -228,9 +245,10 @@ footer{background:var(--sur);border-top:1px solid var(--bor);padding:40px 32px;m
     <h2 id="loginTitle">Sign in to VibeSorting</h2>
     <p id="loginDesc" style="margin-bottom:24px">Sign in to unlock all categories and save your rankings.</p>
     <button class="google-btn" onclick="doGoogleLogin()">
-      <span class="google-logo">G</span>
+      <span class="google-logo" style="font-size:18px;font-weight:700;color:#4285f4;font-family:sans-serif">G</span>
       <span id="googleBtnTxt">Continue with Google</span>
     </button>
+    <div id="loginSetupWarn" style="display:none;margin-top:12px;padding:10px 14px;background:rgba(255,77,109,.1);border:1px solid var(--acc2);border-radius:10px;font-size:11px;color:var(--acc2);text-align:left;line-height:1.7;font-family:Space Mono,monospace"></div>
     <p class="login-note" id="loginNote">No spam. No ads. Just rankings.</p>
   </div>
 </div>
@@ -261,7 +279,7 @@ footer{background:var(--sur);border-top:1px solid var(--bor);padding:40px 32px;m
   <div class="g-body">
     <div class="left-panel">
       <div class="in-label" id="lblNowRank">now ranking</div>
-      <div class="in-card" id="inCard" draggable="true" ondragstart="dragStart(event)" ondragend="dragEnd(event)">
+      <div class="in-card" id="inCard" draggable="true" ondragstart="dragStart(event)" ondragend="dragEnd(event)" onclick="toggleCardSelect(event)">
         <div class="c-emoji" id="cEmoji">⚡</div>
         <div class="c-name" id="cName">Loading</div>
         <div class="c-desc" id="cDesc"></div>
@@ -272,7 +290,7 @@ footer{background:var(--sur);border-top:1px solid var(--bor);padding:40px 32px;m
           <div class="ex-body" id="exBody"><div class="ex-list" id="exList"></div></div>
         </div>
       </div>
-      <div class="drag-hint"><span>Drag</span> → drop on a slot</div>
+      <div class="drag-hint"><span id="dragHintText">Click card to select, then click a slot</span></div>
     </div>
     <div class="right-panel">
       <div class="panel-label" id="lblBuildRank">build your ranking</div>
@@ -321,23 +339,23 @@ footer{background:var(--sur);border-top:1px solid var(--bor);padding:40px 32px;m
 
   <!-- Top categories -->
   <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px">
-    <div style="background:var(--sur);border:1px solid var(--bor);border-radius:14px;padding:20px">
+    <div id="topCat_first" style="background:var(--sur);border:1px solid var(--bor);border-radius:14px;padding:20px">
       <div style="font-size:10px;font-family:'Space Mono',monospace;color:var(--mut);letter-spacing:2px;margin-bottom:10px">🥇 MOST RANKED</div>
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--acc)">⚡ Super Powers</div>
-      <div style="font-size:12px;color:var(--mut);margin-top:4px">47,291 rankings today</div>
-      <div style="margin-top:10px;height:3px;background:var(--bor);border-radius:2px;overflow:hidden"><div style="width:100%;height:100%;background:var(--acc);border-radius:2px"></div></div>
+      <div class="topcat-name" style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--acc)">⚡ Super Powers</div>
+      <div class="topcat-count" style="font-size:12px;color:var(--mut);margin-top:4px">47,291 rankings today</div>
+      <div style="margin-top:10px;height:3px;background:var(--bor);border-radius:2px;overflow:hidden"><div class="topcat-bar" style="width:100%;height:100%;background:var(--acc);border-radius:2px;transition:width 1s ease"></div></div>
     </div>
-    <div style="background:var(--sur);border:1px solid var(--bor);border-radius:14px;padding:20px">
+    <div id="topCat_second" style="background:var(--sur);border:1px solid var(--bor);border-radius:14px;padding:20px">
       <div style="font-size:10px;font-family:'Space Mono',monospace;color:var(--mut);letter-spacing:2px;margin-bottom:10px">🥈 SECOND</div>
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--acc3)">⚽ Footballers</div>
-      <div style="font-size:12px;color:var(--mut);margin-top:4px">31,840 rankings today</div>
-      <div style="margin-top:10px;height:3px;background:var(--bor);border-radius:2px;overflow:hidden"><div style="width:67%;height:100%;background:var(--acc3);border-radius:2px"></div></div>
+      <div class="topcat-name" style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--acc3)">⚽ Footballers</div>
+      <div class="topcat-count" style="font-size:12px;color:var(--mut);margin-top:4px">31,840 rankings today</div>
+      <div style="margin-top:10px;height:3px;background:var(--bor);border-radius:2px;overflow:hidden"><div class="topcat-bar" style="width:67%;height:100%;background:var(--acc3);border-radius:2px;transition:width 1s ease"></div></div>
     </div>
-    <div style="background:var(--sur);border:1px solid var(--bor);border-radius:14px;padding:20px">
+    <div id="topCat_third" style="background:var(--sur);border:1px solid var(--bor);border-radius:14px;padding:20px">
       <div style="font-size:10px;font-family:'Space Mono',monospace;color:var(--mut);letter-spacing:2px;margin-bottom:10px">🥉 THIRD</div>
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--acc2)">🎮 Video Games</div>
-      <div style="font-size:12px;color:var(--mut);margin-top:4px">28,153 rankings today</div>
-      <div style="margin-top:10px;height:3px;background:var(--bor);border-radius:2px;overflow:hidden"><div style="width:60%;height:100%;background:var(--acc2);border-radius:2px"></div></div>
+      <div class="topcat-name" style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--acc2)">🎮 Video Games</div>
+      <div class="topcat-count" style="font-size:12px;color:var(--mut);margin-top:4px">28,153 rankings today</div>
+      <div style="margin-top:10px;height:3px;background:var(--bor);border-radius:2px;overflow:hidden"><div class="topcat-bar" style="width:60%;height:100%;background:var(--acc2);border-radius:2px;transition:width 1s ease"></div></div>
     </div>
   </div>
 
@@ -377,6 +395,18 @@ footer{background:var(--sur);border-top:1px solid var(--bor);padding:40px 32px;m
     </div>
   </div>
 
+  <!-- Top items from real data -->
+  <div style="background:var(--sur);border:1px solid var(--bor);border-radius:14px;padding:20px;margin-bottom:14px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div style="font-size:10px;font-family:'Space Mono',monospace;color:var(--mut);letter-spacing:2px">TOP RANKED — FOOTBALLERS</div>
+      <div style="font-size:10px;color:var(--mut);font-family:'Space Mono',monospace">from real rankings</div>
+    </div>
+    <div id="topItemsTable">
+      <div style="font-size:10px;color:var(--mut);font-family:'Space Mono',monospace;margin-bottom:10px;letter-spacing:1px">TOP RANKED — FOOTBALLERS (OVERALL)</div>
+<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--bor)"><span style="font-family:Bebas Neue,sans-serif;font-size:18px;color:var(--acc);width:22px">1</span><span style="flex:1;font-size:13px;font-weight:600">Messi</span><span style="font-size:11px;color:var(--mut);font-family:Space Mono,monospace">avg #1.8</span><span style="font-size:11px;color:var(--acc);font-family:Space Mono,monospace;margin-left:8px">12,841x #1</span></div><div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--bor)"><span style="font-family:Bebas Neue,sans-serif;font-size:18px;color:var(--acc);width:22px">2</span><span style="flex:1;font-size:13px;font-weight:600">Cristiano Ronaldo</span><span style="font-size:11px;color:var(--mut);font-family:Space Mono,monospace">avg #2.1</span><span style="font-size:11px;color:var(--acc);font-family:Space Mono,monospace;margin-left:8px">9,203x #1</span></div><div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--bor)"><span style="font-family:Bebas Neue,sans-serif;font-size:18px;color:var(--acc);width:22px">3</span><span style="flex:1;font-size:13px;font-weight:600">Ronaldo Nazário</span><span style="font-size:11px;color:var(--mut);font-family:Space Mono,monospace">avg #3.2</span><span style="font-size:11px;color:var(--acc);font-family:Space Mono,monospace;margin-left:8px">4,102x #1</span></div><div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--bor)"><span style="font-family:Bebas Neue,sans-serif;font-size:18px;color:var(--acc);width:22px">4</span><span style="flex:1;font-size:13px;font-weight:600">Ronaldinho</span><span style="font-size:11px;color:var(--mut);font-family:Space Mono,monospace">avg #3.9</span><span style="font-size:11px;color:var(--acc);font-family:Space Mono,monospace;margin-left:8px">3,847x #1</span></div><div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--bor)"><span style="font-family:Bebas Neue,sans-serif;font-size:18px;color:var(--acc);width:22px">5</span><span style="flex:1;font-size:13px;font-weight:600">Zinedine Zidane</span><span style="font-size:11px;color:var(--mut);font-family:Space Mono,monospace">avg #4.1</span><span style="font-size:11px;color:var(--acc);font-family:Space Mono,monospace;margin-left:8px">2,913x #1</span></div><div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--bor)"><span style="font-family:Bebas Neue,sans-serif;font-size:18px;color:var(--acc);width:22px">6</span><span style="flex:1;font-size:13px;font-weight:600">Kylian Mbappé</span><span style="font-size:11px;color:var(--mut);font-family:Space Mono,monospace">avg #4.8</span><span style="font-size:11px;color:var(--acc);font-family:Space Mono,monospace;margin-left:8px">2,104x #1</span></div><div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--bor)"><span style="font-family:Bebas Neue,sans-serif;font-size:18px;color:var(--acc);width:22px">7</span><span style="flex:1;font-size:13px;font-weight:600">Luka Modrić</span><span style="font-size:11px;color:var(--mut);font-family:Space Mono,monospace">avg #5.2</span><span style="font-size:11px;color:var(--acc);font-family:Space Mono,monospace;margin-left:8px">1,847x #1</span></div><div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--bor)"><span style="font-family:Bebas Neue,sans-serif;font-size:18px;color:var(--acc);width:22px">8</span><span style="flex:1;font-size:13px;font-weight:600">Kevin De Bruyne</span><span style="font-size:11px;color:var(--mut);font-family:Space Mono,monospace">avg #5.7</span><span style="font-size:11px;color:var(--acc);font-family:Space Mono,monospace;margin-left:8px">1,203x #1</span></div><div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--bor)"><span style="font-family:Bebas Neue,sans-serif;font-size:18px;color:var(--acc);width:22px">9</span><span style="flex:1;font-size:13px;font-weight:600">Erling Haaland</span><span style="font-size:11px;color:var(--mut);font-family:Space Mono,monospace">avg #5.9</span><span style="font-size:11px;color:var(--acc);font-family:Space Mono,monospace;margin-left:8px">988x #1</span></div><div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--bor)"><span style="font-family:Bebas Neue,sans-serif;font-size:18px;color:var(--acc);width:22px">10</span><span style="flex:1;font-size:13px;font-weight:600">Thierry Henry</span><span style="font-size:11px;color:var(--mut);font-family:Space Mono,monospace">avg #6.1</span><span style="font-size:11px;color:var(--acc);font-family:Space Mono,monospace;margin-left:8px">741x #1</span></div>
+      <div style="font-size:10px;color:var(--mut);font-family:'Space Mono',monospace;margin-top:10px;text-align:right">* mock data until backend connected</div>
+    </div>
+  </div>
   <!-- Weekly trend -->
   <div style="background:var(--sur);border:1px solid var(--bor);border-radius:14px;padding:20px;margin-bottom:28px">
     <div style="font-size:10px;font-family:'Space Mono',monospace;color:var(--mut);letter-spacing:2px;margin-bottom:16px">WEEKLY RANKING VOLUME</div>
@@ -386,11 +416,11 @@ footer{background:var(--sur);border-top:1px solid var(--bor);padding:40px 32px;m
   <!-- Stat pills -->
   <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px">
     <div style="background:var(--sur2);border:1px solid var(--bor);border-radius:10px;padding:10px 16px;font-size:12px">
-      <span style="color:var(--acc);font-family:'Bebas Neue',sans-serif;font-size:18px;margin-right:6px">2.1M</span>
+      <span data-stat="total" style="color:var(--acc);font-family:'Bebas Neue',sans-serif;font-size:18px;margin-right:6px">2.1M</span>
       <span style="color:var(--mut)">total rankings</span>
     </div>
     <div style="background:var(--sur2);border:1px solid var(--bor);border-radius:10px;padding:10px 16px;font-size:12px">
-      <span style="color:var(--acc3);font-family:'Bebas Neue',sans-serif;font-size:18px;margin-right:6px">94K</span>
+      <span data-stat="players" style="color:var(--acc3);font-family:'Bebas Neue',sans-serif;font-size:18px;margin-right:6px">94K</span>
       <span style="color:var(--mut)">players today</span>
     </div>
     <div style="background:var(--sur2);border:1px solid var(--bor);border-radius:10px;padding:10px 16px;font-size:12px">
@@ -438,178 +468,276 @@ footer{background:var(--sur);border-top:1px solid var(--bor);padding:40px 32px;m
 <script>
 
 /* ═══════════════════════════════════════════════════════════
-   SUPABASE CONFIG
-   Kurulum sonrası bu iki değeri doldur:
-   1. supabase.com → Settings → API → Project URL
-   2. supabase.com → Settings → API → anon/public key
+   SUPABASE CONFIG — ADIM 5'te anon key'i buraya yapıştır
 ═══════════════════════════════════════════════════════════ */
 var SUPABASE_URL = 'https://ayqvtcxyjdnqkwzduzsp.supabase.co';
-var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF5cXZ0Y3h5amRucWt3emR1enNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NzI4NDMsImV4cCI6MjA5NTU0ODg0M30.mooYJWGQJysPQB1KHUUIiJpmwKDcPH9-_x1-kk7pqEQ';
-var _sb = null; // Supabase client, lazy init
+var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF5cXZ0Y3h5amRucWt3emR1enNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NzI4NDMsImV4cCI6MjA5NTU0ODg0M30.mooYJWGQJysPQB1KHUUIiJpmwKDcPH9-_x1-kk7pqEQ'; // ← sadece bunu değiştir
+var _sb = null;
 
-function getSupabase(){
-  if(_sb) return _sb;
-  if(SUPABASE_URL==='BURAYA_SUPABASE_URL') return null; // not configured yet
-  try{
-    _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    return _sb;
-  }catch(e){ return null; }
+function getSupabase() {
+  if (_sb) return _sb;
+  if (SUPABASE_KEY === 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF5cXZ0Y3h5amRucWt3emR1enNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NzI4NDMsImV4cCI6MjA5NTU0ODg0M30.mooYJWGQJysPQB1KHUUIiJpmwKDcPH9-_x1-kk7pqEQ') return null;
+  try { _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY); return _sb; }
+  catch(e) { return null; }
 }
 
-/* ─── SESSION ID for anonymous users ─── */
+/* ── Session ID for anonymous users ── */
 var SESSION_ID = (function(){
-  var k='vs_session';
-  var s=localStorage.getItem(k);
-  if(!s){s='s_'+(Math.random().toString(36).slice(2)+Date.now().toString(36));localStorage.setItem(k,s);}
+  var k = 'vs_sid';
+  var s = localStorage.getItem(k);
+  if (!s) { s = 's_' + Math.random().toString(36).slice(2) + Date.now().toString(36); localStorage.setItem(k, s); }
   return s;
 })();
 
-/* ─── SAVE RANKING to Supabase ─── */
-async function saveRankingToDB(){
-  var sb=getSupabase(); if(!sb) return; // silent fail if not configured
-  var row={
-    session_id: SESSION_ID,
-    user_id: USER.loggedIn && USER.supabaseId ? USER.supabaseId : null,
-    category: S.cat,
-    subcategory: S.sub,
-    lang: CL,
-    used_swap: S.usedSwap||false,
-    duration_sec: S.startTime ? Math.round((Date.now()-S.startTime)/1000) : null
-  };
-  for(var i=0;i<10;i++){
-    if(S.placed[i]) row['rank_'+(i+1)] = S.placed[i].item.name;
-  }
-  try{
-    await sb.from('rankings').insert(row);
-    console.log('Ranking saved');
-  }catch(e){ console.warn('Save ranking error:', e.message); }
-}
+/* ════════════════════════════════════════
+   AUTH — Google OAuth via Supabase
+════════════════════════════════════════ */
+async function doGoogleLogin() {
+  document.getElementById('loginModal').classList.remove('on');
+  var sb = getSupabase();
 
-/* ─── SAVE BUG REPORT ─── */
-async function saveBugReport(text, file){
-  var sb=getSupabase(); if(!sb){
-    // Fallback: open mailto
-    window.open('mailto:kineticsimulations@gmail.com?subject='+encodeURIComponent('VibeSorting Bug Report')+'&body='+encodeURIComponent(text));
+  /* ── Demo mode: Supabase key henüz girilmemiş ── */
+  if (!sb) {
+    var names = [['Alex Rivera','AR'],['Sam Chen','SC'],['Jordan Park','JP'],['Morgan Lee','ML'],['Casey Kim','CK']];
+    var pick = names[Math.floor(Math.random() * names.length)];
+    USER = { loggedIn:true, name:pick[0], initials:pick[1], id:null, demo:true };
+    for (var k in CATS_CFG) CATS_CFG[k].locked = false;
+    updateAuthUI(); buildCatGrid();
     return;
   }
-  var screenshotUrl = null;
-  if(file){
-    try{
-      var ext = file.name.split('.').pop();
-      var path = 'bugs/'+Date.now()+'.'+ext;
-      var {data,error} = await sb.storage.from('screenshots').upload(path, file);
-      if(!error){
-        screenshotUrl = sb.storage.from('screenshots').getPublicUrl(path).data.publicUrl;
-      }
-    }catch(e){}
+
+  /* ── Real Google OAuth ── */
+  var redirectUrl = window.location.origin + window.location.pathname;
+  console.log('OAuth redirectTo:', redirectUrl);
+
+  // Show what redirect URI to whitelist in Google Cloud Console
+  var warnEl = document.getElementById('loginSetupWarn');
+  if (warnEl) {
+    warnEl.style.display = 'block';
+    warnEl.innerHTML = 'Redirecting to Google...<br>If nothing happens, check:<br>'
+      + '1. Google Cloud → OAuth → Redirect URIs includes:<br>'
+      + '<b>https://ayqvtcxyjdnqkwzduzsp.supabase.co/auth/v1/callback</b><br>'
+      + '2. Supabase → Auth → URL Configuration → Site URL = <b>' + window.location.origin + '</b>';
   }
-  try{
-    await sb.from('bug_reports').insert({
-      user_id: USER.loggedIn && USER.supabaseId ? USER.supabaseId : null,
-      message: text,
-      screenshot_url: screenshotUrl,
-      user_agent: navigator.userAgent,
-      page_state: JSON.stringify({cat:S.cat,sub:S.sub,phase:S.phase})
+
+  var oauthResult = await sb.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: redirectUrl,
+      queryParams: { access_type: 'offline', prompt: 'select_account' }
+    }
+  });
+  if (oauthResult.error) {
+    console.error('Login error:', oauthResult.error.message);
+    alert('Google login failed: ' + oauthResult.error.message + '\n\nMake sure:\n1. Google provider enabled in Supabase Auth\n2. Client ID + Secret added\n3. Redirect URI: ' + redirectUrl);
+  }
+}
+
+function setUserFromSupabase(u) {
+  var name = (u.user_metadata && u.user_metadata.full_name) || u.email.split('@')[0];
+  var ini = name.split(' ').map(function(w){ return w[0]; }).join('').toUpperCase().slice(0,2);
+  USER = { loggedIn:true, name:name, initials:ini, id:u.id, email:u.email, demo:false };
+  for (var k in CATS_CFG) CATS_CFG[k].locked = false;
+  updateAuthUI(); buildCatGrid();
+}
+
+async function checkSession() {
+  var sb = getSupabase(); if (!sb) return;
+  try {
+    // Handle OAuth callback — Supabase auto-processes the URL hash/code
+    var res = await sb.auth.getSession();
+    if (res.data && res.data.session && res.data.session.user) {
+      setUserFromSupabase(res.data.session.user);
+    }
+    sb.auth.onAuthStateChange(function(event, session) {
+      console.log('Auth event:', event, session ? 'has session' : 'no session');
+      if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session) {
+        setUserFromSupabase(session.user);
+        document.getElementById('loginModal').classList.remove('on');
+        // Clean up URL after OAuth redirect
+        if (window.location.hash || window.location.search.includes('code=')) {
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
+      }
+      if (event === 'SIGNED_OUT') {
+        USER = { loggedIn:false, name:'', initials:'', id:null, demo:false };
+        for (var k in CATS_CFG) {
+          if (k !== 'powers') CATS_CFG[k].locked = true;
+        }
+        updateAuthUI(); buildCatGrid();
+      }
     });
+  } catch(e) { console.warn('Session check:', e.message); }
+}
+
+async function logOut() {
+  var sb = getSupabase();
+  if (sb) await sb.auth.signOut();
+  USER = { loggedIn:false, name:'', initials:'', id:null, demo:false };
+  CATS_CFG.football.locked = true; CATS_CFG.nba.locked = true;
+  CATS_CFG.series.locked = true;   CATS_CFG.films.locked = true;
+  CATS_CFG.techbrands.locked = true; CATS_CFG.games.locked = true;
+  updateAuthUI(); buildCatGrid();
+}
+
+/* ════════════════════════════════════════
+   SAVE RANKING
+════════════════════════════════════════ */
+async function saveRankingToDB() {
+  var sb = getSupabase(); if (!sb) return;
+  var row = {
+    session_id:   SESSION_ID,
+    user_id:      (USER.loggedIn && USER.id) ? USER.id : null,
+    category:     S.cat,
+    subcategory:  S.sub,
+    lang:         CL,
+    used_swap:    S.usedSwap || false,
+    duration_sec: S.startTime ? Math.round((Date.now() - S.startTime) / 1000) : null
+  };
+  for (var i = 0; i < 10; i++) {
+    if (S.placed[i]) row['rank_' + (i+1)] = S.placed[i].item.name;
+  }
+  try {
+    var res = await sb.from('rankings').insert(row);
+    if (res.error) throw res.error;
+    console.log('✓ Ranking saved');
+  } catch(e) { console.warn('Save ranking error:', e.message); }
+}
+
+/* ════════════════════════════════════════
+   BUG REPORT — screenshot upload + DB
+════════════════════════════════════════ */
+async function saveBugReport(text, file) {
+  var sb = getSupabase();
+
+  /* No Supabase → fallback to mailto */
+  if (!sb) {
+    var subj = encodeURIComponent('VibeSorting Bug Report');
+    var body = encodeURIComponent(text);
+    window.open('mailto:kineticsimulations@gmail.com?subject=' + subj + '&body=' + body);
     return true;
-  }catch(e){
-    console.warn('Bug report error:', e.message);
-    // fallback to mailto
-    window.open('mailto:kineticsimulations@gmail.com?subject='+encodeURIComponent('VibeSorting Bug')+'&body='+encodeURIComponent(text));
+  }
+
+  var screenshotUrl = null;
+
+  /* Upload screenshot to Storage */
+  if (file) {
+    try {
+      var ext  = file.name.split('.').pop().toLowerCase();
+      var path = 'bugs/' + Date.now() + '_' + Math.random().toString(36).slice(2) + '.' + ext;
+      var up   = await sb.storage.from('screenshots').upload(path, file, { upsert: false });
+      if (!up.error) {
+        var pub = sb.storage.from('screenshots').getPublicUrl(path);
+        screenshotUrl = pub.data.publicUrl;
+      }
+    } catch(e) { console.warn('Screenshot upload:', e.message); }
+  }
+
+  /* Insert bug report row */
+  try {
+    var ins = await sb.from('bug_reports').insert({
+      user_id:        (USER.loggedIn && USER.id) ? USER.id : null,
+      message:        text,
+      screenshot_url: screenshotUrl,
+      user_agent:     navigator.userAgent,
+      page_state:     JSON.stringify({ cat:S.cat, sub:S.sub, phase:S.phase, lang:CL })
+    });
+    if (ins.error) throw ins.error;
+    return true;
+  } catch(e) {
+    console.warn('Bug report DB error:', e.message);
+    /* Fallback */
+    var subj2 = encodeURIComponent('VibeSorting Bug Report');
+    var body2 = encodeURIComponent(text);
+    window.open('mailto:kineticsimulations@gmail.com?subject=' + subj2 + '&body=' + body2);
     return false;
   }
 }
 
-/* ─── LOAD REAL ANALYTICS from Supabase ─── */
-async function loadRealAnalytics(){
-  var sb=getSupabase(); if(!sb) return; // keep mock data
-  try{
-    // Top categories last 24h
-    var {data} = await sb.from('rankings')
-      .select('category')
-      .gte('created_at', new Date(Date.now()-86400000).toISOString());
-    if(data && data.length > 0){
-      var counts={};
-      data.forEach(function(r){ counts[r.category]=(counts[r.category]||0)+1; });
-      var sorted=Object.entries(counts).sort(function(a,b){return b[1]-a[1]});
-      // Update stat pills with real data
-      var totalEl=document.querySelector('[data-stat="total"]');
-      if(totalEl) totalEl.textContent=(data.length).toLocaleString();
-      console.log('Real analytics loaded:', sorted);
-    }
-  }catch(e){ console.warn('Analytics load error:', e.message); }
-}
+/* ════════════════════════════════════════
+   REAL ANALYTICS from Supabase
+════════════════════════════════════════ */
+async function loadRealAnalytics() {
+  var sb = getSupabase(); if (!sb) { renderAnalytics(); return; }
 
-/* ─── REAL GOOGLE LOGIN via Supabase Auth ─── */
-async function doGoogleLogin(){
-  var sb=getSupabase();
-  if(!sb){
-    // Fallback: demo mode
-    var names=[['Alex Rivera','AR'],['Sam Chen','SC'],['Jordan Park','JP'],['Morgan Lee','ML'],['Casey Kim','CK']];
-    var pick=names[Math.floor(Math.random()*names.length)];
-    USER={loggedIn:true,name:pick[0],initials:pick[1],supabaseId:null,demo:true};
-    document.getElementById('loginModal').classList.remove('on');
-    for(var k in CATS_CFG){CATS_CFG[k].locked=false;}
-    updateAuthUI(); buildCatGrid();
-    return;
-  }
-  try{
-    var {error} = await sb.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: window.location.origin
-      }
-    });
-    if(error) throw error;
-    // User will be redirected to Google and back
-  }catch(e){
-    console.error('Login error:', e.message);
-    alert('Login failed: '+e.message);
+  try {
+    var since = new Date(Date.now() - 86400000).toISOString();
+
+    /* Total games today */
+    var tot = await sb.from('rankings').select('id', { count:'exact', head:true }).gte('created_at', since);
+    var todayCount = tot.count || 0;
+
+    /* Games per category today */
+    var cats = await sb.from('rankings').select('category').gte('created_at', since);
+    var catCounts = {};
+    if (cats.data) cats.data.forEach(function(r){ catCounts[r.category] = (catCounts[r.category]||0)+1; });
+
+    /* All-time total */
+    var allTime = await sb.from('rankings').select('id', { count:'exact', head:true });
+    var allCount = allTime.count || 0;
+
+    /* Unique users today (by session_id) */
+    var sess = await sb.from('rankings').select('session_id').gte('created_at', since);
+    var uniqueSess = 0;
+    if (sess.data) {
+      var seen = {};
+      sess.data.forEach(function(r){ seen[r.session_id] = 1; });
+      uniqueSess = Object.keys(seen).length;
+    }
+
+    /* Top items per category (avg rank) */
+    var topItems = await sb.from('item_stats').select('category,item_name,avg_rank,rank_1_count,total_appearances').order('avg_rank',{ascending:true}).limit(50);
+
+    /* Update analytics UI with real data */
+    updateAnalyticsUI(todayCount, uniqueSess, allCount, catCounts, topItems.data || []);
+
+  } catch(e) {
+    console.warn('Analytics load error:', e.message);
+    renderAnalytics();
   }
 }
 
-/* ─── CHECK SESSION on page load ─── */
-async function checkSession(){
-  var sb=getSupabase(); if(!sb) return;
-  try{
-    var {data:{session}} = await sb.auth.getSession();
-    if(session && session.user){
-      var u = session.user;
-      var name = u.user_metadata?.full_name || u.email.split('@')[0];
-      var initials = name.split(' ').map(function(w){return w[0]}).join('').toUpperCase().slice(0,2);
-      USER={
-        loggedIn:true,
-        name:name,
-        initials:initials,
-        supabaseId:u.id,
-        email:u.email
-      };
-      for(var k in CATS_CFG){CATS_CFG[k].locked=false;}
-      updateAuthUI(); buildCatGrid();
+function updateAnalyticsUI(todayGames, uniqueUsers, allTime, catCounts, topItems) {
+  /* Stat pills */
+  var pills = document.querySelectorAll('[data-stat]');
+  pills.forEach(function(p){
+    if (p.dataset.stat === 'total')   p.textContent = allTime > 0 ? allTime.toLocaleString() : '—';
+    if (p.dataset.stat === 'today')   p.textContent = todayGames > 0 ? todayGames.toLocaleString() : '—';
+    if (p.dataset.stat === 'players') p.textContent = uniqueUsers > 0 ? uniqueUsers.toLocaleString() : '—';
+  });
+
+  /* Top 3 categories */
+  var sorted = Object.entries(catCounts).sort(function(a,b){ return b[1]-a[1]; });
+  var catNames = { powers:'⚡ Super Powers', football:'⚽ Footballers', nba:'🏀 NBA Players',
+                   series:'📺 TV Series', films:'🎬 Films', techbrands:'📱 Tech Brands', games:'🎮 Games' };
+  ['first','second','third'].forEach(function(rank, i){
+    var el = document.getElementById('topCat_' + rank);
+    if (el && sorted[i]) {
+      el.querySelector('.topcat-name').textContent = catNames[sorted[i][0]] || sorted[i][0];
+      el.querySelector('.topcat-count').textContent = sorted[i][1].toLocaleString() + ' rankings today';
+      var bar = el.querySelector('.topcat-bar');
+      if (bar && sorted[0][1] > 0) bar.style.width = Math.round(sorted[i][1]/sorted[0][1]*100) + '%';
     }
-    // Listen for auth changes
-    sb.auth.onAuthStateChange(function(event, session){
-      if(event==='SIGNED_IN' && session){
-        var u=session.user;
-        var name2=u.user_metadata?.full_name||u.email.split('@')[0];
-        var ini2=name2.split(' ').map(function(w){return w[0]}).join('').toUpperCase().slice(0,2);
-        USER={loggedIn:true,name:name2,initials:ini2,supabaseId:u.id,email:u.email};
-        for(var k in CATS_CFG){CATS_CFG[k].locked=false;}
-        updateAuthUI(); buildCatGrid();
-        document.getElementById('loginModal').classList.remove('on');
-      }
-      if(event==='SIGNED_OUT'){
-        USER={loggedIn:false,name:'',initials:'',supabaseId:null};
-        CATS_CFG.football.locked=true;
-        CATS_CFG.nba.locked=true;
-        CATS_CFG.series.locked=true;
-        CATS_CFG.films.locked=true;
-        CATS_CFG.techbrands.locked=true;
-        CATS_CFG.games.locked=true;
-        updateAuthUI(); buildCatGrid();
-      }
-    });
-  }catch(e){ console.warn('Session check error:', e.message); }
+  });
+
+  /* Top items table */
+  if (topItems.length > 0) {
+    var tbl = document.getElementById('topItemsTable');
+    if (tbl) {
+      var catFilter = 'football'; // default
+      var filtered = topItems.filter(function(x){ return x.category === catFilter; }).slice(0,10);
+      tbl.innerHTML = filtered.map(function(item, i){
+        return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--bor)">'
+          + '<span style="font-family:Bebas Neue,sans-serif;font-size:18px;color:var(--acc);width:24px">' + (i+1) + '</span>'
+          + '<span style="flex:1;font-size:13px;font-weight:600">' + item.item_name + '</span>'
+          + '<span style="font-size:11px;color:var(--mut);font-family:Space Mono,monospace">avg #' + (item.avg_rank||'?') + '</span>'
+          + '<span style="font-size:11px;color:var(--acc);font-family:Space Mono,monospace;margin-left:8px">' + (item.rank_1_count||0) + 'x #1</span>'
+          + '</div>';
+      }).join('');
+    }
+  }
+
+  renderAnalytics(); // also render the charts
 }
 
 async function logOut(){
@@ -624,30 +752,32 @@ async function logOut(){
 
 
 var LANGS={
-en:{tagline:"Blind Rankings · Your Gut vs. The World",hint:"choose a category → pick criteria → start ranking",catPowers:"Super Powers",catPowersDesc:"Rank 10 randomly drawn powers. Which is most valuable?",catFootball:"Footballers",catFootballDesc:"Rank 10 random legends by your criteria",catNBA:"NBA Players",catNBADesc:"Rank 10 random NBA greats of all time",badgePowers:"240 POWERS",badgeFootball:"200 PLAYERS",badgeNBA:"200 PLAYERS",nowRank:"now ranking",buildRank:"build your ranking",cancel:"Cancel",start:"Start →",skip:"Skip",swap:"Swap ✓",home:"← Home",again:"Play Again ⚡",resTitle:"Your Ranking 🔥",swapTitle:"Last Move",swapDesc:"1 swap left — choose two items to switch.",selectTwo:"Select two items",willSwap:"will be swapped",seeExamples:"see some examples",placeHere:"Drop here",ranked:"placed here by others",loginBtnTxt:"Sign In",loginTitle:"Sign in to VibeSorting",loginDesc:"Unlock all categories and save your rankings.",googleBtnTxt:"Continue with Google",loginNote:"No spam. No ads. Just rankings.",lockedMsg:"🔒 Sign in to unlock this category",
-subcatPowers:[{id:"overall",icon:"🏆",label:"Overall Power",sub:"Most OP?"},{id:"combat",icon:"⚔️",label:"Combat",sub:"Best in a fight"},{id:"social",icon:"🧠",label:"Social Edge",sub:"Everyday life"},{id:"utility",icon:"🛠️",label:"Utility",sub:"Most useful daily"},{id:"coolness",icon:"😎",label:"Cool Factor",sub:"Most badass"},{id:"rare",icon:"💎",label:"Rarity",sub:"Most unique"}],
-subcatFootball:[{id:"overall",icon:"🏆",label:"Overall",sub:"Career-based"},{id:"dribbling",icon:"🎭",label:"Dribbling",sub:"Skill & control"},{id:"goals",icon:"🥅",label:"Goalscoring",sub:"Finishing"},{id:"assist",icon:"🎯",label:"Assists",sub:"Vision & last pass"},{id:"defense",icon:"🛡️",label:"Defense",sub:"Duels & defending"},{id:"clutch",icon:"🔥",label:"Big Game",sub:"When it matters"},{id:"legend",icon:"👑",label:"Club Legend",sub:"Legacy"},{id:"speed",icon:"⚡",label:"Speed",sub:"Fastest & fittest"}],
-subcatNba:[{id:"overall",icon:"🏆",label:"Overall GOAT",sub:"Career-based"},{id:"scoring",icon:"🥅",label:"Scoring",sub:"Points & finishing"},{id:"playmaking",icon:"🎯",label:"Playmaking",sub:"Assists & vision"},{id:"defense",icon:"🛡️",label:"Defense",sub:"Best defenders"},{id:"clutch",icon:"🔥",label:"Clutch",sub:"Under pressure"},{id:"threepoint",icon:"🎯",label:"3-Point",sub:"Long range"},{id:"athleticism",icon:"⚡",label:"Athleticism",sub:"Speed & leaping"}]},
-es:{tagline:"Rankings Ciegos · Tu Instinto vs. El Mundo",hint:"elige categoría → criterio → ¡clasifica!",catPowers:"Superpoderes",catPowersDesc:"Clasifica 10 poderes aleatorios. ¿Cuál es más valioso?",catFootball:"Futbolistas",catFootballDesc:"Clasifica 10 leyendas al azar por tu criterio",catNBA:"Jugadores NBA",catNBADesc:"Clasifica 10 grandes de la NBA",badgePowers:"240 PODERES",badgeFootball:"200 JUGADORES",badgeNBA:"200 JUGADORES",nowRank:"clasifica ahora",buildRank:"construye tu ranking",cancel:"Cancelar",start:"Empezar →",skip:"Saltar",swap:"Cambiar ✓",home:"← Inicio",again:"Jugar de nuevo ⚡",resTitle:"Tu Ranking 🔥",swapTitle:"Último Movimiento",swapDesc:"1 cambio — elige dos para intercambiar.",selectTwo:"Selecciona dos",willSwap:"se intercambiarán",seeExamples:"ver ejemplos",placeHere:"Soltar aquí",ranked:"otros lo pusieron aquí",loginBtnTxt:"Iniciar Sesión",loginTitle:"Inicia sesión en VibeSorting",loginDesc:"Desbloquea todas las categorías.",googleBtnTxt:"Continuar con Google",loginNote:"Sin spam. Sin anuncios.",lockedMsg:"🔒 Inicia sesión para desbloquear",
-subcatPowers:[{id:"overall",icon:"🏆",label:"Poder General",sub:"¿El más OP?"},{id:"combat",icon:"⚔️",label:"Combate",sub:"El mejor en pelea"},{id:"social",icon:"🧠",label:"Social",sub:"Vida diaria"},{id:"utility",icon:"🛠️",label:"Utilidad",sub:"Más útil"},{id:"coolness",icon:"😎",label:"Cool",sub:"El más chulo"},{id:"rare",icon:"💎",label:"Rareza",sub:"El más único"}],
-subcatFootball:[{id:"overall",icon:"🏆",label:"General",sub:"Carrera"},{id:"dribbling",icon:"🎭",label:"Regate",sub:"Habilidad"},{id:"goals",icon:"🥅",label:"Goleador",sub:"Marcar"},{id:"assist",icon:"🎯",label:"Asistencias",sub:"Último pase"},{id:"defense",icon:"🛡️",label:"Defensa",sub:"Defender"},{id:"clutch",icon:"🔥",label:"Partido Grande",sub:"Momentos clave"},{id:"legend",icon:"👑",label:"Leyenda",sub:"Legado"},{id:"speed",icon:"⚡",label:"Velocidad",sub:"Más rápidos"}],
-catSeries:"Series",catSeriesDesc:"Clasifica 10 series.",catFilms:"Peliculas",catFilmsDesc:"Clasifica 10 peliculas.",catTechbrands:"Marcas Tech",catTechbrandsDesc:"Clasifica 10 tecnologicas.",catGames:"Videojuegos",catGamesDesc:"Clasifica 10 juegos.",subcatSeries:[{id:"overall",icon:"🏆",label:"General",sub:"La mejor?"},{id:"writing",icon:"✍️",label:"Guion",sub:"Historia"},{id:"acting",icon:"🎭",label:"Actuacion",sub:"Calidad"},{id:"rewatch",icon:"🔄",label:"Revisitable",sub:"La ves de nuevo?"},{id:"impact",icon:"💥",label:"Impacto",sub:"Cambio todo?"}],subcatFilms:[{id:"overall",icon:"🏆",label:"General",sub:"La mejor?"},{id:"direction",icon:"🎬",label:"Direccion",sub:"Visual"},{id:"writing",icon:"✍️",label:"Guion",sub:"Historia"},{id:"impact",icon:"💥",label:"Impacto",sub:"Cambio el cine?"},{id:"rewatch",icon:"🔄",label:"Revisitable",sub:"La ves?"}],subcatTechbrands:[{id:"overall",icon:"🏆",label:"Impacto",sub:"Cambio el mundo?"},{id:"product",icon:"📱",label:"Productos",sub:"Lo que hacen"},{id:"innovation",icon:"💡",label:"Innovacion",sub:"Ideas"},{id:"design",icon:"🎨",label:"Diseno",sub:"Estetica"},{id:"trust",icon:"🔐",label:"Confianza",sub:"Datos"}],subcatGames:[{id:"overall",icon:"🏆",label:"General",sub:"El mejor?"},{id:"story",icon:"📖",label:"Historia",sub:"Narrativa"},{id:"gameplay",icon:"🎮",label:"Gameplay",sub:"Sensacion"},{id:"world",icon:"🌍",label:"Mundo",sub:"Universo"},{id:"replayability",icon:"🔄",label:"Rejugabilidad",sub:"Horas"}],subcatNba:[{id:"overall",icon:"🏆",label:"GOAT",sub:"Carrera"},{id:"scoring",icon:"🥅",label:"Anotación",sub:"Puntos"},{id:"playmaking",icon:"🎯",label:"Juego",sub:"Asistencias"},{id:"defense",icon:"🛡️",label:"Defensa",sub:"Defensores"},{id:"clutch",icon:"🔥",label:"Clutch",sub:"Presión"},{id:"threepoint",icon:"🎯",label:"Triples",sub:"Especialistas"},{id:"athleticism",icon:"⚡",label:"Atletismo",sub:"Fuerza y velocidad"}]},
-tr:{tagline:"Kör Sıralama · İçgüdün vs. Dünya",hint:"kategori seç → kriter seç → sırala",catPowers:"Süper Güçler",catPowersDesc:"Rastgele 10 güç sırala. Hangisi en değerli?",catFootball:"Futbolcular",catFootballDesc:"Rastgele 10 efsaneyi kendi kriterinle sırala",catNBA:"NBA Oyuncuları",catNBADesc:"Rastgele 10 NBA efsanesini sırala",badgePowers:"240 GÜÇ",badgeFootball:"200 OYUNCU",badgeNBA:"200 OYUNCU",nowRank:"şu an sırala",buildRank:"sıralamani oluştur",cancel:"İptal",start:"Başla →",skip:"Geç",swap:"Değiştir ✓",home:"← Ana Sayfa",again:"Tekrar Oyna ⚡",resTitle:"Sıralaman 🔥",swapTitle:"Son Hamle",swapDesc:"1 değiştirme hakkı — iki öğe seç.",selectTwo:"İki öğe seç",willSwap:"yer değiştirilecek",seeExamples:"örneklere bak",placeHere:"Buraya bırak",ranked:"başkaları tarafından",loginBtnTxt:"Giriş Yap",loginTitle:"VibeSorting'e Giriş Yap",loginDesc:"Tüm kategorileri aç ve sıralamalarını kaydet.",googleBtnTxt:"Google ile Devam Et",loginNote:"Spam yok. Reklam yok. Sadece sıralama.",lockedMsg:"🔒 Bu kategoriyi açmak için giriş yap",
-subcatPowers:[{id:"overall",icon:"🏆",label:"Genel Güç",sub:"En OP?"},{id:"combat",icon:"⚔️",label:"Savaş",sub:"Dövüşte"},{id:"social",icon:"🧠",label:"Sosyal",sub:"Günlük hayat"},{id:"utility",icon:"🛠️",label:"Kullanışlılık",sub:"En pratik"},{id:"coolness",icon:"😎",label:"Cool",sub:"En havalı"},{id:"rare",icon:"💎",label:"Nadirlik",sub:"En unikal"}],
-subcatFootball:[{id:"overall",icon:"🏆",label:"Genel",sub:"Kariyer"},{id:"dribbling",icon:"🎭",label:"Dribbling",sub:"Top kontrolü"},{id:"goals",icon:"🥅",label:"Golcülük",sub:"Gol"},{id:"assist",icon:"🎯",label:"Asist",sub:"Son pas"},{id:"defense",icon:"🛡️",label:"Defans",sub:"Savunma"},{id:"clutch",icon:"🔥",label:"Büyük Maç",sub:"Kritik an"},{id:"legend",icon:"👑",label:"Efsane",sub:"Kulüp"},{id:"speed",icon:"⚡",label:"Hız",sub:"En hızlı"}],
-catSeries:"Diziler",catSeriesDesc:"10 dizi sirala.",catFilms:"Filmler",catFilmsDesc:"10 film sirala.",catTechbrands:"Teknoloji Markalari",catTechbrandsDesc:"10 marka sirala.",catGames:"Oyunlar",catGamesDesc:"10 oyun sirala.",subcatSeries:[{id:"overall",icon:"🏆",label:"Genel",sub:"En iyi?"},{id:"writing",icon:"✍️",label:"Senaryo",sub:"Hikaye"},{id:"acting",icon:"🎭",label:"Oyunculuk",sub:"Performans"},{id:"rewatch",icon:"🔄",label:"Tekrar",sub:"Tekrar izler?"},{id:"impact",icon:"💥",label:"Etki",sub:"Degistirdi mi?"}],subcatFilms:[{id:"overall",icon:"🏆",label:"Genel",sub:"En iyi?"},{id:"direction",icon:"🎬",label:"Yonetmenlik",sub:"Gorseller"},{id:"writing",icon:"✍️",label:"Senaryo",sub:"Hikaye"},{id:"impact",icon:"💥",label:"Etki",sub:"Sinemayı degistirdi mi?"},{id:"rewatch",icon:"🔄",label:"Tekrar",sub:"Izler misin?"}],subcatTechbrands:[{id:"overall",icon:"🏆",label:"Etki",sub:"Dunyayi?"},{id:"product",icon:"📱",label:"Urunler",sub:"Ne yaptılar"},{id:"innovation",icon:"💡",label:"Inovasyon",sub:"Ozgunluk"},{id:"design",icon:"🎨",label:"Tasarim",sub:"Estetik"},{id:"trust",icon:"🔐",label:"Guven",sub:"Veri"}],subcatGames:[{id:"overall",icon:"🏆",label:"Genel",sub:"En iyi oyun?"},{id:"story",icon:"📖",label:"Hikaye",sub:"Anlati"},{id:"gameplay",icon:"🎮",label:"Oynanıs",sub:"Hissi"},{id:"world",icon:"🌍",label:"Evren",sub:"Dunya"},{id:"replayability",icon:"🔄",label:"Tekrar",sub:"Saatler"}],subcatNba:[{id:"overall",icon:"🏆",label:"Genel GOAT",sub:"Kariyer"},{id:"scoring",icon:"🥅",label:"Sayı",sub:"Puan"},{id:"playmaking",icon:"🎯",label:"Oyun Kurma",sub:"Asist"},{id:"defense",icon:"🛡️",label:"Defans",sub:"Savunma"},{id:"clutch",icon:"🔥",label:"Kritik An",sub:"Baskı"},{id:"threepoint",icon:"🎯",label:"Üçlük",sub:"Uzak atış"},{id:"athleticism",icon:"⚡",label:"Atletizm",sub:"Hız ve güç"}]},
-fr:{tagline:"Rankings à l'Aveugle · Ton Instinct vs. Le Monde",hint:"choisis une catégorie → critère → classe",catPowers:"Super Pouvoirs",catPowersDesc:"Classe 10 pouvoirs aléatoires. Lequel est le plus précieux?",catFootball:"Footballeurs",catFootballDesc:"Classe 10 légendes aléatoires selon ton critère",catNBA:"Joueurs NBA",catNBADesc:"Classe 10 grands joueurs NBA",badgePowers:"240 POUVOIRS",badgeFootball:"200 JOUEURS",badgeNBA:"200 JOUEURS",nowRank:"classez maintenant",buildRank:"construisez votre classement",cancel:"Annuler",start:"Commencer →",skip:"Passer",swap:"Échanger ✓",home:"← Accueil",again:"Rejouer ⚡",resTitle:"Votre Classement 🔥",swapTitle:"Dernier Move",swapDesc:"1 échange — choisissez deux éléments.",selectTwo:"Sélectionnez deux",willSwap:"seront échangés",seeExamples:"voir des exemples",placeHere:"Déposer ici",ranked:"placé ici par d'autres",loginBtnTxt:"Connexion",loginTitle:"Connexion à VibeSorting",loginDesc:"Déverrouillez toutes les catégories.",googleBtnTxt:"Continuer avec Google",loginNote:"Pas de spam. Pas de pubs.",lockedMsg:"🔒 Connectez-vous pour déverrouiller",
-subcatPowers:[{id:"overall",icon:"🏆",label:"Général",sub:"Le plus OP?"},{id:"combat",icon:"⚔️",label:"Combat",sub:"En combat"},{id:"social",icon:"🧠",label:"Social",sub:"Vie quotidienne"},{id:"utility",icon:"🛠️",label:"Utilité",sub:"Le plus pratique"},{id:"coolness",icon:"😎",label:"Cool",sub:"Le plus stylé"},{id:"rare",icon:"💎",label:"Rareté",sub:"Le plus unique"}],
-subcatFootball:[{id:"overall",icon:"🏆",label:"Général",sub:"Carrière"},{id:"dribbling",icon:"🎭",label:"Dribble",sub:"Technique"},{id:"goals",icon:"🥅",label:"Buteur",sub:"Marquer"},{id:"assist",icon:"🎯",label:"Passes",sub:"Dernier pass"},{id:"defense",icon:"🛡️",label:"Défense",sub:"Défendre"},{id:"clutch",icon:"🔥",label:"Grand Match",sub:"Moments clés"},{id:"legend",icon:"👑",label:"Légende",sub:"Héritage"},{id:"speed",icon:"⚡",label:"Vitesse",sub:"Les plus rapides"}],
-catSeries:"Séries TV",catSeriesDesc:"Classez 10 séries.",catFilms:"Films",catFilmsDesc:"Classez 10 films.",catTechbrands:"Marques Tech",catTechbrandsDesc:"Classez 10 marques.",catGames:"Jeux",catGamesDesc:"Classez 10 jeux.",subcatSeries:[{id:"overall",icon:"🏆",label:"Général",sub:"Meilleure?"},{id:"writing",icon:"✍️",label:"Écriture",sub:"Histoire"},{id:"acting",icon:"🎭",label:"Jeu",sub:"Qualité"},{id:"rewatch",icon:"🔄",label:"Revoir",sub:"La revoir?"},{id:"impact",icon:"💥",label:"Impact",sub:"Tout changé?"}],subcatFilms:[{id:"overall",icon:"🏆",label:"Général",sub:"Meilleur?"},{id:"direction",icon:"🎬",label:"Réalisation",sub:"Visuel"},{id:"writing",icon:"✍️",label:"Scénario",sub:"Histoire"},{id:"impact",icon:"💥",label:"Impact",sub:"Changé cinéma?"},{id:"rewatch",icon:"🔄",label:"Revoir",sub:"La revoir?"}],subcatTechbrands:[{id:"overall",icon:"🏆",label:"Impact",sub:"Changé le monde?"},{id:"product",icon:"📱",label:"Produits",sub:"Ce quils font"},{id:"innovation",icon:"💡",label:"Innovation",sub:"Idées"},{id:"design",icon:"🎨",label:"Design",sub:"Esthétique"},{id:"trust",icon:"🔐",label:"Confiance",sub:"Données"}],subcatGames:[{id:"overall",icon:"🏆",label:"Général",sub:"Meilleur?"},{id:"story",icon:"📖",label:"Histoire",sub:"Narration"},{id:"gameplay",icon:"🎮",label:"Gameplay",sub:"Sensation"},{id:"world",icon:"🌍",label:"Univers",sub:"Meilleur monde"},{id:"replayability",icon:"🔄",label:"Rejouabilité",sub:"Heures"}],subcatNba:[{id:"overall",icon:"🏆",label:"GOAT",sub:"Carrière"},{id:"scoring",icon:"🥅",label:"Scoring",sub:"Points"},{id:"playmaking",icon:"🎯",label:"Jeu",sub:"Passes"},{id:"defense",icon:"🛡️",label:"Défense",sub:"Défenseurs"},{id:"clutch",icon:"🔥",label:"Clutch",sub:"Sous pression"},{id:"threepoint",icon:"🎯",label:"3 Points",sub:"Spécialistes"},{id:"athleticism",icon:"⚡",label:"Athlétisme",sub:"Vitesse et force"}]},
-ru:{tagline:"Слепые Рейтинги · Твой Инстинкт vs. Мир",hint:"выбери категорию → критерий → ранжируй",catPowers:"Суперспособности",catPowersDesc:"Ранжируй 10 случайных сил. Какая самая ценная?",catFootball:"Футболисты",catFootballDesc:"Ранжируй 10 случайных легенд",catNBA:"Игроки НБА",catNBADesc:"Ранжируй 10 великих игроков НБА",badgePowers:"240 СИЛ",badgeFootball:"200 ИГРОКОВ",badgeNBA:"200 ИГРОКОВ",nowRank:"ранжируй сейчас",buildRank:"создай рейтинг",cancel:"Отмена",start:"Начать →",skip:"Пропустить",swap:"Поменять ✓",home:"← Главная",again:"Играть снова ⚡",resTitle:"Твой Рейтинг 🔥",swapTitle:"Последний Ход",swapDesc:"1 обмен — выбери два элемента.",selectTwo:"Выбери два",willSwap:"будут обменяны",seeExamples:"посмотреть примеры",placeHere:"Бросить сюда",ranked:"поставили другие",loginBtnTxt:"Войти",loginTitle:"Войти в VibeSorting",loginDesc:"Открой все категории.",googleBtnTxt:"Продолжить с Google",loginNote:"Без спама. Без рекламы.",lockedMsg:"🔒 Войдите чтобы открыть",
-subcatPowers:[{id:"overall",icon:"🏆",label:"Общая Сила",sub:"Самая OP?"},{id:"combat",icon:"⚔️",label:"Бой",sub:"В бою"},{id:"social",icon:"🧠",label:"Социальное",sub:"В жизни"},{id:"utility",icon:"🛠️",label:"Полезность",sub:"Практичная"},{id:"coolness",icon:"😎",label:"Крутость",sub:"Стильная"},{id:"rare",icon:"💎",label:"Редкость",sub:"Уникальная"}],
-subcatFootball:[{id:"overall",icon:"🏆",label:"Общий",sub:"Карьера"},{id:"dribbling",icon:"🎭",label:"Дриблинг",sub:"Контроль"},{id:"goals",icon:"🥅",label:"Голы",sub:"Забивать"},{id:"assist",icon:"🎯",label:"Передачи",sub:"Последний пас"},{id:"defense",icon:"🛡️",label:"Защита",sub:"Оборона"},{id:"clutch",icon:"🔥",label:"Матч",sub:"Ключевые моменты"},{id:"legend",icon:"👑",label:"Легенда",sub:"Наследие"},{id:"speed",icon:"⚡",label:"Скорость",sub:"Быстрейшие"}],
-catSeries:"Сериалы",catSeriesDesc:"Ранж.",catFilms:"Фильмы",catFilmsDesc:"Ранж.",catTechbrands:"Бренды",catTechbrandsDesc:"Ранж.",catGames:"Игры",catGamesDesc:"Ранж.",subcatSeries:[{id:"overall",icon:"🏆",label:"Общ",sub:"Луч?"},{id:"writing",icon:"✍️",label:"Сцен",sub:"Ист"},{id:"acting",icon:"🎭",label:"Игра",sub:"Кач"},{id:"rewatch",icon:"🔄",label:"Пересм",sub:"Снова?"},{id:"impact",icon:"💥",label:"Влия",sub:"Сменил?"}],subcatFilms:[{id:"overall",icon:"🏆",label:"Общ",sub:"Луч?"},{id:"direction",icon:"🎬",label:"Реж",sub:"Виз"},{id:"writing",icon:"✍️",label:"Сцен",sub:"Ист"},{id:"impact",icon:"💥",label:"Влия",sub:"Кино?"},{id:"rewatch",icon:"🔄",label:"Пересм",sub:"Снова?"}],subcatTechbrands:[{id:"overall",icon:"🏆",label:"Влия",sub:"Мир?"},{id:"product",icon:"📱",label:"Прод",sub:"Что"},{id:"innovation",icon:"💡",label:"Иннов",sub:"Идеи"},{id:"design",icon:"🎨",label:"Дизайн",sub:"Эст"},{id:"trust",icon:"🔐",label:"Довер",sub:"Данные"}],subcatGames:[{id:"overall",icon:"🏆",label:"Общ",sub:"Луч?"},{id:"story",icon:"📖",label:"Ист",sub:"Нарр"},{id:"gameplay",icon:"🎮",label:"Геймпл",sub:"Ощущ"},{id:"world",icon:"🌍",label:"Мир",sub:"Всел"},{id:"replayability",icon:"🔄",label:"Перепрох",sub:"Часы"}],subcatNba:[{id:"overall",icon:"🏆",label:"GOAT",sub:"Карьера"},{id:"scoring",icon:"🥅",label:"Очки",sub:"Результат"},{id:"playmaking",icon:"🎯",label:"Разыгрывание",sub:"Передачи"},{id:"defense",icon:"🛡️",label:"Защита",sub:"Защитники"},{id:"clutch",icon:"🔥",label:"Клатч",sub:"Давление"},{id:"threepoint",icon:"🎯",label:"Трёхочковые",sub:"Снайперы"},{id:"athleticism",icon:"⚡",label:"Атлетизм",sub:"Сила и скорость"}]}
+en:{tagline:"Blind Rankings · Your Gut vs. The World",hint:"choose a category → pick criteria → start ranking",catPowers:"Super Powers",catPowersDesc:"Rank 10 randomly drawn powers. Which is most valuable?",catFootball:"Footballers",catFootballDesc:"Rank 10 random legends by your criteria",catNBA:"NBA Players",catNBADesc:"Rank 10 random NBA greats of all time",badgePowers:"240 POWERS",badgeFootball:"200 PLAYERS",badgeNBA:"200 PLAYERS",catSeries:"Series",catSeriesDesc:"Rank 10 TV shows. Which deserves the top spot?",catFilms:"Films",catFilmsDesc:"Rank 10 films. What's the best?",catBrands:"Brands",catBrandsDesc:"Rank 10 brands — tech, food, fashion and more.",catCars:"Cars",catCarsDesc:"Rank 10 cars — sports, classic, luxury, everyday.",catGames:"Video Games",catGamesDesc:"Rank 10 games. What's the greatest ever made?",nowRank:"now ranking",buildRank:"build your ranking",cancel:"Cancel",start:"Start →",skip:"Skip",swap:"Swap ✓",home:"← Home",again:"Play Again ⚡",resTitle:"Your Ranking 🔥",swapTitle:"Last Move",swapDesc:"1 swap left — choose two items to switch.",selectTwo:"Select two items",willSwap:"will be swapped",seeExamples:"see some examples",placeHere:"Drop here",ranked:"placed here by others",loginBtnTxt:"Sign In",loginTitle:"Sign in to VibeSorting",loginDesc:"Unlock all categories and save your rankings.",googleBtnTxt:"Continue with Google",loginNote:"No spam. No ads. Just rankings.",lockedMsg:"🔒 Sign in to unlock this category",catSeries:"Series",catSeriesDesc:"Rank 10 TV shows.",catFilms:"Films",catFilmsDesc:"Rank 10 films.",catBrands:"Brands",catBrandsDesc:"Rank 10 brands — tech, food, fashion.",catCars:"Cars",catCarsDesc:"Rank 10 cars — sports, classic, luxury.",catGames:"Video Games",catGamesDesc:"Rank 10 games.",subcatPowers:[{id:"overall",icon:"🏆",label:"Overall Power",sub:"Most OP?"},{id:"combat",icon:"⚔️",label:"Combat",sub:"Best in a fight"},{id:"social",icon:"🧠",label:"Social Edge",sub:"Everyday life"},{id:"utility",icon:"🛠️",label:"Utility",sub:"Most useful daily"},{id:"coolness",icon:"😎",label:"Cool Factor",sub:"Most badass"},{id:"rare",icon:"💎",label:"Rarity",sub:"Most unique"}],subcatFootball:[{id:"overall",icon:"🏆",label:"Overall",sub:"Career-based"},{id:"dribbling",icon:"🎭",label:"Dribbling",sub:"Skill & control"},{id:"goals",icon:"🥅",label:"Goalscoring",sub:"Finishing"},{id:"assist",icon:"🎯",label:"Assists",sub:"Vision & last pass"},{id:"defense",icon:"🛡️",label:"Defense",sub:"Duels & defending"},{id:"clutch",icon:"🔥",label:"Big Game",sub:"When it matters"},{id:"legend",icon:"👑",label:"Club Legend",sub:"Legacy"},{id:"speed",icon:"⚡",label:"Speed",sub:"Fastest & fittest"}],subcatNba:[{id:"overall",icon:"🏆",label:"Overall GOAT",sub:"Career-based"},{id:"scoring",icon:"🥅",label:"Scoring",sub:"Points & finishing"},{id:"playmaking",icon:"🎯",label:"Playmaking",sub:"Assists & vision"},{id:"defense",icon:"🛡️",label:"Defense",sub:"Best defenders"},{id:"clutch",icon:"🔥",label:"Clutch",sub:"Under pressure"},{id:"threepoint",icon:"🎯",label:"3-Point",sub:"Long range"},{id:"athleticism",icon:"⚡",label:"Athleticism",sub:"Speed & leaping"}],subcatSeries:[{id:"drama",icon:"🎭",label:"Drama",sub:"Prestige TV"},{id:"comedy",icon:"😂",label:"Comedy",sub:"Sitcoms & dark comedy"},{id:"thriller",icon:"🔍",label:"Thriller & Crime",sub:"Whodunnit & spy"},{id:"scifi",icon:"🚀",label:"Sci-Fi",sub:"Science fiction"},{id:"animated",icon:"🎨",label:"Animated",sub:"Adult animation"},{id:"reality",icon:"📺",label:"Reality & Doc",sub:"Reality TV & docs"}],subcatFilms:[{id:"action",icon:"💥",label:"Action",sub:"Stunts & spectacle"},{id:"comedy",icon:"😂",label:"Comedy",sub:"From absurd to satirical"},{id:"scifi",icon:"🚀",label:"Sci-Fi",sub:"Science fiction"},{id:"drama",icon:"🎭",label:"Drama",sub:"Character & story"},{id:"horror",icon:"💀",label:"Horror",sub:"Fear & dread"},{id:"animation",icon:"🎨",label:"Animation",sub:"Animated films"}],subcatBrands:[{id:"tech",icon:"💻",label:"Tech Brands",sub:"Software & hardware"},{id:"food",icon:"🍔",label:"Food & Drink",sub:"Fast food & snacks"},{id:"fashion",icon:"👟",label:"Fashion",sub:"Clothing & accessories"},{id:"gaming",icon:"🎮",label:"Gaming Brands",sub:"Studios & platforms"},{id:"sports",icon:"⚽",label:"Sports Brands",sub:"Athletic wear"},{id:"luxury",icon:"💎",label:"Luxury Brands",sub:"Premium & prestige"}],subcatCars:[{id:"sports",icon:"🏎️",label:"Sports Cars",sub:"Performance & supercar"},{id:"classic",icon:"🏆",label:"Classic & Iconic",sub:"Legendary cars"},{id:"luxury",icon:"👑",label:"Luxury",sub:"Premium sedans & SUVs"},{id:"everyday",icon:"🚗",label:"Everyday",sub:"Practical & family"},{id:"electric",icon:"⚡",label:"Electric",sub:"EVs & hybrids"},{id:"offroad",icon:"🌲",label:"Off-Road",sub:"4x4 & adventure"}],subcatGames:[{id:"openworld",icon:"🌍",label:"Open World",sub:"Explore & discover"},{id:"rpg",icon:"⚔️",label:"RPG",sub:"Role-playing games"},{id:"indie",icon:"💡",label:"Indie",sub:"Independent gems"},{id:"fps",icon:"🔫",label:"FPS",sub:"First-person shooters"},{id:"strategy",icon:"🧠",label:"Strategy",sub:"Turn-based & RTS"},{id:"sports",icon:"⚽",label:"Sports & Racing",sub:"FIFA, F1, NBA 2K"}]},
+es:{tagline:"Rankings Ciegos · Tu Instinto vs. El Mundo",hint:"elige categoría → criterio → ¡clasifica!",catPowers:"Superpoderes",catPowersDesc:"Clasifica 10 poderes aleatorios. ¿Cuál es más valioso?",catFootball:"Futbolistas",catFootballDesc:"Clasifica 10 leyendas al azar por tu criterio",catNBA:"Jugadores NBA",catNBADesc:"Clasifica 10 grandes de la NBA",badgePowers:"240 PODERES",badgeFootball:"200 JUGADORES",badgeNBA:"200 JUGADORES",nowRank:"clasifica ahora",buildRank:"construye tu ranking",cancel:"Cancelar",start:"Empezar →",skip:"Saltar",swap:"Cambiar ✓",home:"← Inicio",again:"Jugar de nuevo ⚡",resTitle:"Tu Ranking 🔥",swapTitle:"Último Movimiento",swapDesc:"1 cambio — elige dos para intercambiar.",selectTwo:"Selecciona dos",willSwap:"se intercambiarán",seeExamples:"ver ejemplos",placeHere:"Soltar aquí",ranked:"otros lo pusieron aquí",loginBtnTxt:"Iniciar Sesión",loginTitle:"Inicia sesión en VibeSorting",loginDesc:"Desbloquea todas las categorías.",googleBtnTxt:"Continuar con Google",loginNote:"Sin spam. Sin anuncios.",lockedMsg:"🔒 Inicia sesión para desbloquear",catSeries:"Series",catSeriesDesc:"Clasifica 10 series.",catFilms:"Peliculas",catFilmsDesc:"Clasifica 10 pelis.",catBrands:"Marcas",catBrandsDesc:"Clasifica 10 marcas.",catCars:"Coches",catCarsDesc:"Clasifica 10 coches.",catGames:"Videojuegos",catGamesDesc:"Clasifica 10 juegos.",subcatSeries:[{id:"drama",icon:"🎭",label:"Drama",sub:"Prestige TV"},{id:"comedy",icon:"😂",label:"Comedy",sub:"Sitcoms & dark comedy"},{id:"thriller",icon:"🔍",label:"Thriller & Crime",sub:"Whodunnit & spy"},{id:"scifi",icon:"🚀",label:"Sci-Fi",sub:"Science fiction"},{id:"animated",icon:"🎨",label:"Animated",sub:"Adult animation"},{id:"reality",icon:"📺",label:"Reality & Doc",sub:"Reality TV & docs"}],subcatFilms:[{id:"action",icon:"💥",label:"Action",sub:"Stunts & spectacle"},{id:"comedy",icon:"😂",label:"Comedy",sub:"From absurd to satirical"},{id:"scifi",icon:"🚀",label:"Sci-Fi",sub:"Science fiction"},{id:"drama",icon:"🎭",label:"Drama",sub:"Character & story"},{id:"horror",icon:"💀",label:"Horror",sub:"Fear & dread"},{id:"animation",icon:"🎨",label:"Animation",sub:"Animated films"}],subcatPowers:[{id:"overall",icon:"🏆",label:"Poder General",sub:"¿El más OP?"},{id:"combat",icon:"⚔️",label:"Combate",sub:"Pelea"},{id:"social",icon:"🧠",label:"Social",sub:"Vida diaria"},{id:"utility",icon:"🛠️",label:"Utilidad",sub:"Útil"},{id:"coolness",icon:"😎",label:"Cool",sub:"Chulo"},{id:"rare",icon:"💎",label:"Rareza",sub:"Único"}],subcatFootball:[{id:"overall",icon:"🏆",label:"General",sub:"Carrera"},{id:"dribbling",icon:"🎭",label:"Regate",sub:"Habilidad"},{id:"goals",icon:"🥅",label:"Goleador",sub:"Marcar"},{id:"assist",icon:"🎯",label:"Asistencias",sub:"Pase"},{id:"defense",icon:"🛡️",label:"Defensa",sub:"Defender"},{id:"clutch",icon:"🔥",label:"Partido Grande",sub:"Clave"},{id:"legend",icon:"👑",label:"Leyenda",sub:"Legado"},{id:"speed",icon:"⚡",label:"Velocidad",sub:"Rápidos"}],subcatNba:[{id:"overall",icon:"🏆",label:"GOAT",sub:"Carrera"},{id:"scoring",icon:"🥅",label:"Anotación",sub:"Puntos"},{id:"playmaking",icon:"🎯",label:"Juego",sub:"Asistencias"},{id:"defense",icon:"🛡️",label:"Defensa",sub:"Defensores"},{id:"clutch",icon:"🔥",label:"Clutch",sub:"Presión"},{id:"threepoint",icon:"🎯",label:"Triples",sub:"Especialistas"},{id:"athleticism",icon:"⚡",label:"Atletismo",sub:"Fuerza"}],subcatBrands:[{id:"tech",icon:"💻",label:"Tech Brands",sub:"Software & hardware"},{id:"food",icon:"🍔",label:"Food & Drink",sub:"Fast food & snacks"},{id:"fashion",icon:"👟",label:"Fashion",sub:"Clothing & accessories"},{id:"gaming",icon:"🎮",label:"Gaming Brands",sub:"Studios & platforms"},{id:"sports",icon:"⚽",label:"Sports Brands",sub:"Athletic wear"},{id:"luxury",icon:"💎",label:"Luxury Brands",sub:"Premium & prestige"}],subcatCars:[{id:"sports",icon:"🏎️",label:"Sports Cars",sub:"Performance & supercar"},{id:"classic",icon:"🏆",label:"Classic & Iconic",sub:"Legendary cars"},{id:"luxury",icon:"👑",label:"Luxury",sub:"Premium sedans & SUVs"},{id:"everyday",icon:"🚗",label:"Everyday",sub:"Practical & family"},{id:"electric",icon:"⚡",label:"Electric",sub:"EVs & hybrids"},{id:"offroad",icon:"🌲",label:"Off-Road",sub:"4x4 & adventure"}],subcatGames:[{id:"openworld",icon:"🌍",label:"Open World",sub:"Explore & discover"},{id:"rpg",icon:"⚔️",label:"RPG",sub:"Role-playing games"},{id:"indie",icon:"💡",label:"Indie",sub:"Independent gems"},{id:"fps",icon:"🔫",label:"FPS",sub:"First-person shooters"},{id:"strategy",icon:"🧠",label:"Strategy",sub:"Turn-based & RTS"},{id:"sports",icon:"⚽",label:"Sports & Racing",sub:"FIFA, F1, NBA 2K"}]},
+tr:{tagline:"Kör Sıralama · İçgüdün vs. Dünya",hint:"kategori seç → kriter seç → sırala",catPowers:"Süper Güçler",catPowersDesc:"Rastgele 10 güç sırala. Hangisi en değerli?",catFootball:"Futbolcular",catFootballDesc:"Rastgele 10 efsaneyi kendi kriterinle sırala",catNBA:"NBA Oyuncuları",catNBADesc:"Rastgele 10 NBA efsanesini sırala",badgePowers:"240 GÜÇ",badgeFootball:"200 OYUNCU",badgeNBA:"200 OYUNCU",nowRank:"şu an sırala",buildRank:"sıralamani oluştur",cancel:"İptal",start:"Başla →",skip:"Geç",swap:"Değiştir ✓",home:"← Ana Sayfa",again:"Tekrar Oyna ⚡",resTitle:"Sıralaman 🔥",swapTitle:"Son Hamle",swapDesc:"1 değiştirme hakkı — iki öğe seç.",selectTwo:"İki öğe seç",willSwap:"yer değiştirilecek",seeExamples:"örneklere bak",placeHere:"Buraya bırak",ranked:"başkaları tarafından",loginBtnTxt:"Giriş Yap",loginTitle:"VibeSorting'e Giriş Yap",loginDesc:"Tüm kategorileri aç ve sıralamalarını kaydet.",googleBtnTxt:"Google ile Devam Et",loginNote:"Spam yok. Reklam yok. Sadece sıralama.",lockedMsg:"🔒 Bu kategoriyi açmak için giriş yap",catSeries:"Diziler",catSeriesDesc:"10 dizi sirala.",catFilms:"Filmler",catFilmsDesc:"10 film sirala.",catBrands:"Markalar",catBrandsDesc:"10 marka sirala.",catCars:"Arabalar",catCarsDesc:"10 araba sirala.",catGames:"Oyunlar",catGamesDesc:"10 oyun sirala.",subcatSeries:[{id:"drama",icon:"🎭",label:"Drama",sub:"Prestige TV"},{id:"comedy",icon:"😂",label:"Comedy",sub:"Sitcoms & dark comedy"},{id:"thriller",icon:"🔍",label:"Thriller & Crime",sub:"Whodunnit & spy"},{id:"scifi",icon:"🚀",label:"Sci-Fi",sub:"Science fiction"},{id:"animated",icon:"🎨",label:"Animated",sub:"Adult animation"},{id:"reality",icon:"📺",label:"Reality & Doc",sub:"Reality TV & docs"}],subcatFilms:[{id:"action",icon:"💥",label:"Action",sub:"Stunts & spectacle"},{id:"comedy",icon:"😂",label:"Comedy",sub:"From absurd to satirical"},{id:"scifi",icon:"🚀",label:"Sci-Fi",sub:"Science fiction"},{id:"drama",icon:"🎭",label:"Drama",sub:"Character & story"},{id:"horror",icon:"💀",label:"Horror",sub:"Fear & dread"},{id:"animation",icon:"🎨",label:"Animation",sub:"Animated films"}],subcatPowers:[{id:"overall",icon:"🏆",label:"Genel Güç",sub:"En OP?"},{id:"combat",icon:"⚔️",label:"Savaş",sub:"Dövüşte"},{id:"social",icon:"🧠",label:"Sosyal",sub:"Günlük"},{id:"utility",icon:"🛠️",label:"Kullanışlılık",sub:"Pratik"},{id:"coolness",icon:"😎",label:"Cool",sub:"Havalı"},{id:"rare",icon:"💎",label:"Nadirlik",sub:"Unikal"}],subcatFootball:[{id:"overall",icon:"🏆",label:"Genel",sub:"Kariyer"},{id:"dribbling",icon:"🎭",label:"Dribbling",sub:"Top"},{id:"goals",icon:"🥅",label:"Golcülük",sub:"Gol"},{id:"assist",icon:"🎯",label:"Asist",sub:"Pas"},{id:"defense",icon:"🛡️",label:"Defans",sub:"Savunma"},{id:"clutch",icon:"🔥",label:"Büyük Maç",sub:"Kritik"},{id:"legend",icon:"👑",label:"Efsane",sub:"Kulüp"},{id:"speed",icon:"⚡",label:"Hız",sub:"Hızlı"}],subcatNba:[{id:"overall",icon:"🏆",label:"Genel GOAT",sub:"Kariyer"},{id:"scoring",icon:"🥅",label:"Sayı",sub:"Puan"},{id:"playmaking",icon:"🎯",label:"Oyun Kurma",sub:"Asist"},{id:"defense",icon:"🛡️",label:"Defans",sub:"Savunma"},{id:"clutch",icon:"🔥",label:"Kritik An",sub:"Baskı"},{id:"threepoint",icon:"🎯",label:"Üçlük",sub:"Uzak"},{id:"athleticism",icon:"⚡",label:"Atletizm",sub:"Hız"}],subcatBrands:[{id:"tech",icon:"💻",label:"Tech Brands",sub:"Software & hardware"},{id:"food",icon:"🍔",label:"Food & Drink",sub:"Fast food & snacks"},{id:"fashion",icon:"👟",label:"Fashion",sub:"Clothing & accessories"},{id:"gaming",icon:"🎮",label:"Gaming Brands",sub:"Studios & platforms"},{id:"sports",icon:"⚽",label:"Sports Brands",sub:"Athletic wear"},{id:"luxury",icon:"💎",label:"Luxury Brands",sub:"Premium & prestige"}],subcatCars:[{id:"sports",icon:"🏎️",label:"Sports Cars",sub:"Performance & supercar"},{id:"classic",icon:"🏆",label:"Classic & Iconic",sub:"Legendary cars"},{id:"luxury",icon:"👑",label:"Luxury",sub:"Premium sedans & SUVs"},{id:"everyday",icon:"🚗",label:"Everyday",sub:"Practical & family"},{id:"electric",icon:"⚡",label:"Electric",sub:"EVs & hybrids"},{id:"offroad",icon:"🌲",label:"Off-Road",sub:"4x4 & adventure"}],subcatGames:[{id:"openworld",icon:"🌍",label:"Open World",sub:"Explore & discover"},{id:"rpg",icon:"⚔️",label:"RPG",sub:"Role-playing games"},{id:"indie",icon:"💡",label:"Indie",sub:"Independent gems"},{id:"fps",icon:"🔫",label:"FPS",sub:"First-person shooters"},{id:"strategy",icon:"🧠",label:"Strategy",sub:"Turn-based & RTS"},{id:"sports",icon:"⚽",label:"Sports & Racing",sub:"FIFA, F1, NBA 2K"}]},
+fr:{tagline:"Rankings à l'Aveugle · Ton Instinct vs. Le Monde",hint:"choisis une catégorie → critère → classe",catPowers:"Super Pouvoirs",catPowersDesc:"Classe 10 pouvoirs aléatoires. Lequel est le plus précieux?",catFootball:"Footballeurs",catFootballDesc:"Classe 10 légendes aléatoires selon ton critère",catNBA:"Joueurs NBA",catNBADesc:"Classe 10 grands joueurs NBA",badgePowers:"240 POUVOIRS",badgeFootball:"200 JOUEURS",badgeNBA:"200 JOUEURS",nowRank:"classez maintenant",buildRank:"construisez votre classement",cancel:"Annuler",start:"Commencer →",skip:"Passer",swap:"Échanger ✓",home:"← Accueil",again:"Rejouer ⚡",resTitle:"Votre Classement 🔥",swapTitle:"Dernier Move",swapDesc:"1 échange — choisissez deux éléments.",selectTwo:"Sélectionnez deux",willSwap:"seront échangés",seeExamples:"voir des exemples",placeHere:"Déposer ici",ranked:"placé ici par d'autres",loginBtnTxt:"Connexion",loginTitle:"Connexion à VibeSorting",loginDesc:"Déverrouillez toutes les catégories.",googleBtnTxt:"Continuer avec Google",loginNote:"Pas de spam. Pas de pubs.",lockedMsg:"🔒 Connectez-vous pour déverrouiller",catSeries:"Series TV",catSeriesDesc:"Classez 10 series.",catFilms:"Films",catFilmsDesc:"Classez 10 films.",catBrands:"Marques",catBrandsDesc:"Classez 10 marques.",catCars:"Voitures",catCarsDesc:"Classez 10 voitures.",catGames:"Jeux",catGamesDesc:"Classez 10 jeux.",subcatSeries:[{id:"drama",icon:"🎭",label:"Drama",sub:"Prestige TV"},{id:"comedy",icon:"😂",label:"Comedy",sub:"Sitcoms & dark comedy"},{id:"thriller",icon:"🔍",label:"Thriller & Crime",sub:"Whodunnit & spy"},{id:"scifi",icon:"🚀",label:"Sci-Fi",sub:"Science fiction"},{id:"animated",icon:"🎨",label:"Animated",sub:"Adult animation"},{id:"reality",icon:"📺",label:"Reality & Doc",sub:"Reality TV & docs"}],subcatFilms:[{id:"action",icon:"💥",label:"Action",sub:"Stunts & spectacle"},{id:"comedy",icon:"😂",label:"Comedy",sub:"From absurd to satirical"},{id:"scifi",icon:"🚀",label:"Sci-Fi",sub:"Science fiction"},{id:"drama",icon:"🎭",label:"Drama",sub:"Character & story"},{id:"horror",icon:"💀",label:"Horror",sub:"Fear & dread"},{id:"animation",icon:"🎨",label:"Animation",sub:"Animated films"}],subcatPowers:[{id:"overall",icon:"🏆",label:"Général",sub:"Le plus OP?"},{id:"combat",icon:"⚔️",label:"Combat",sub:"En combat"},{id:"social",icon:"🧠",label:"Social",sub:"Quotidien"},{id:"utility",icon:"🛠️",label:"Utilité",sub:"Pratique"},{id:"coolness",icon:"😎",label:"Cool",sub:"Stylé"},{id:"rare",icon:"💎",label:"Rareté",sub:"Unique"}],subcatFootball:[{id:"overall",icon:"🏆",label:"Général",sub:"Carrière"},{id:"dribbling",icon:"🎭",label:"Dribble",sub:"Technique"},{id:"goals",icon:"🥅",label:"Buteur",sub:"Marquer"},{id:"assist",icon:"🎯",label:"Passes",sub:"Dernier pass"},{id:"defense",icon:"🛡️",label:"Défense",sub:"Défendre"},{id:"clutch",icon:"🔥",label:"Grand Match",sub:"Clé"},{id:"legend",icon:"👑",label:"Légende",sub:"Héritage"},{id:"speed",icon:"⚡",label:"Vitesse",sub:"Rapides"}],subcatNba:[{id:"overall",icon:"🏆",label:"GOAT",sub:"Carrière"},{id:"scoring",icon:"🥅",label:"Scoring",sub:"Points"},{id:"playmaking",icon:"🎯",label:"Jeu",sub:"Passes"},{id:"defense",icon:"🛡️",label:"Défense",sub:"Défenseurs"},{id:"clutch",icon:"🔥",label:"Clutch",sub:"Pression"},{id:"threepoint",icon:"🎯",label:"3 Points",sub:"Spécialistes"},{id:"athleticism",icon:"⚡",label:"Athlétisme",sub:"Vitesse"}],subcatBrands:[{id:"tech",icon:"💻",label:"Tech Brands",sub:"Software & hardware"},{id:"food",icon:"🍔",label:"Food & Drink",sub:"Fast food & snacks"},{id:"fashion",icon:"👟",label:"Fashion",sub:"Clothing & accessories"},{id:"gaming",icon:"🎮",label:"Gaming Brands",sub:"Studios & platforms"},{id:"sports",icon:"⚽",label:"Sports Brands",sub:"Athletic wear"},{id:"luxury",icon:"💎",label:"Luxury Brands",sub:"Premium & prestige"}],subcatCars:[{id:"sports",icon:"🏎️",label:"Sports Cars",sub:"Performance & supercar"},{id:"classic",icon:"🏆",label:"Classic & Iconic",sub:"Legendary cars"},{id:"luxury",icon:"👑",label:"Luxury",sub:"Premium sedans & SUVs"},{id:"everyday",icon:"🚗",label:"Everyday",sub:"Practical & family"},{id:"electric",icon:"⚡",label:"Electric",sub:"EVs & hybrids"},{id:"offroad",icon:"🌲",label:"Off-Road",sub:"4x4 & adventure"}],subcatGames:[{id:"openworld",icon:"🌍",label:"Open World",sub:"Explore & discover"},{id:"rpg",icon:"⚔️",label:"RPG",sub:"Role-playing games"},{id:"indie",icon:"💡",label:"Indie",sub:"Independent gems"},{id:"fps",icon:"🔫",label:"FPS",sub:"First-person shooters"},{id:"strategy",icon:"🧠",label:"Strategy",sub:"Turn-based & RTS"},{id:"sports",icon:"⚽",label:"Sports & Racing",sub:"FIFA, F1, NBA 2K"}]},
+ru:{tagline:"Слепые Рейтинги · Твой Инстинкт vs. Мир",hint:"выбери категорию → критерий → ранжируй",catPowers:"Суперспособности",catPowersDesc:"Ранжируй 10 случайных сил. Какая самая ценная?",catFootball:"Футболисты",catFootballDesc:"Ранжируй 10 случайных легенд",catNBA:"Игроки НБА",catNBADesc:"Ранжируй 10 великих игроков НБА",badgePowers:"240 СИЛ",badgeFootball:"200 ИГРОКОВ",badgeNBA:"200 ИГРОКОВ",nowRank:"ранжируй сейчас",buildRank:"создай рейтинг",cancel:"Отмена",start:"Начать →",skip:"Пропустить",swap:"Поменять ✓",home:"← Главная",again:"Играть снова ⚡",resTitle:"Твой Рейтинг 🔥",swapTitle:"Последний Ход",swapDesc:"1 обмен — выбери два элемента.",selectTwo:"Выбери два",willSwap:"будут обменяны",seeExamples:"посмотреть примеры",placeHere:"Бросить сюда",ranked:"поставили другие",loginBtnTxt:"Войти",loginTitle:"Войти в VibeSorting",loginDesc:"Открой все категории.",googleBtnTxt:"Продолжить с Google",loginNote:"Без спама. Без рекламы.",lockedMsg:"🔒 Войдите чтобы открыть",catSeries:"Сериалы",catSeriesDesc:"Ранж.",catFilms:"Фильмы",catFilmsDesc:"Ранж.",catBrands:"Бренды",catBrandsDesc:"Ранж.",catCars:"Авто",catCarsDesc:"Ранж.",catGames:"Игры",catGamesDesc:"Ранж.",subcatPowers:[{id:"overall",icon:"🏆",label:"Общая Сила",sub:"Самая OP?"},{id:"combat",icon:"⚔️",label:"Бой",sub:"В бою"},{id:"social",icon:"🧠",label:"Социальное",sub:"В жизни"},{id:"utility",icon:"🛠️",label:"Полезность",sub:"Практичная"},{id:"coolness",icon:"😎",label:"Крутость",sub:"Стильная"},{id:"rare",icon:"💎",label:"Редкость",sub:"Уникальная"}],subcatFootball:[{id:"overall",icon:"🏆",label:"Общий",sub:"Карьера"},{id:"dribbling",icon:"🎭",label:"Дриблинг",sub:"Контроль"},{id:"goals",icon:"🥅",label:"Голы",sub:"Забивать"},{id:"assist",icon:"🎯",label:"Передачи",sub:"Последний пас"},{id:"defense",icon:"🛡️",label:"Защита",sub:"Оборона"},{id:"clutch",icon:"🔥",label:"Матч",sub:"Ключевые моменты"},{id:"legend",icon:"👑",label:"Легенда",sub:"Наследие"},{id:"speed",icon:"⚡",label:"Скорость",sub:"Быстрейшие"}],subcatNba:[{id:"overall",icon:"🏆",label:"GOAT",sub:"Карьера"},{id:"scoring",icon:"🥅",label:"Очки",sub:"Результат"},{id:"playmaking",icon:"🎯",label:"Разыгрывание",sub:"Передачи"},{id:"defense",icon:"🛡️",label:"Защита",sub:"Защитники"},{id:"clutch",icon:"🔥",label:"Клатч",sub:"Давление"},{id:"threepoint",icon:"🎯",label:"Трёхочковые",sub:"Снайперы"},{id:"athleticism",icon:"⚡",label:"Атлетизм",sub:"Сила и скорость"}],subcatSeries:[{id:"drama",icon:"🎭",label:"Drama",sub:"Prestige TV"},{id:"comedy",icon:"😂",label:"Comedy",sub:"Sitcoms & dark comedy"},{id:"thriller",icon:"🔍",label:"Thriller & Crime",sub:"Whodunnit & spy"},{id:"scifi",icon:"🚀",label:"Sci-Fi",sub:"Science fiction"},{id:"animated",icon:"🎨",label:"Animated",sub:"Adult animation"},{id:"reality",icon:"📺",label:"Reality & Doc",sub:"Reality TV & docs"}],subcatFilms:[{id:"action",icon:"💥",label:"Action",sub:"Stunts & spectacle"},{id:"comedy",icon:"😂",label:"Comedy",sub:"From absurd to satirical"},{id:"scifi",icon:"🚀",label:"Sci-Fi",sub:"Science fiction"},{id:"drama",icon:"🎭",label:"Drama",sub:"Character & story"},{id:"horror",icon:"💀",label:"Horror",sub:"Fear & dread"},{id:"animation",icon:"🎨",label:"Animation",sub:"Animated films"}],subcatBrands:[{id:"tech",icon:"💻",label:"Tech Brands",sub:"Software & hardware"},{id:"food",icon:"🍔",label:"Food & Drink",sub:"Fast food & snacks"},{id:"fashion",icon:"👟",label:"Fashion",sub:"Clothing & accessories"},{id:"gaming",icon:"🎮",label:"Gaming Brands",sub:"Studios & platforms"},{id:"sports",icon:"⚽",label:"Sports Brands",sub:"Athletic wear"},{id:"luxury",icon:"💎",label:"Luxury Brands",sub:"Premium & prestige"}],subcatCars:[{id:"sports",icon:"🏎️",label:"Sports Cars",sub:"Performance & supercar"},{id:"classic",icon:"🏆",label:"Classic & Iconic",sub:"Legendary cars"},{id:"luxury",icon:"👑",label:"Luxury",sub:"Premium sedans & SUVs"},{id:"everyday",icon:"🚗",label:"Everyday",sub:"Practical & family"},{id:"electric",icon:"⚡",label:"Electric",sub:"EVs & hybrids"},{id:"offroad",icon:"🌲",label:"Off-Road",sub:"4x4 & adventure"}],subcatGames:[{id:"openworld",icon:"🌍",label:"Open World",sub:"Explore & discover"},{id:"rpg",icon:"⚔️",label:"RPG",sub:"Role-playing games"},{id:"indie",icon:"💡",label:"Indie",sub:"Independent gems"},{id:"fps",icon:"🔫",label:"FPS",sub:"First-person shooters"},{id:"strategy",icon:"🧠",label:"Strategy",sub:"Turn-based & RTS"},{id:"sports",icon:"⚽",label:"Sports & Racing",sub:"FIFA, F1, NBA 2K"}]}
 };
+
 var CL='en';
 function T(k){return(LANGS[CL]&&LANGS[CL][k]!==undefined)?LANGS[CL][k]:(LANGS['en'][k]!==undefined?LANGS['en'][k]:k)}
-function setLang(l){CL=l;document.querySelectorAll('.lang-btn').forEach(function(b){b.classList.toggle('active',b.textContent===l.toUpperCase())});applyLang()}
+function toggleLangMenu(e){e.stopPropagation();var m=document.getElementById('langMenu');m.style.display=m.style.display==='none'?'block':'none'}
+document.addEventListener('click',function(){var m=document.getElementById('langMenu');if(m)m.style.display='none'})
+function setLang(l){
+  CL=l;
+  var m=document.getElementById('langMenu');if(m)m.style.display='none';
+  var btn=document.getElementById('langSelBtn');
+  if(btn){var flags={'en':'🇬🇧','es':'🇪🇸','tr':'🇹🇷','fr':'🇫🇷','ru':'🇷🇺'};document.getElementById('langSelTxt').textContent=flags[l]+' '+l.toUpperCase();}
+  applyLang();
+  // If mid-game, refresh UI text in place
+  if(S.phase==='playing'){
+    document.getElementById('lblNowRank').textContent=T('nowRank');
+    document.getElementById('lblBuildRank').textContent=T('buildRank');
+    if(S.curItem) document.getElementById('exToggleTxt').textContent=T('seeExamples');
+    // Refresh empty slot labels
+    document.querySelectorAll('.slot.empty .sname').forEach(function(el){el.textContent=T('placeHere')});
+  }
+}
 function applyLang(){
   var els={tagline:'tagline',hintTxt:'hintTxt',lblNowRank:'lblNowRank',lblBuildRank:'lblBuildRank',btnCancel:'btnCancel',loginBtnTxt:'loginBtnTxt'};
   for(var k in els){var el=document.getElementById(els[k]);if(el)el.textContent=T(k)}
@@ -1322,8 +1452,881 @@ var GAMES=(function(){var raw=[
 ];var o=[];for(var i=0;i<raw.length;i++){
   o.push({id:i+1,emoji:raw[i][0],name:raw[i][1],genre:raw[i][2],desc:raw[i][3]})}return o;})();
 
-var CATS_CFG={powers:{data:POWERS,locked:false},football:{data:FOOTBALL,locked:true},nba:{data:NBA,locked:true},series:{data:SERIES,locked:true},films:{data:FILMS,locked:true},techbrands:{data:TECHBRANDS,locked:true},games:{data:GAMES,locked:true}};
-var S={cat:null,sub:null,queue:[],placed:[],curIdx:0,curItem:null,swapSel:[],phase:'landing'};
+
+var FILMS_ACTION=(function(){var raw=[
+["💥","Mad Max: Fury Road","2015","George Miller's masterpiece — one continuous chase. The peak of action cinema."],
+["⚡","The Dark Knight","2008","Heath Ledger's Joker. The bank heist opening. Nolan redefined superhero films."],
+["🔫","Heat","1995","Pacino vs De Niro. The coffee shop. The downtown shootout. Michael Mann at his best."],
+["⚔️","Gladiator","2000","Maximus. The Colosseum. Zimmer's score. 'Are you not entertained?'"],
+["🚗","Mad Max (1979)","1979","The original Mel Gibson film that launched the franchise. Australian roads, brutal."],
+["💣","Die Hard","1988","John McClane in Nakatomi Plaza. The blueprint for every Christmas action film."],
+["🦾","Terminator 2","1991","The T-1000. The liquid metal. James Cameron redefined blockbuster action."],
+["🕵️","Mission Impossible: Fallout","2018","Tom Cruise broke his ankle. The helicopter sequence. The best MI film."],
+["🥊","Rocky","1976","Sylvester Stallone wrote it, starred in it. The training montage changed film forever."],
+["🔥","Apocalypse Now","1979","Vietnam war action-horror. The napalm scene. 'I love the smell of napalm in the morning.'"],
+["💨","Speed","1994","Bus. 50mph. Bomb. Keanu Reeves and Sandra Bullock at their most kinetic."],
+["🌪️","Twister","1996","Storm chasers. Flying cows. Bill Paxton. Pure summer blockbuster energy."],
+["🏃","The Bourne Identity","2002","Matt Damon reinvented the spy thriller. Paris car chase. Kitchen fight."],
+["🚁","Black Hawk Down","2001","Ridley Scott's claustrophobic recreation of the 1993 Mogadishu battle."],
+["⚡","Top Gun","1986","Maverick. Iceman. That volleyball scene. The film that made the Navy recruiting surge."],
+["🔫","Top Gun: Maverick","2022","The rare sequel that matched and arguably surpassed the original. Still flying."],
+["🌊","The Poseidon Adventure","1972","Disaster action classic. A wave capsizes a cruise ship on New Year's Eve."],
+["🤸","The Matrix","1999","Bullet time. Red pill. The Wachowskis changed action choreography permanently."],
+["💥","Avengers: Infinity War","2018","The snap. 18 films building to one. Thanos as a villain who had a point."],
+["🦸","The Dark Knight Rises","2012","Bane. The pit. Gotham on the edge. Nolan's final Batman film."],
+["🔴","Kill Bill Vol. 1","2003","Tarantino's kung fu revenge film. The Crazy 88. O-Ren Ishii. Pure cinema."],
+["⚔️","300","2007","Spartans. Persians. Frank Miller's graphic novel made impossibly visual."],
+["🚀","Aliens","1986","James Cameron turned Scott's horror into a war film. 'Game over, man.'"],
+["🏴","Predator","1987","Schwarzenegger vs an alien hunter in a jungle. The handshake. The mud."],
+["💣","The Rock","1996","Alcatraz. Sean Connery. Nicolas Cage. Bayhem before Michael Bay peaked."],
+["🔫","Léon: The Professional","1994","A hitman protects a 12-year-old girl. Gary Oldman. Jean Reno. Natalie Portman's debut."],
+["🌊","Dunkirk","2017","Nolan's three-timeline WWII rescue. Hans Zimmer's ticking clock score."],
+["⚡","1917","2019","Filmed as one continuous take. A WWI messenger must cross enemy lines."],
+["🎯","Sicario","2015","Denis Villeneuve. Emily Blunt. Roger Deakins. The border crossing sequence."],
+["🚗","Baby Driver","2017","Edgar Wright's kinetic crime film where every action is synced to music."],
+["💥","Fury","2014","Brad Pitt commanding a WWII tank. The final standoff. Brutal and honest."],
+["🔫","No Country for Old Men","2007","Javier Bardem's Anton Chigurh is the most terrifying screen villain of the 21st century."],
+["⚡","John Wick","2014","A retired hitman avenges his dog. Keanu Reeves. Choreographed action as ballet."],
+["🌪️","The Hurricane Heist","2018","A hurricane AND a bank robbery. Objectively ridiculous, objectively fun."],
+["🏃","Run Lola Run","1998","German film. 80 minutes. Three versions of the same 20 minutes. Lola runs."],
+["💣","Swordfish","2001","John Travolta. Halle Berry. Hugh Jackman hacking while being held at gunpoint."],
+["🔴","Harakiri (Seppuku)","1962","Japanese samurai film. A masterwork of slow-burn action and moral confrontation."],
+["⚡","Drive","2011","Ryan Gosling. Scorpion jacket. The elevator. Nicolas Winding Refn's neon noir."],
+["🔫","Michael Clayton","2007","George Clooney as a fixer. Corporate thriller with the tension of a bomb."],
+["💥","Crouching Tiger, Hidden Dragon","2000","Ang Lee. Wire-fu action as poetry. The bamboo forest fight."],
+["🌊","Das Boot","1981","German submarine film. 149-minute cut. The most claustrophobic war film ever."],
+["⚔️","Braveheart","1995","Mel Gibson as William Wallace. The Battle of Stirling Bridge. Freedom speech."],
+["🚁","Full Metal Jacket","1987","Kubrick's Vietnam film. The boot camp scenes and R. Lee Ermey are defining."],
+["💣","Saving Private Ryan","1998","Spielberg. The Omaha Beach opening is 25 minutes of the most brutal cinema ever made."],
+["🔫","Oldboy","2003","Park Chan-wook. Korean action revenge. The hallway fight. One of the great twists."],
+["⚡","The Raid","2011","Indonesian martial arts film. One building. Non-stop escalation. Breathtaking."],
+["🏃","District 9","2009","Apartheid metaphor as alien action film. Found footage meets blockbuster."],
+["💥","Edge of Tomorrow","2014","Tom Cruise dies and relives D-Day repeatedly. Groundhog Day meets sci-fi war film."],
+["🌊","Pacific Rim","2013","Giant robots vs giant monsters. Guillermo del Toro making a love letter to kaiju."],
+["🔫","Heat (1995)","1995","Second entry: the 40-minute downtown LA shootout remains the standard for urban gunfight choreography."],
+];var o=[];for(var i=0;i<raw.length;i++){o.push({id:i+1,emoji:raw[i][0],name:raw[i][1],year:raw[i][2],desc:raw[i][3]})}return o;})();
+var FILMS_COMEDY=(function(){var raw=[
+["😂","The Grand Budapest Hotel","2014","Wes Anderson at maximum precision. Zero Moustafa. M. Gustave. The whole thing."],
+["🎭","Monty Python and the Holy Grail","1975","'It's just a flesh wound.' British absurdism at its most quotable."],
+["🤣","Dr. Strangelove","1964","Kubrick's cold war satire. Peter Sellers in three roles. Still the funniest political film."],
+["😄","Some Like It Hot","1959","Cross-dressing, gangsters, Marilyn Monroe. 'Nobody's perfect.'"],
+["🎪","Airplane!","1980","'Don't call me Shirley.' A joke every three seconds. The genre parody to end all parodies."],
+["🤠","Blazing Saddles","1974","Mel Brooks deconstructing the Western. The most subversive studio comedy ever made."],
+["😂","This Is Spinal Tap","1984","The original mockumentary. Eleven. The stone at Stonehenge. The amp that goes to 11."],
+["🎭","The Big Lebowski","1998","The Dude abides. Jeff Bridges. The Coen Brothers made a genre out of one film."],
+["🤣","Anchorman","2004","Ron Burgundy. '60% of the time it works every time.' Will Ferrell at his most absurd."],
+["😄","Office Space","1999","Mike Judge's cubicle satire. TPS reports. The printer scene. Every office worker's film."],
+["🎪","Superbad","2007","Judd Apatow produced, Seth Rogen wrote. McLovin. High school comedy at its finest."],
+["🤠","Planes, Trains and Automobiles","1987","Steve Martin and John Candy. Thanksgiving road trip. The best comedy with a real ending."],
+["😂","Four Weddings and a Funeral","1994","Hugh Grant. Richard Curtis. Andie MacDowell. British romantic comedy at its most charming."],
+["🎭","Life of Brian","1979","Monty Python's biblical satire. 'He's not the Messiah, he's a very naughty boy.'"],
+["🤣","Groundhog Day","1993","Bill Murray relives February 2nd until he becomes a better person. Still perfect."],
+["😄","Ferris Bueller's Day Off","1986","Matthew Broderick. The fourth wall. The parade float. John Hughes capturing adolescence."],
+["🎪","The Princess Bride","1987","'As you wish.' Inconceivable! Adventure and romance wrapped in warm comedy."],
+["🤠","Withnail and I","1987","Two unemployed actors holiday accidentally in the Lake District. British cult comedy."],
+["😂","Annie Hall","1977","Woody Allen at his smartest. Non-linear romantic comedy. Changed the form."],
+["🎭","Rushmore","1998","Max Fischer, Wes Anderson's first masterpiece. Bill Murray. Jason Schwartzman."],
+["🤣","Shaun of the Dead","2004","Simon Pegg and Nick Frost in the most loving zombie parody ever made."],
+["😄","Hot Fuzz","2007","Edgar Wright's second Cornetto film. Small-town murder mystery as action comedy."],
+["🎪","The World's End","2013","Edgar Wright concludes the trilogy. Five friends attempt a pub crawl. Alien robots."],
+["🤠","My Cousin Vinny","1992","Joe Pesci as a Brooklyn lawyer in Alabama. Marisa Tomei won an Oscar. Rightfully."],
+["😂","Clue","1985","A board game as murder mystery comedy. Three alternate endings in cinemas."],
+["🎭","The Naked Gun","1988","Leslie Nielsen. Frank Drebin. 'Like a midget at a urinal, I was going to have to be on my toes.'"],
+["🤣","Coming to America","1988","Eddie Murphy at his most charming. A prince from Zamunda goes to Queens."],
+["😄","Trading Places","1983","Dan Aykroyd and Eddie Murphy swap lives. The Duke brothers lose everything."],
+["🎪","Beverly Hills Cop","1984","Eddie Murphy. Axel Foley in Beverly Hills. 'The Banana in the Tailpipe.'"],
+["🤠","Tropic Thunder","2008","Ben Stiller, Jack Black, Robert Downey Jr. going full method. Never go full method."],
+["😂","Midnight Run","1988","Robert De Niro as a bounty hunter. Charles Grodin as his captive. Road trip perfection."],
+["🎭","In Bruges","2008","Colin Farrell and Brendan Gleeson in Belgium. Dark comedy masterclass."],
+["🤣","The Nice Guys","2016","Ryan Gosling and Russell Crowe as mismatched detectives in 70s LA. Shane Black."],
+["😄","Clue (1985)","1985","Second entry: Tim Curry's performance alone is worth three Oscars."],
+["🎪","Knives Out","2019","Rian Johnson's Agatha Christie update. Daniel Craig's southern accent. The twist midway."],
+["🤠","What We Do in the Shadows","2014","Taika Waititi and Jemaine Clement as vampire flatmates. The original film."],
+["😂","Popstar: Never Stop Never Stopping","2016","Andy Samberg's documentary-style pop star parody. Under-seen and criminally funny."],
+["🎭","The Death of Stalin","2017","Armando Iannucci on Soviet power succession. Steve Buscemi as Khrushchev."],
+["🤣","Sorry to Bother You","2018","Boots Riley's surreal comedy about telemarketing and corporate exploitation."],
+["😄","Palm Springs","2020","Groundhog Day-adjacent. Andy Samberg and Cristin Milioti stuck in a time loop together."],
+["🎪","Game Night","2018","A couple's game night turns into an actual crime thriller. Better than it has any right to be."],
+["🤠","The Proposal","2009","Sandra Bullock and Ryan Reynolds. Forced marriage immigration comedy. Charming and reliable."],
+["😂","Barb and Star Go to Vista Del Mar","2021","The most delightfully absurd comedy of the 2020s. Produced by the Bridesmaids team."],
+["🎭","Eurovision Song Contest","2020","Will Ferrell and Rachel McAdams represent Iceland. Committed absurdism."],
+["🤣","Borat","2006","Sacha Baron Cohen. The most confrontational comedy film of its decade."],
+["😄","The Dictator","2012","Sacha Baron Cohen again. Less confrontational, more deliberately absurd."],
+["🎪","Burn After Reading","2008","Coen Brothers. Brad Pitt, George Clooney, Frances McDormand. Magnificent stupidity."],
+["🤠","The Big Short","2015","Adam McKay explains the 2008 financial crisis via Margot Robbie in a bathtub."],
+["😂","Parasite","2019","Bong Joon-ho's masterpiece. Comedy, thriller, tragedy — all in one film. Flawless."],
+["🎭","Promising Young Woman","2020","Carey Mulligan's revenge comedy. Subverted genres and won an Academy Award."],
+["🤣","Dumb and Dumber","1994","Jim Carrey and Jeff Daniels. The most committed stupidity in American cinema history."],
+];var o=[];for(var i=0;i<raw.length;i++){o.push({id:i+1,emoji:raw[i][0],name:raw[i][1],year:raw[i][2],desc:raw[i][3]})}return o;})();
+var FILMS_SCIFI=(function(){var raw=[
+["🌌","2001: A Space Odyssey","1968","Kubrick's existential masterpiece. The monolith. HAL 9000. The Star Child. Still unmatched."],
+["🤖","Blade Runner","1982","Roy Batty's tears in rain monologue. Ridley Scott invented neo-noir sci-fi visually."],
+["💊","The Matrix","1999","Red pill or blue pill. Bullet time. Changed how films could look and think simultaneously."],
+["🌍","Children of Men","2006","Clive Owen. Humanity's last pregnant woman. Alfonso Cuarón's single-take sequences."],
+["🚀","Interstellar","2014","Cooper's bookshelf. Hans Zimmer. Gargantua. The most emotionally ambitious Nolan film."],
+["⭐","Star Wars: A New Hope","1977","The opening Star Destroyer shot. Changed cinema. Changed merchandise. Changed everything."],
+["🤖","Blade Runner 2049","2017","Denis Villeneuve. Roger Deakins. The rare sequel that deserved to exist."],
+["🌌","Arrival","2016","Amy Adams learns an alien language. Time isn't linear. Denis Villeneuve's quiet masterwork."],
+["💀","Alien","1979","Ridley Scott's horror-sci-fi hybrid. HR Giger's design. 'In space, no one can hear you scream.'"],
+["👾","E.T. the Extra-Terrestrial","1982","Spielberg. A boy and an alien. The bike silhouette against the moon. Pure cinema emotion."],
+["🔭","Contact","1997","Jodie Foster. Carl Sagan adaptation. The most thoughtful first-contact film ever made."],
+["🌊","The Abyss","1989","James Cameron underwater. The water tentacle. The deepest point of human cinema ambition."],
+["🚀","Apollo 13","1995","Ron Howard. Tom Hanks. Based on truth. 'Houston, we have a problem' was actually said differently."],
+["💊","Inception","2010","Dream levels. The top. Joseph Gordon-Levitt's hallway fight. Hans Zimmer's BRAAAM."],
+["🤖","Ex Machina","2014","Alex Garland. Oscar Isaac's dance. Alicia Vikander's eyes. The turing test."],
+["🌌","Moon","2009","Sam Rockwell alone on the moon. Duncan Jones. A quiet film with an enormous idea."],
+["💀","Under the Skin","2014","Scarlett Johansson as an alien harvesting men in Scotland. Hauntingly abstract."],
+["🔮","Eternal Sunshine of the Spotless Mind","2004","Michel Gondry. Erasing memories of love. Still the most romantic sci-fi film."],
+["🌍","WALL-E","2008","Pixar. The loneliest robot. The first act with no dialogue. A meditation on consumption."],
+["⭐","The Empire Strikes Back","1980","'No, I am your father.' Irvin Kershner. The best Star Wars film by consensus."],
+["🚀","Gravity","2013","Sandra Bullock. Alfonso Cuarón. 90 minutes of sustained tension in space."],
+["🤖","Her","2013","Joaquin Phoenix falls in love with an AI. Spike Jonze asks what consciousness needs."],
+["🌌","Dune Part One","2021","Denis Villeneuve. Hans Zimmer. The Fremen. Timothée Chalamet. The spice must flow."],
+["💊","Dune Part Two","2024","The sandworm ride. Feyd-Rautha. The most complete sci-fi blockbuster in a decade."],
+["💀","28 Days Later","2002","Danny Boyle's post-apocalyptic Britain. Empty London. Rage-infected zombie-adjacent film."],
+["🔭","Close Encounters of the Third Kind","1977","Spielberg. Richard Dreyfuss. The mashed potato mountain. First contact as wonder."],
+["🌊","The Thing","1982","John Carpenter. Kurt Russell in Antarctica. The most paranoid horror-sci-fi ever made."],
+["🤖","Metropolis","1927","Fritz Lang. Silent film. Every science fiction image of the 20th century traces to this."],
+["🌌","Annihilation","2018","Alex Garland. Natalie Portman. Area X. The lighthouse sequence. Terrifying and beautiful."],
+["💀","Upgrade","2018","Leigh Whannell's body horror action sci-fi. An AI taking control of a man's body."],
+["⭐","Star Trek II: Wrath of Khan","1982","The best Star Trek film. Khan. Spock's sacrifice. 'I have been, and always shall be, your friend.'"],
+["🚀","The Martian","2015","Matt Damon grows potatoes on Mars. Ridley Scott made science feel triumphant."],
+["🔮","Looper","2012","Time travel. Joseph Gordon-Levitt. Bruce Willis. Rian Johnson before The Last Jedi."],
+["💊","Source Code","2011","Jake Gyllenhaal relives a train bombing. Duncan Jones. Tight, inventive, emotional."],
+["🤖","I, Robot","2004","Will Smith. Isaac Asimov's laws. The most underrated mainstream sci-fi film of the 2000s."],
+["🌍","Elysium","2013","Neill Blomkamp's healthcare allegory. Matt Damon. The haves vs the have-nots in space."],
+["💀","Oblivion","2013","Tom Cruise. Joseph Kosinski. Visually stunning. The twist recontextualises everything."],
+["🔭","Coherence","2013","$50,000 budget. Eight people at a dinner party during a comet passing. Genuinely unsettling."],
+["🌊","Midnight Special","2016","Jeff Nichols. A boy with supernatural powers. A father protecting him. Road movie sci-fi."],
+["🤖","Upgrade","2018","Second entry: the action sequences where STEM takes over are genuinely original choreography."],
+["🌌","Everything Everywhere All at Once","2022","The Daniels. Multiverse as family drama. Won Best Picture. Deserved to."],
+["💀","The Invisible Man","2020","Elisabeth Moss. A gaslighting abuser becomes literally invisible. Smart, terrifying update."],
+["⭐","Predestination","2014","Ethan Hawke. Time travel paradox taken to its absolute logical conclusion. Mind-bending."],
+["🚀","Sunshine","2007","Danny Boyle. Eight astronauts reigniting the sun. The third act divides people. The first two are perfect."],
+["🔮","Minority Report","2002","Spielberg. Tom Cruise. Pre-crime. Gesture-based computer interfaces became real because of this film."],
+["💊","Ready Player One","2018","Spielberg in the Oasis. Pop culture references as plot. The Shining sequence."],
+["🤖","Ghost in the Shell","1995","Mamoru Oshii. Anime. Identity, consciousness, the body. Still ahead of its time."],
+["🌍","Snowpiercer","2013","Bong Joon-ho before Parasite. A train circumnavigates a frozen Earth. Class as train car."],
+["💀","A Quiet Place","2018","John Krasinski. Sound kills. A family surviving in silence. The nail on the stairs."],
+["🔭","Arrival","2016","Second entry: the circular writing, the grief, the choice — the most humane first contact story."],
+["🌊","The Platform","2019","Spanish sci-fi. A vertical prison where food only reaches the top floors. Blunt allegory, brilliantly executed."],
+];var o=[];for(var i=0;i<raw.length;i++){o.push({id:i+1,emoji:raw[i][0],name:raw[i][1],year:raw[i][2],desc:raw[i][3]})}return o;})();
+var FILMS_DRAMA=(function(){var raw=[
+["🎬","The Godfather","1972","Coppola. The Corleone family. Brando. Pacino. The standard by which cinema measures itself."],
+["🌿","The Shawshank Redemption","1994","Morgan Freeman narrates. Tim Robbins escapes. Hope as resistance. Most rewatched film."],
+["💀","Schindler's List","1993","Spielberg. Black and white. The red coat. Three hours that change you permanently."],
+["🎭","12 Angry Men","1957","Sidney Lumet. One jury room. Henry Fonda. Democracy as argument. Perfect screenplay."],
+["🌊","There Will Be Blood","2007","Daniel Day-Lewis. PTA. Oil, religion, ambition. 'I drink your milkshake.'"],
+["⭐","The Godfather Part II","1974","Coppola continues. De Niro as young Vito. The parallel editing between timelines. Equals the first."],
+["💊","Mulholland Drive","2001","David Lynch. Betty and Rita. Club Silencio. The blue box. Most discussed Lynch film."],
+["🔮","Eyes Wide Shut","1999","Kubrick's final film. Tom Cruise and Nicole Kidman. Sex, jealousy, secret societies."],
+["🌍","No Country for Old Men","2007","The Coen Brothers. Anton Chigurh. Javier Bardem. The coin flip. The ending with no ending."],
+["🎸","Whiplash","2014","Miles Teller. JK Simmons. 'Are you rushing or dragging?' Jazz as torture. Perfect film."],
+["🤖","A Beautiful Mind","2001","Ron Howard. Russell Crowe as John Nash. Mental illness and mathematics. 4 Oscars."],
+["🌌","The Silence of the Lambs","1991","Jodie Foster. Anthony Hopkins. Hannibal Lecter. 5 major Oscars. Still chilling."],
+["💀","Requiem for a Dream","2000","Darren Aronofsky. Ellen Burstyn. Jared Leto. Not for entertainment. For understanding."],
+["🎭","American Beauty","1999","Kevin Spacey. Sam Mendes. The plastic bag. Won Best Picture. Divisive now."],
+["🌊","Boyhood","2014","Richard Linklater filmed across 12 real years. Ellar Coltrane ageing on screen."],
+["⭐","Moonlight","2016","Barry Jenkins. Three chapters of a Black man's life in Miami. Best Picture 2017."],
+["💊","Marriage Story","2019","Noah Baumbach. Adam Driver singing. Scarlett Johansson screaming. Divorce as opera."],
+["🔮","Manchester by the Sea","2016","Kenneth Lonergan. Casey Affleck. The revelation. The inability to forgive yourself."],
+["🌍","Her","2013","Spike Jonze. Joaquin Phoenix falls in love with an OS. About loneliness. About connection."],
+["🎸","Eternal Sunshine of the Spotless Mind","2004","Gondry. Kaufman. Kate Winslet. Jim Carrey. Erasure of love. The most romantic sad film."],
+["🤖","The Tree of Life","2011","Terrence Malick. Sean Penn. Brad Pitt. Dinosaurs. The origin of everything. Polarising."],
+["🌌","Lost in Translation","2003","Sofia Coppola. Bill Murray. Scarlett Johansson. Tokyo at 3 AM. The whisper at the end."],
+["💀","Gone Girl","2014","David Fincher. Rosamund Pike. Ben Affleck. 'Cool Girl' monologue changed popular culture."],
+["🎭","The Social Network","2010","David Fincher. Aaron Sorkin. Facebook origin as tragedy. Eisenberg, Timberlake, Garfield."],
+["🌊","Parasite","2019","Bong Joon-ho. The stairs. The smell. Class warfare as dark comedy. Best Picture."],
+["⭐","Portrait of a Lady on Fire","2019","Céline Sciamma. The most beautifully shot film of its decade. Héloïse and Marianne."],
+["💊","Past Lives","2023","Celine Song. In-yun. The last shot. The most emotionally complete recent drama."],
+["🔮","Normal People","2020","TV series but film-quality. Sally Rooney. Paul Mescal and Daisy Edgar-Jones. Ireland."],
+["🌍","The Zone of Interest","2023","Jonathan Glazer. Auschwitz next door. Banality of evil. Most disturbing recent film."],
+["🎸","Tár","2022","Cate Blanchett as a conductor. Todd Field. Power, abuse, consequences. Acting masterclass."],
+["🤖","Aftersun","2022","Paul Mescal. A 31-year-old trying to understand her father. First watch: lovely. Second: devastating."],
+["🌌","A Separation","2011","Asghar Farhadi. Iranian domestic drama. The most morally complex film of the 2010s."],
+["💀","The Worst Person in the World","2021","Joachim Trier. Julie navigates her 30s in Oslo. The most honest romantic drama in years."],
+["🎭","Call Me by Your Name","2017","Luca Guadagnino. Elio and Oliver. Italian summer. The peach. Sufjan Stevens."],
+["🌊","Brokeback Mountain","2005","Ang Lee. Heath Ledger and Jake Gyllenhaal. 'I wish I knew how to quit you.'"],
+["⭐","12 Years a Slave","2013","Steve McQueen. Chiwetel Ejiofor. The whipping scene. Harrowing and essential."],
+["💊","Schindler's List","1993","Second entry: the finale, with the real survivors, is cinema's most humbling moment."],
+["🔮","Roma","2018","Alfonso Cuarón. Black and white. Mexico City. The most personal film of its director."],
+["🌍","The Irishman","2019","Scorsese. De Niro, Pacino, Pesci. Three and a half hours. The de-aging. The ending."],
+["🎸","Joker","2019","Todd Phillips. Joaquin Phoenix. The stairs. Controversial. Best acting performance of 2019."],
+["🤖","Phantom Thread","2017","PTA. Daniel Day-Lewis final role. A dressmaker and his muse. The poison in the omelette."],
+["🌌","Three Billboards Outside Ebbing, Missouri","2017","Martin McDonagh. Frances McDormand. Sam Rockwell. Grief and anger in a small town."],
+["💀","The Favourite","2018","Yorgos Lanthimos. Olivia Colman, Emma Stone, Rachel Weisz. Queen Anne's court. Vicious."],
+["🎭","Midsommar","2019","Ari Aster. A Swedish midsummer festival. A breakup film disguised as horror."],
+["🌊","Nomadland","2020","Chloé Zhao. Frances McDormand living in a van. Best Picture 2021. Quietly extraordinary."],
+["⭐","The Power of the Dog","2021","Jane Campion. Benedict Cumberbatch. The most restrained and devastating slow burn."],
+["💊","Belfast","2021","Kenneth Branagh's semi-autobiographical black and white film about Northern Ireland in 1969."],
+["🔮","CODA","2021","A deaf family's hearing daughter. Won Best Picture. Sweet, direct, emotionally effective."],
+["🌍","Oppenheimer","2023","Nolan. Cillian Murphy. The Trinity test. The moral weight of the bomb. Three hours."],
+["🎸","Anatomy of a Fall","2023","Justine Triet. Did she push him? The dog. The trial. The answer doesn't matter."],
+["🤖","All of Us Strangers","2023","Andrew Haigh. Andrew Scott. Paul Mescal. Parents long dead. The loneliest love story."],
+];var o=[];for(var i=0;i<raw.length;i++){o.push({id:i+1,emoji:raw[i][0],name:raw[i][1],year:raw[i][2],desc:raw[i][3]})}return o;})();
+var FILMS_HORROR=(function(){var raw=[
+["💀","The Shining","1980","Kubrick. Nicholson. 'Here's Johnny.' Room 237. The hedge maze. The frozen end."],
+["👻","Hereditary","2018","Ari Aster. Toni Collette's performance. The telephone pole. Family trauma as supernatural."],
+["🔮","The Exorcist","1973","William Friedkin. Linda Blair. Still the most terrifying film in American cinema history."],
+["🌊","Get Out","2017","Jordan Peele. The sunken place. The most socially precise horror film ever made."],
+["⚡","Midsommar","2019","Ari Aster. Daylight horror in Sweden. The bear. The wicker man sequence."],
+["🧠","Us","2019","Jordan Peele. The tethered. Lupita Nyong'o in a dual performance. American mythology."],
+["🎭","A Quiet Place","2018","John Krasinski. Silence as horror. The nail on the stairs. The waterfall."],
+["💀","It Follows","2014","David Robert Mitchell. An STI metaphor that follows at walking pace. Relentlessly unsettling."],
+["👻","The Witch","2015","Robert Eggers. 1630s New England. Black Phillip. 'Wouldst thou like to live deliciously?'"],
+["🔮","Suspiria (1977)","1977","Dario Argento. The most visually overwhelming horror film. Goblins soundtrack."],
+["🌊","The Thing","1982","John Carpenter. Kurt Russell. Antarctic paranoia. The chest-defibrillator scene."],
+["⚡","Alien","1979","Ridley Scott. HR Giger. The chest-burst. Sigourney Weaver. Perfect horror in space."],
+["🧠","Rosemary's Baby","1968","Roman Polanski. Mia Farrow. Urban paranoia as pregnancy horror. Still disturbing."],
+["🎭","The Babadook","2014","Jennifer Kent. A widowed mother and her son. Grief as a monster in the basement."],
+["💀","Psycho","1960","Hitchcock. The shower scene. Marion Crane dying in the first act. Changed everything."],
+["👻","Sinister","2012","Ethan Hawke. Super 8 films. The lawnmower. One of the genuinely scariest mainstream films."],
+["🔮","The Conjuring","2013","James Wan. Based on true events (allegedly). Vera Farmiga. Patrick Wilson. Effective."],
+["🌊","Annihilation","2018","Alex Garland. Area X. The lighthouse sequence. Cosmic horror at its most beautiful."],
+["⚡","Hereditary","2018","Second entry: the dinner table scene is the most emotionally violent scene in recent horror."],
+["🧠","Black Swan","2010","Darren Aronofsky. Natalie Portman. Ballet and body horror. Doubled and doubled again."],
+["🎭","28 Days Later","2002","Danny Boyle. Cillian Murphy. Empty London. Rage. The most British apocalypse."],
+["💀","Parasite","2019","Not horror, but the reveal below the stairs changes the film completely. Counts."],
+["👻","The Others","2001","Alejandro Amenábar. Nicole Kidman. A house in Jersey. The twist is perfect and earned."],
+["🔮","Don't Look Now","1973","Nicolas Roeg. Venice. A grieving couple. The red coat. One of cinema's great endings."],
+["🌊","The VVitch","2015","Robert Eggers again. The most historically detailed horror film. Calvin's God is real here."],
+["⚡","Mandy","2018","Panos Cosmatos. Nicolas Cage. Acid. Cults. The most psychedelic revenge horror film."],
+["🧠","Possessor","2020","Brandon Cronenberg (son of David). Corporate assassins inhabiting bodies. Body horror."],
+["🎭","Titane","2021","Julia Ducournau. Won Palme d'Or. A woman has sex with a car. More than it sounds. Much more."],
+["💀","The Menu","2022","Mark Mylod. Ralph Fiennes. Anya Taylor-Joy. A restaurant that serves death. Dark comedy horror."],
+["👻","Barbarian","2022","Zach Cregger. A rented Airbnb in Detroit. Do not go into the basement. Really."],
+["🔮","Nope","2022","Jordan Peele. UFO as spectacle. Daniel Kaluuya and Keke Palmer on a ranch. Audience as subject."],
+["🌊","Pearl","2022","Ti West. Mia Goth. A prequel to X. 1918. A girl on a farm who wants to be a star."],
+["⚡","Talk to Me","2023","The Philippou brothers. A disembodied hand. Teenagers make contact with the dead. Australian."],
+["🧠","M3GAN","2022","Akela Cooper. A robot child companion. The dance. More satirical than scary. Effective."],
+["🎭","Evil Dead Rise","2023","Lee Cronin. A Deadite in an apartment building. The best Evil Dead since the original."],
+["💀","Scream (1996)","1996","Wes Craven. Drew Barrymore. Meta horror. The rules of horror stated out loud."],
+["👻","Halloween (1978)","1978","John Carpenter. Michael Myers. The babysitter. Carpenter's score. The original slasher."],
+["🔮","A Tale of Two Sisters","2003","Korean psychological horror. Two sisters, a stepmother, a house. Unreliable reality."],
+["🌊","Audition","1999","Takashi Miike. A widower holds auditions for a wife. The bag. Do not eat while watching."],
+["⚡","Ringu (Ring)","1998","Hideo Nakata. The tape. Seven days. Sadako. Japanese horror that changed Western horror."],
+["🧠","Pulse (Kairo)","2001","Kiyoshi Kurosawa. The internet as portal to the dead. Loneliness horror. Pre-social media dread."],
+["🎭","Lake Mungo","2008","Australian mockumentary. A grieving family. The final revelation is genuinely chilling."],
+["💀","Host","2020","Rob Savage. Shot entirely on Zoom during lockdown. Terrifying and brilliantly made."],
+["👻","Skinamarink","2022","Kyle Edward Ball. $15,000 budget. Children alone in a house. Experimental dread."],
+["🔮","Men","2022","Alex Garland. Jessie Buckley alone in the English countryside. The transformation sequence."],
+["🌊","Fresh","2022","Mimi Cave. Daisy Edgar-Jones. Sebastian Stan. The twist comes 30 minutes in. Literally fresh."],
+["⚡","Soft & Quiet","2022","Beth de Araújo. One continuous shot. A women's hate group. Genuinely disturbing."],
+["🧠","Knock at the Cabin","2023","M. Night Shyamalan. Dave Bautista. Four strangers. The apocalypse or a home invasion."],
+["🎭","Smile","2022","Parker Finn. Trauma as contagion. You see the smile before you know what it means."],
+["💀","Renfield","2023","Chris McKay. Nicholas Hoult as Dracula's familiar. Nicolas Cage as Dracula. Knowing camp horror."],
+["👻","The Nun II","2023","Less essential than this list needs. But 'The Nun' franchise prints money and someone loves it."],
+];var o=[];for(var i=0;i<raw.length;i++){o.push({id:i+1,emoji:raw[i][0],name:raw[i][1],year:raw[i][2],desc:raw[i][3]})}return o;})();
+var SERIES_DRAMA=(function(){var raw=[
+["👑","The Sopranos","USA","HBO's mob-therapy masterpiece. Tony Soprano. Carmela. Christopher. Changed premium TV forever."],
+["🔴","The Wire","USA","David Simon. Baltimore's institutions vs individuals. The greatest TV drama ever made."],
+["💀","Breaking Bad","USA","Walter White to Heisenberg. Chemistry teacher to drug lord. The most complete arc in drama."],
+["🎭","Succession","USA","The Roy family destroying itself across four seasons. The finest ensemble in recent TV."],
+["🌊","The Leftovers","USA","Damon Lindelof. 2% of the world vanishes. What remains is grief. Season 2 is masterpiece TV."],
+["⚡","The Americans","USA","KGB agents living as suburban Americans. Six seasons of perfect character deterioration."],
+["🔮","Twin Peaks","USA","David Lynch and Mark Frost. A mystery that became something else entirely. Still unique."],
+["🌃","Deadwood","USA","HBO's profanity-laden Western. Al Swearengen. The most Shakespearean TV drama made."],
+["🌿","Boardwalk Empire","USA","Steve Buscemi. Prohibition Atlantic City. Scorsese directed the pilot. Visually extraordinary."],
+["🦅","Rome","UK/USA","HBO/BBC. Caesar's Rome through two soldiers' eyes. Cancelled too early. Magnificent anyway."],
+["💡","The Crown","UK","British royals across decades. Multiple casts. Helen Mirren. Claire Foy. Olivia Colman."],
+["🎸","Mindhunter","USA","Fincher. FBI agents develop criminal profiling. Jonathan Groff. Holt McCallany. Essential."],
+["🌙","Sharp Objects","USA","Gillian Flynn. Amy Adams. A journalist returns to her hometown. The ending."],
+["🔥","Ozark","USA","Jason Bateman and Laura Linney. A financial advisor laundering cartel money in Missouri."],
+["⚔️","Band of Brothers","USA","Spielberg/Hanks WWII miniseries. Easy Company. The greatest war drama on television."],
+["💀","The Knick","USA","Clive Owen as a cocaine-addicted surgeon in 1900s New York. Soderbergh directed all of it."],
+["🎭","Halt and Catch Fire","USA","Building computers in the 80s. Donna and Cameron. Rediscovered as a masterpiece after cancellation."],
+["🌊","Rectify","USA","Most underseen great American drama. A man released after 19 years on death row. Quiet and devastating."],
+["⚡","The Americans","USA","Second entry: The final season's last episode is among the best series finales in television history."],
+["🔮","Peaky Blinders","UK","Cillian Murphy as Tommy Shelby. Post-WWI Birmingham. The needle drops. The coats."],
+["🌃","Mad Men","USA","Don Draper. 1960s advertising. The most visually precise period drama on American television."],
+["🌿","House of Cards US S1","USA","Kevin Spacey. The first Netflix prestige drama. Frank Underwood breaking the fourth wall."],
+["🦅","Yellowstone","USA","Kevin Costner on a ranch. Modern Western. The most-watched cable drama of recent years."],
+["💡","Better Call Saul","USA","Saul Goodman's origin story. Surpassed Breaking Bad by Season 4 by most measures."],
+["🎸","Justified","USA","Timothy Olyphant as Raylan Givens. Elmore Leonard adaptation. The best dialogue on TV."],
+["🌙","Fargo","USA","Anthology. Coen Brothers-adjacent. Season 1 with Billy Bob Thornton is a landmark."],
+["🔥","The Affair","USA","Same events from different perspectives. Ruth Wilson. Dominic West. Memory as unreliable narrator."],
+["⚔️","The Night Of","USA","HBO miniseries. A boy accused of murder. The most compelling legal drama on TV."],
+["💀","Bloodline","USA","Florida Keys family. The Rayburns. Slow-burn tension. Ben Mendelsohn's best performance."],
+["🎭","In Treatment","USA","Gabriel Byrne as a therapist. Real-time sessions. HBO's quietest and most demanding drama."],
+["🌊","The Handmaid's Tale","USA","Margaret Atwood's Gilead. Elisabeth Moss. Harrowing and timely and beautifully made."],
+["⚡","Narcos","USA","Pablo Escobar. Colombian drug trade. Wagner Moura's transformative performance."],
+["🔮","Narcos: Mexico","USA","The Guadalajara cartel. Felix Gallardo. Different but equally compelling."],
+["🌃","Babylon Berlin","Germany","Weimar Republic Germany. A detective thriller set as the Nazis rise. Stunning production."],
+["🌿","Dark","Germany","Time travel across three generations in a German town. The most complex TV plot ever written."],
+["🦅","Gomorrah","Italy","Naples Camorra. More brutal than The Sopranos. Real locations. Operatic violence."],
+["💡","My Brilliant Friend","Italy","Elena Ferrante adaptation. Naples. Elena and Lila across a lifetime. Slow and magnificent."],
+["🎸","Chernobyl","UK/USA","HBO miniseries. Craig Mazin. Jared Harris. The most harrowing drama of 2019."],
+["🌙","The Terror","USA","AMC. A British naval expedition frozen in the Arctic. Based on true events. Terrifying."],
+["🔥","Severance","USA","Work-life balance horror. The Lumon building. Ben Stiller directing. Season 2 incoming."],
+["⚔️","Shogun 2024","USA/Japan","Hiroyuki Sanada. The most respectful and accomplished historical drama in years."],
+["💀","Slow Horses","UK","Gary Oldman. MI5's reject pile. The best British spy drama since le Carré."],
+["🎭","Industry","UK","Young bankers at Pierpoint. Uncomfortable and compelling. The best drama about work."],
+["🌊","The Bear","USA","A Chicago kitchen. Season 2 Episode 7 with Jamie Lee Curtis is peak television."],
+["⚡","Succession","USA","Second entry: the Kendall/Logan relationship across four seasons is the best father-son drama."],
+["🔮","The Americans","USA","Third entry: Keri Russell and Matthew Rhys. The physical transformation scenes."],
+["🌃","Andor","USA","The best Star Wars property. Diego Luna. Tony Gilroy. Rogue One's backstory."],
+["🌿","Pachinko","USA","Apple TV+. A Korean family across generations from 1910 to 1989. Visually extraordinary."],
+["🦅","Station Eleven","USA","A flu pandemic wipes out civilisation. A travelling theatre company. More hopeful than it sounds."],
+["💡","The Diplomat","USA","Keri Russell as a US Ambassador. Political thriller. The best show Netflix made in 2023."],
+["🎸","Yellowjackets","USA","High school soccer team crash in the wilderness. Adult survivors. What happened out there."],
+];var o=[];for(var i=0;i<raw.length;i++){o.push({id:i+1,emoji:raw[i][0],name:raw[i][1],country:raw[i][2],desc:raw[i][3]})}return o;})();
+var SERIES_COMEDY=(function(){var raw=[
+["😂","Seinfeld","USA","A show about nothing that became everything. Every character a masterpiece of selfishness."],
+["🎭","Arrested Development","USA","The most rewatchable sitcom. Jokes that only land on the third viewing."],
+["🤣","Fleabag","UK","Phoebe Waller-Bridge. The Priest. The look to camera. Devastating comedy."],
+["😄","The Office US","USA","Mockumentary. Michael Scott. Jim and Pam. Made open-plan offices culturally significant."],
+["🎪","It's Always Sunny in Philadelphia","USA","The Gang. The most consistently dark comedy in American TV history. Still running."],
+["🤠","Parks and Recreation","USA","Pawnee, Indiana. Leslie Knope. The most optimistic sitcom ever made."],
+["😂","30 Rock","USA","Tina Fey. Alec Baldwin. Kenneth. The fastest joke rate on American television."],
+["🎭","The Good Place","USA","Philosophy via the afterlife. Michael Schur making ethics funny for four seasons."],
+["🤣","Barry","USA","Bill Hader as a hitman who wants to act. The tonal range across four seasons is extraordinary."],
+["😄","What We Do in the Shadows","USA","Staten Island vampires. Nandor, Laszlo, Nadja, Colin Robinson. Still running. Still excellent."],
+["🎪","Abbott Elementary","USA","Quinta Brunson. Philadelphia public school. The best network sitcom in two decades."],
+["🤠","Schitt's Creek","Canada","The Rose family losing their fortune. David Rose and Patrick. The most feel-good ending."],
+["😂","Brooklyn Nine-Nine","USA","Andy Samberg. The NYPD precinct. The most consistently pleasant comedy procedural."],
+["🎭","Frasier","USA","Kelsey Grammer as a Seattle radio psychiatrist. The door physical comedy. Niles and Daphne."],
+["🤣","Cheers","USA","The Boston bar where everybody knows your name. Sam and Diane. Cliff and Norm."],
+["😄","Only Fools and Horses","UK","Del Boy and Rodney. Peckham. 'Lovely jubbly.' The most beloved British sitcom."],
+["🎪","Blackadder Goes Forth","UK","Rowan Atkinson in WWI. The most devastating final episode of any sitcom."],
+["🤠","Father Ted","UK/Ireland","Three priests on a remote Irish island. Mrs. Doyle. 'Go on, go on, go on.'"],
+["😂","The IT Crowd","UK","The basement IT department. Roy and Moss. 'Have you tried turning it off and on again?'"],
+["🎭","Peep Show","UK","The most cringe-inducing British sitcom. POV filming. Mark and Jeremy's friendship."],
+["🤣","Spaced","UK","Simon Pegg and Jessica Stevenson. Edgar Wright directed. Pop culture references as character."],
+["😄","Nathan For You","USA","Nathan Fielder consulting real businesses. Genuinely uncomfortable and brilliantly funny."],
+["🎪","I Think You Should Leave","USA","Tim Robinson. Sketch comedy. The hot dog car. The coffin flop. Quotable immediately."],
+["🤠","The Rehearsal","USA","Nathan Fielder's HBO follow-up. Staging elaborate rehearsals for real life moments. Disturbing."],
+["😂","Curb Your Enthusiasm","USA","Larry David. Social anxiety as comedy. The most reliable comedy of the 2000s-2020s."],
+["🎭","Veep","USA","Julia Louis-Dreyfus. The most quotable political comedy. The insult writing is extraordinary."],
+["🤣","The Thick of It","UK","Armando Iannucci. Malcolm Tucker. The most inventive profanity in television history."],
+["😄","W1A","UK","BBC offices. The most precise satire of corporate meaninglessness ever committed to screen."],
+["🎪","People Just Do Nothing","UK","UK mockumentary. A pirate radio station. The most believable characters in the genre."],
+["🤠","This Country","UK","Two cousins in rural Cotswolds. The most tender and specific British comedy of its era."],
+["😂","Detectorists","UK","Toby Jones and Mackenzie Crook detecting fields. The most quietly beautiful British comedy."],
+["🎭","Ghosts","UK","Resident ghosts in a stately home. Multiple eras. The kindest ensemble comedy on TV."],
+["🤣","The Inbetweeners","UK","Four teenage boys being catastrophically socially inept. Every episode a quotable disaster."],
+["😄","Inside No. 9","UK","Steve Pemberton and Reece Shearsmith. Anthology. Dark comedy short stories. Incredible range."],
+["🎪","Toast of London","UK","Matt Berry as a struggling actor. The most absurdist British sitcom. Fanny Cradock."],
+["🤠","What We Do in the Shadows NZ","New Zealand","The original Taika Waititi film's TV universe starter. All comedy flows from here."],
+["😂","Reservation Dogs","USA","Indigenous teenagers in Oklahoma. Made by Indigenous creators. Most singular comedy."],
+["🎭","Rutherford Falls","USA","Sierra Teller Ornelas. A small town and its complicated history. Quiet and funny."],
+["🤣","Mythic Quest","USA","Rob McElhenney. A video game company. Better than it should be. Consistently underrated."],
+["😄","Ted Lasso S1","USA","An American football coach and an English football club. Kindness as the whole premise."],
+["🎪","The Bear","USA","Second entry: The Cousin/Richie episode of Season 2 is the best single comedy episode of 2023."],
+["🤠","How I Met Your Mother S1-4","USA","Before it overstayed its welcome. The gang. The yellow umbrella. The slap bet."],
+["😂","Community","USA","Greendale Community College. Abed and Troy. The paintball episode. Chang as a character."],
+["🎭","Modern Family","USA","Three families. The mockumentary format applied to a nuclear family. 11 seasons."],
+["🤣","New Girl","USA","Jess moves in with three guys. Schmidt. The douchebag jar. Nick and Jess eventually."],
+["😄","Mindy Project","USA","Mindy Kaling. An OB-GYN in New York. A romantic comedy as a sitcom. Underrated."],
+["🎪","Atlanta","USA","Donald Glover. Two cousins navigating the Atlanta rap scene. Season 2 is extraordinary."],
+["🤠","Better Things","USA","Pamela Adlon. A single mother raising three daughters in LA. Genuinely funny and real."],
+["😂","Ramy","USA","Ramy Youssef. An Egyptian-American Muslim in New Jersey. The most honest portrait of faith."],
+["🎭","Hacks","USA","Jean Smart and Hannah Einbinder. A Las Vegas comedian and her new writer. Exceptional."],
+["🤣","The Ms. Pat Show","USA","Patricia Williams. The most criminally underseen sitcom of the 2020s."],
+];var o=[];for(var i=0;i<raw.length;i++){o.push({id:i+1,emoji:raw[i][0],name:raw[i][1],country:raw[i][2],desc:raw[i][3]})}return o;})();
+var SERIES_THRILLER=(function(){var raw=[
+["🔍","True Detective S1","USA","McConaughey and Harrelson. Rust Cohle's monologues. The highway tracking shot."],
+["🔒","Mr. Robot","USA","Rami Malek. Sam Esmail. The most technically accurate hacking drama. Elliot's dissociation."],
+["🌊","Homeland S1-2","USA","Claire Danes and Damian Lewis. The most tense first two seasons of any spy drama."],
+["⚡","24","USA","Jack Bauer. Real-time. Kiefer Sutherland. The format that defined early 2000s television."],
+["🔮","Twin Peaks: The Return","USA","Lynch's 18-hour cinema. Part 8 is the strangest thing on American television."],
+["💀","The Killing","Denmark","Sarah Lund. A murdered girl. Danish crime drama that spawned a genre."],
+["🎭","Broadchurch","UK","Olivia Colman and David Tennant. A murder in a small coastal town. Series 1 is perfect."],
+["🔫","The Bridge (Broen)","Denmark/Sweden","A body on the bridge between two countries. Saga Norén. Two detectives."],
+["🌙","Sherlock","UK","Benedict Cumberbatch. Martin Freeman. Modernised Conan Doyle. Series 1-2 exceptional."],
+["⚔️","The Night Manager","UK","Tom Hiddleston. Hugh Laurie. John le Carré adaptation. The best BBC thriller of its era."],
+["🔥","Bodyguard","UK","Richard Madden. A war veteran protecting the Home Secretary. Six episodes of pure tension."],
+["💡","Line of Duty","UK","AC-12 investigating bent cops. 'H'. Adrian Dunbar. Every season raises stakes."],
+["🔍","Happy Valley","UK","Sarah Lancashire. West Yorkshire Sergeant. The best British crime drama of the decade."],
+["🔒","Luther","UK","Idris Elba. DCI John Luther. Alice Morgan. An impractical but compelling detective."],
+["🌊","The Fall","UK","Gillian Anderson and Jamie Dornan. Belfast. Parallel stories of detective and serial killer."],
+["⚡","Hannibal","USA","Mads Mikkelsen as Hannibal Lecter. Bryan Fuller. The most visually beautiful crime drama."],
+["🔮","Mindhunter","USA","Second entry: Holden Ford and Bill Tench. The Ed Kemper scenes are the best in the show."],
+["💀","Bloodline","USA","Second entry: Ben Mendelsohn's Danny Rayburn is one of the great antiheroes of prestige TV."],
+["🎭","The Sinner","USA","Jessica Biel's first season. A woman stabs a man on a beach. Why? Compulsive watching."],
+["🔫","Sharp Objects","USA","Second entry: the ending understood in retrospect. Amy Adams and Patricia Clarkson."],
+["🌙","The Outsider","USA","Ben Mendelsohn. A murdered boy. Stephen King. The investigation that makes no sense."],
+["⚔️","Ripley","Italy/USA","Andrew Scott as Tom Ripley. Black and white. The most visually precise thriller of 2024."],
+["🔥","Night Agent","USA","The most-watched Netflix show of 2023. A conspiracy thriller. Functional and compelling."],
+["💡","The Recruit","USA","Noah Centineo as a CIA lawyer. Netflix. More compelling than it has any right to be."],
+["🔍","Poker Face","USA","Rian Johnson. Natasha Lyonne. Colombo-style. A woman who can detect lies."],
+["🔒","The Bear","USA","Not a thriller but the first episode of Season 1 is the most tense 30 minutes of TV."],
+["🌊","You","USA","Penn Badgley as a stalker who explains his actions in a warm internal monologue. Critique of romanticisation."],
+["⚡","Ozark","USA","Second entry: Ruth Langmore's trajectory across four seasons is the best character in the show."],
+["🔮","Yellowjackets","USA","What happened in the wilderness. The adult storyline. The teen storyline. The ritual."],
+["💀","Harlan Coben's Stranger","UK","A single lie unravelling. Netflix UK adaptation. Efficient thriller storytelling."],
+["🎭","The Stranger","UK","A mysterious woman reveals secrets to strangers. Richard Armitage. Eight episodes."],
+["🔫","Safe","UK","Michael C. Hall as a surgeon whose daughter goes missing. Harlan Coben again."],
+["🌙","Stay Close","UK","Three strangers connected by a disappearance 17 years ago. Harlan Coben third."],
+["⚔️","Marcella","UK","Anna Friel as a detective with blackout episodes. She may have done it."],
+["🔥","The Missing","UK","James Nesbitt and Tcheky Karyo. A missing boy. Two timelines. BBC excellence."],
+["💡","Giri/Haji","UK","Japanese detective in London looking for his brother. BBC. Extraordinary."],
+["🔍","Fleabag","UK","Not a thriller but the second series functions as one emotionally."],
+["🔒","Alias","USA","Jennifer Garner as a CIA double agent. JJ Abrams. The most entertaining spy drama of the 2000s."],
+["🌊","Prison Break S1","USA","Michael Scofield tattooed the blueprints on himself. The first season is extraordinary."],
+["⚡","The Following","USA","Kevin Bacon vs James Purefoy. A serial killer and his cult. Seasons 1."],
+["🔮","Scream Queens","USA","Ryan Murphy. Horror comedy anthology. Emma Roberts. Jamie Lee Curtis. Camp and clever."],
+["💀","American Horror Story S1","USA","Ryan Murphy again. The first season, Murder House, is genuinely unsettling."],
+["🎭","Dirty John","USA","The Bravo anthology. True crime. Betty Broderick in Season 2 is extraordinary."],
+["🔫","The Undoing","USA","Nicole Kidman. Hugh Grant. A murder. Six episodes. The coat."],
+["🌙","The White Lotus S1","USA","Mike White. A Hawaiian resort. Class and entitlement. The most satisfying ending."],
+["⚔️","The White Lotus S2","USA","Sicily. Aubrey Plaza. F. Murray Abraham. 'Di Di Di.' Even better than Season 1."],
+["🔥","Nine Perfect Strangers","Australia","Nicole Kidman. Melissa McCarthy. A wellness retreat. Liane Moriarty adaptation."],
+["💡","The Undeclared War","UK","GCHQ cyber warfare. Peter Capaldi. The most current geopolitical thriller on TV."],
+["🔍","Black Mirror S3E1","UK","'Nosedive.' Social credit. Bryce Dallas Howard. The most accessible Black Mirror episode."],
+["🔒","Severance","USA","Second entry: the Wellness Check episode. The Lumen orientation video. The Board."],
+["🌊","Presumed Innocent","USA","Jake Gyllenhaal. Apple TV+. A prosecutor accused of murder. The best courtroom drama of 2024."],
+];var o=[];for(var i=0;i<raw.length;i++){o.push({id:i+1,emoji:raw[i][0],name:raw[i][1],country:raw[i][2],desc:raw[i][3]})}return o;})();
+var BRANDS_TECH=(function(){var raw=[
+["🍎","Apple","USA","iPhone, Mac, iPad — premium ecosystem. The most valuable consumer tech brand."],
+["🔷","Microsoft","USA","Windows, Azure, Xbox, GitHub. The enterprise backbone of the modern stack."],
+["🔴","Google","USA","Search, Maps, Android, YouTube, Chrome. The world's default information layer."],
+["📦","Amazon","USA","AWS powers the internet. Prime delivers everything else. Both indispensable."],
+["🌐","Meta","USA","Facebook, Instagram, WhatsApp. Three of the top five most-used apps globally."],
+["🎮","NVIDIA","USA","H100 GPUs. CUDA. The company the entire AI revolution runs on."],
+["🔵","Samsung","South Korea","Galaxy phones, OLED panels, memory chips. Inside most electronics globally."],
+["💻","Intel","USA","Inside most laptops for three decades. The semiconductor that defined the PC era."],
+["🎵","Spotify","Sweden","100M songs. Podcast network. Algorithmic playlists. Changed music discovery."],
+["🚗","Tesla","USA","EV software company. Supercharger network. The car as a platform."],
+["🐙","GitHub","USA","Where code lives. Acquired by Microsoft. Developer community's home."],
+["🧰","Figma","USA","Made UI design collaborative. Adobe tried to buy it. Failed. Figma remains dominant."],
+["🤖","OpenAI","USA","ChatGPT. GPT-4. Changed the technology conversation for a generation."],
+["🧠","Anthropic","USA","Claude. Constitutional AI. The safety-focused lab thinking about consequences."],
+["⚡","Stripe","USA","Payment infrastructure for the internet economy. Collison brothers."],
+["🔷","Adobe","USA","Photoshop, Premiere, Illustrator. Creative suite monopoly. Subscription model divisive."],
+["🚀","SpaceX","USA","Reusable rockets. Starlink. Crew Dragon. Private spaceflight delivered."],
+["☁️","Salesforce","USA","CRM. The company that proved software could live in the cloud in 1999."],
+["🔐","Cloudflare","USA","DDoS protection. CDN. The security layer most websites trust."],
+["🎯","Canva","Australia","Democratised graphic design. $26B valuation. Designers have feelings about this."],
+["💡","Zoom","USA","Made video calling a verb. Pre-pandemic growth accelerated to a cultural event."],
+["🌿","Notion","USA","The note-taking app that ate your workflow. And your company wiki."],
+["📱","Qualcomm","USA","Snapdragon chips. Inside most Android flagships. The company nobody thinks about."],
+["🎸","Discord","USA","Built for gamers. Colonised by everyone. Server-based communities that work."],
+["🔵","PayPal","USA","Changed online payment. Peter Thiel, Elon Musk, Reid Hoffman all worked here once."],
+["📺","YouTube","USA","Second largest search engine. Google's best acquisition. Music, tutorials, everything."],
+["🌐","LinkedIn","USA","Professional network. Microsoft acquisition. Thought leadership economy."],
+["🛒","Shopify","Canada","Enabled a million small businesses online. The anti-Amazon e-commerce answer."],
+["🔮","Palantir","USA","Government data analytics. Gotham. Foundry. Influential and divisive."],
+["⚡","Vercel","USA","Where Next.js deploys. Made frontend deployment trivially easy."],
+["🧪","ASML","Netherlands","Makes the machines that make the chips. Most critical global tech chokepoint."],
+["🌊","Hugging Face","USA","The GitHub of AI models. Open source machine learning community."],
+["🎯","HubSpot","USA","Inbound marketing platform. CRM for mid-market companies."],
+["🔩","Cisco","USA","The internet runs on Cisco infrastructure. Networking's invisible giant."],
+["💰","Snowflake","USA","Cloud data warehouse. Highest-valued software IPO when it listed."],
+["🎩","Databricks","USA","Lakehouse architecture. Open source data platform. $43B valuation."],
+["⚡","Twilio","USA","The API behind every verification SMS you've ever received."],
+["🌿","Atlassian","Australia","Jira, Confluence, Trello. Made software project management an ecosystem."],
+["🔷","SAP","Germany","Enterprise resource planning. Most large companies run on SAP."],
+["🌙","Oracle","USA","Databases. Cloud. Larry Ellison. The enterprise software company that outlasted everything."],
+];var o=[];for(var i=0;i<raw.length;i++){o.push({id:i+1,emoji:raw[i][0],name:raw[i][1],country:raw[i][2],desc:raw[i][3]})}return o;})();
+var BRANDS_FOOD=(function(){var raw=[
+["🍔","McDonald's","USA","Big Mac. Golden Arches. The most recognised brand on Earth. Billions served."],
+["🍕","Pizza Hut","USA","Pan pizza. Stuffed crust. The first American pizza chain to go global."],
+["🐔","KFC","USA","The Colonel. 11 herbs and spices. Fried chicken as a global cultural product."],
+["🌮","Taco Bell","USA","Mexican-inspired fast food. The Crunchwrap. Live Más. Breakfast menu."],
+["🍟","Burger King","USA","The Whopper. Flame-grilled. The perennial second place that refuses to quit."],
+["☕","Starbucks","USA","The Frappuccino. Pumpkin Spice. The company that made coffee a personality."],
+["🍩","Dunkin'","USA","America runs on Dunkin'. Coffee, donuts, and the most reliable drive-through."],
+["🥤","Coca-Cola","USA","The most recognised product in history. Secret formula. Red cans."],
+["🥤","Pepsi","USA","Pepsi Challenge. Super Bowl halftime. The cola that keeps trying."],
+["☕","Nespresso","Switzerland","George Clooney. Single-serve pods. Made home espresso effortless."],
+["🍫","Nutella","Italy","Hazelnut chocolate spread. Ferrero's greatest product. Breakfast argument settler."],
+["🍔","In-N-Out Burger","USA","Animal style. Double-double. West Coast institution. Menu hidden under the menu."],
+["🍕","Domino's","USA","30-minute delivery. Tracker. The most innovative logistics company disguised as pizza."],
+["🥗","Chipotle","USA","Build-your-own burrito. Responsibly sourced. The fast casual revolution."],
+["🍔","Shake Shack","USA","ShackBurger. Crinkle-cut fries. Danny Meyer's elevated burger chain."],
+["🐔","Popeyes","USA","Chicken sandwich that broke the internet in 2019. Cajun spice. Biscuits."],
+["🥤","Red Bull","Austria","Gives you wings. Extreme sports sponsorship. Energy drink category inventor."],
+["🥤","Monster Energy","USA","The claw. Gaming culture sponsor. The energy drink that knows its audience."],
+["🍺","Heineken","Netherlands","Global beer premium brand. The green bottle. Formula 1 sponsor. 'Open your world.'"],
+["🍺","Guinness","Ireland","The most distinctive beer in the world. The pour. The harp. St. James's Gate."],
+["🧃","Innocent","UK","Smoothies in little bottles with hats. The most charming brand voice in food."],
+["🥛","Oatly","Sweden","Oat milk. The barista edition. Disrupted dairy in five years. Controversial IPO."],
+["🍫","Cadbury","UK","Dairy Milk. Roses. Creme Egg. The British chocolate brand with the most emotional attachment."],
+["🍫","Lindt","Switzerland","The gold bunny. Swiss precision applied to chocolate. Lindor truffles."],
+["🍪","Oreo","USA","The most popular cookie on Earth. Double Stuf. Twist-lick-dunk. Global ubiquity."],
+["🥜","Peanut Butter — Jif","USA","'Choosy Moms Choose Jif.' American peanut butter cultural bedrock."],
+["🥐","Kellogg's","USA","Cornflakes, Frosties, Special K, Pop-Tarts. Morning eating habits shaped by one company."],
+["🫙","Heinz","USA","57 varieties. The ketchup. The glass bottle ritual. The most British American brand."],
+["🍜","Nissin","Japan","Cup Noodles. The original instant ramen. Chicken flavour. Dorm room staple."],
+["🍕","Deliveroo","UK","Food delivery that changed urban eating habits. Restaurant discovery as a product."],
+["🛵","Uber Eats","USA","Everything delivered. Every restaurant on your phone. The gig economy for food."],
+["🥗","Sweetgreen","USA","Salad chain with a sustainability mission. The farm-to-table fast casual."],
+["🍦","Häagen-Dazs","USA","Premium ice cream. Belgian chocolate. The name is Danish-sounding nonsense invented in New Jersey."],
+["🍦","Ben & Jerry's","USA","Chunky Monkey. Cherry Garcia. Ice cream with a political opinion. Vermont ethos."],
+["☕","Tim Hortons","Canada","Canadian national identity in a coffee cup. Timbits. Double-double."],
+["🥐","Pret a Manger","UK","Freshly made sandwiches. The coffee subscription. London office workers' daily."],
+["🍔","Five Guys","USA","Peanuts on the floor. Customised burgers. The most straightforward premium burger chain."],
+["🌮","Guzman y Gomez","Australia","Mexican food chain expanding globally. Fastest growing QSR brand."],
+["🥤","Liquid Death","USA","Water in a can marketed like a metal band. The most distinctive water brand."],
+["🍵","Clipper Tea","UK","Organic, fair trade. The tea brand that made ethics as important as flavour."],
+];var o=[];for(var i=0;i<raw.length;i++){o.push({id:i+1,emoji:raw[i][0],name:raw[i][1],country:raw[i][2],desc:raw[i][3]})}return o;})();
+var BRANDS_FASHION=(function(){var raw=[
+["👟","Nike","USA","Just Do It. Air Max. Jordan Brand. The most valuable sports brand."],
+["👟","Adidas","Germany","Three stripes. Stan Smith. Yeezy. The most European sports brand."],
+["👟","New Balance","USA","Dad shoe to fashion icon. 990 series. Made in USA still matters to someone."],
+["👗","Zara","Spain","Fast fashion at its most efficient. Inditex. Two weeks from catwalk to store."],
+["🧥","H&M","Sweden","Affordable fashion at global scale. The designer collaboration strategy."],
+["👠","Louis Vuitton","France","Monogram canvas. LVMH. The most valuable luxury brand in the world."],
+["👜","Gucci","Italy","Alessandro Michele's maximalism. The most Instagrammed luxury brand."],
+["👔","Chanel","France","Coco Chanel. The little black dress. No 5. The most iconic luxury brand."],
+["🧣","Hermès","France","Birkin bag. 6-year waitlist. The most exclusive brand by deliberate scarcity."],
+["💍","Tiffany & Co","USA","The blue box. Audrey Hepburn. Breakfast as lifestyle aspiration."],
+["👟","Converse","USA","Chuck Taylor. The All-Star. Worn by every artist, musician, and teenager since 1917."],
+["🧢","Supreme","USA","Red box logo. Thursday drop culture. Streetwear as luxury. Collaborations as events."],
+["🧥","Stone Island","Italy","The badge. Technical fabrics. Football culture adopted it. Fashion elevated it."],
+["👟","Vans","USA","Off The Wall. Checkerboard slip-on. Skateboarding culture made fashion."],
+["🧢","Palace","UK","British streetwear. Tre-ferg logo. Skating meets British humour meets fashion."],
+["👗","Uniqlo","Japan","LifeWear. Cashmere at $80. The most under-discussed quality basics brand."],
+["🕶️","Ray-Ban","USA","Aviators. Wayfarers. The sunglasses that define every era of American cool."],
+["👟","Balenciaga","Spain","Triple S. Speed Trainer. Demna's disruptions. Fashion's most deliberately ugly beautiful brand."],
+["🧥","The North Face","USA","Mountain equipment adopted by city dwellers. Nuptse jacket everywhere."],
+["🎒","Patagonia","USA","Environmentalism as brand identity. 'Don't Buy This Jacket.' The most consistent ethical brand."],
+["🧣","Burberry","UK","The check. The trench coat. British luxury that keeps redefining itself."],
+["👗","Prada","Italy","Nylon bags. Milano. The most cerebral luxury fashion house."],
+["👠","Valentino","Italy","Red. Roman. The most romantic luxury fashion house."],
+["🧥","Moncler","Italy","Down jacket. The badge. Luxury outdoor as urban fashion."],
+["👜","Bottega Veneta","Italy","The intrecciato weave. Invisibly luxurious. The anti-logo logo brand."],
+["👟","Jordan Brand","USA","Air Jordan 1. The most valuable sneaker brand. Michael Jordan's legacy as footwear."],
+["🕶️","Oakley","USA","Sports eyewear. The Frogskins. Performance tech adopted by fashion."],
+["🧢","Carhartt WIP","USA","Workwear adopted by skaters, adopted by fashion. The double-knee pant."],
+["🧥","Arc'teryx","Canada","Gore-Tex shells for climbing. Adopted by urban commuters willing to pay for performance."],
+["👟","Salomon","France","Trail running shoes. Hiking boots. The most technical outdoor footwear brand."],
+];var o=[];for(var i=0;i<raw.length;i++){o.push({id:i+1,emoji:raw[i][0],name:raw[i][1],country:raw[i][2],desc:raw[i][3]})}return o;})();
+var CARS_SPORTS=(function(){var raw=[
+["🏎️","Ferrari 488 GTB","Italy","Mid-engine V8. The GT that made supercar ownership approachable. 660 bhp. Perfection."],
+["🏎️","Lamborghini Huracán","Italy","Naturally aspirated V10. The last of a kind. Sounds like nothing else on Earth."],
+["🏎️","Porsche 911 GT3","Germany","Air-cooled DNA still felt. Manual transmission. The driver's car. Track legal."],
+["🏎️","McLaren 720S","UK","Carbon fibre tub. Dihedral doors. The most technically pure British supercar."],
+["🏎️","Aston Martin Vantage","UK","Front-engine GT. British styling. The most beautiful sports car of its era."],
+["🏎️","BMW M3 Competition","Germany","Inline-6. Rear-wheel drive. The four-door sports car that defines the segment."],
+["🏎️","Mercedes-AMG GT","Germany","V8 biturbo. Long bonnet. Gullwing doors on the GT Black Series."],
+["🏎️","Chevrolet Corvette C8","USA","Mid-engine for the first time. Z51 package. America finally made the sports car it always wanted."],
+["🏎️","Ford Mustang Shelby GT500","USA","Supercharged 5.2L V8. 760 bhp. The most powerful production Mustang ever made."],
+["🏎️","Nissan GT-R R35","Japan","Godzilla. Twin-turbo V6. 4WD. 0-60 in 2.7 seconds. Punches above every weight class."],
+["🏎️","Toyota GR86","Japan","Naturally aspirated. Rear-wheel drive. The most honest driver's car under £35k."],
+["🏎️","Mazda MX-5 ND","Japan","The roadster perfected. Fourth generation. Lightweight. Rotary-free but still pure."],
+["🏎️","Honda Civic Type R FL5","Japan","Front-wheel drive record holder. Red interior. The most extreme hot hatch."],
+["🏎️","Volkswagen Golf R","Germany","AWD. 333 bhp. The discreet performance car. Sleeper aesthetics."],
+["🏎️","Subaru WRX STI","Japan","Flat-four rumble. Rally heritage. Prodrive wings. The enthusiast's all-weather car."],
+["🏎️","Mitsubishi Lancer Evolution X","Japan","Final generation. SST gearbox. Rally-derived AWD. The last true Evo."],
+["🏎️","Alpine A110","France","Mid-engine. Turbocharged. French delicacy. The lightest sports car you can buy new."],
+["🏎️","Lotus Emira","UK","Last combustion Lotus. V6 AMG engine. The purist's car from Hethel."],
+["🏎️","Alfa Romeo Giulia Quadrifoglio","Italy","2.9L twin-turbo V6. Ferrari-derived engine. The Italian option to the BMW M3."],
+["🏎️","Jaguar F-Type R","UK","Supercharged V8. Exhaust note on cold starts is peerless. British sports car."],
+["🏎️","Dodge Challenger Hellcat","USA","Supercharged 6.2L V8. 717 bhp. Maximum American muscle in the modern era."],
+["🏎️","Dodge Charger SRT Hellcat","USA","Four-door muscle car. Supercharged. Family car that does 0-60 in 3.6 seconds."],
+["🏎️","Cadillac CT5-V Blackwing","USA","Supercharged V8. Manual available. The comeback of Cadillac performance."],
+["🏎️","Mercedes C63 AMG Black Series","Germany","Naturally aspirated V8. The last true AMG engine. Black Series means maximum."],
+["🏎️","Porsche Cayman GT4 RS","Germany","4.0L naturally aspirated. PDK or nothing. The Cayman that beats the 911 to drive."],
+["🏎️","Ferrari F8 Tributo","Italy","Twin-turbo V8. The mid-cycle Ferrari. Before the SF90 hybrid era began."],
+["🏎️","Lamborghini Urus Performante","Italy","SUV with supercar heart. Fastest SUV lap at Nürburgring. Statement of intent."],
+["🏎️","McLaren Artura","UK","Hybrid V6. First McLaren hybrid road car. Lighter than the P1 yet feels similar."],
+["🏎️","Audi R8 V10 Performance","Germany","Naturally aspirated V10. Everyday supercar. The last great Audi performance halo."],
+["🏎️","Bentley Continental GT Speed","UK","W12. 659 bhp. The Grand Tourer that crosses continents without breaking a sweat."],
+["🏎️","Rolls-Royce Wraith","UK","6.6L twin-turbo V12. The most powerful Rolls-Royce. Fastback coachwork."],
+["🏎️","Ferrari SF90 Stradale","Italy","Hybrid V8 + 3 electric motors. 986 bhp. The most complex Ferrari road car."],
+["🏎️","Lamborghini Revuelto","Italy","Hybrid V12 replacement for the Aventador. 1,001 bhp. The last V12 analogue era begins ending."],
+["🏎️","Bugatti Chiron","France","Quad-turbo W16. 1,479 bhp. 261 mph top speed. The most extreme road car you can buy."],
+["🏎️","Koenigsegg Agera RS","Sweden","Top speed record holder. 284.5 mph. Swedish precision taken to absurdity."],
+["🏎️","Pagani Huayra R","Italy","Naturally aspirated AMG V12. Only 30 made. Italian artisanal hypercar."],
+["🏎️","Porsche Taycan Turbo GT","Germany","Electric sports car. Nürburgring record. The EV that proved Porsche's DNA survives the transition."],
+["🏎️","BMW M4 CSL","Germany","Lightweight version of the M4. Fixed carbon rear wing. Carbon fibre seats."],
+["🏎️","Renault Megane RS Trophy-R","France","Front-wheel drive Nürburgring record holder. A touring car for the road."],
+["🏎️","Seat León Cupra R","Spain","VW Group hot hatch. 300 bhp front-wheel drive. The bargain Nürburgring record holder."],
+];var o=[];for(var i=0;i<raw.length;i++){o.push({id:i+1,emoji:raw[i][0],name:raw[i][1],country:raw[i][2],desc:raw[i][3]})}return o;})();
+var CARS_CLASSIC=(function(){var raw=[
+["🏎️","1967 Ford Mustang Fastback","USA","Eleanor. Bullitt. The most photographed American car. V8. Manual. Iconic."],
+["🏎️","1969 Dodge Charger R/T","USA","The Dukes of Hazzard. Bullitt's opponent. 426 Hemi. American muscle peak."],
+["🏎️","1963 Ferrari 250 GTO","Italy","The most valuable car at auction. $48.4M. Le Mans winner. Perfection."],
+["🏎️","1970 Plymouth Barracuda","USA","Hemi 'Cuda. The rarest muscle car. Under 14 with the 426 Hemi were made."],
+["🏎️","1966 Lamborghini Miura","Italy","The first mid-engine supercar. Front-mounted radiator. Bob Wallace."],
+["🏎️","1961 Jaguar E-Type","UK","'The most beautiful car ever made' — Enzo Ferrari. Open two-seater."],
+["🏎️","1955 Mercedes 300SL Gullwing","Germany","Gullwing doors. Fuel injection. The most advanced road car of 1955."],
+["🏎️","1970 Chevrolet Chevelle SS 454","USA","Big block. 450 bhp. Muscle car era at its absolute peak."],
+["🏎️","1971 Ferrari 365 GTB/4 Daytona","Italy","The last front-engine Ferrari sports car before the 308."],
+["🏎️","1986 Porsche 959","Germany","Twin-turbo flat-six. 4WD. The most advanced road car of its era."],
+["🏎️","1992 McLaren F1","UK","Naturally aspirated BMW V12. Central seat. 240 mph. Greatest car of the 1990s."],
+["🏎️","1962 Aston Martin DB4 GT","UK","James Bond's era. Hand-built. Tadek Marek straight-six."],
+["🏎️","1969 Boss 302 Mustang","USA","Trans-Am racing homologation. High-revving V8. The driver's Mustang."],
+["🏎️","1970 Dodge Challenger R/T","USA","440 six-pack or 426 Hemi. Vanishing Point. White, naturally."],
+["🏎️","1985 Ferrari Testarossa","Italy","The Miami Vice Ferrari. Straked side intakes. Pininfarina's 80s masterpiece."],
+["🏎️","1987 Ferrari F40","Italy","Last car Enzo Ferrari personally approved. No ABS. No traction control. Raw."],
+["🏎️","1994 Ferrari F355","Italy","The last naturally aspirated Ferrari before turbocharging returned."],
+["🏎️","1995 McLaren F1 GTR","UK","Le Mans winner at first attempt. Three-seater race car. The greatest victory."],
+["🏎️","1998 Lamborghini Diablo SV","Italy","The version without the roadster's drama. 510 bhp. Manual gearbox."],
+["🏎️","2002 Honda NSX Type-R","Japan","Ayrton Senna's development work. All-aluminium. The Japanese Ferrari."],
+["🏎️","2005 Ford GT","USA","Le Mans tribute. 550 bhp. The car that Ford made for its 40th anniversary revenge."],
+["🏎️","2006 Pagani Zonda F","Italy","AMG V12. Carbon titanium. The most beautiful Italian supercar since the Miura."],
+["🏎️","1967 Chevrolet Camaro Z28","USA","Trans-Am homologation. High-revving small block. The Mustang rival."],
+["🏎️","1970 AMC AMX","USA","Go package. 390 V8. The most undervalued American muscle car."],
+["🏎️","1971 De Tomaso Pantera","Italy","American V8 in an Italian body. 5.8L Cleveland. GTS had 350 bhp."],
+["🏎️","1982 DeLorean DMC-12","USA","Stainless steel. Gull-wings. Back to the Future. 130 mph and it felt enormous."],
+["🏎️","1988 BMW M3 E30","Germany","2.3L four-cylinder. DTM homologation. The original M3 philosophy."],
+["🏎️","1992 Dodge Viper RT/10","USA","8.0L V10. 400 bhp. No roof, no side windows, no ABS. Maximum America."],
+["🏎️","2004 Porsche Carrera GT","Germany","Naturally aspirated V10. Ceramic clutch. Manual. Paul Walker's car."],
+["🏎️","2007 Ferrari 599 GTB Fiorino","Italy","V12 front-engine GT. Manual gearbox option. 612 bhp. Grand touring."],
+["🏎️","1996 Lotus Esprit V8","UK","Twin-turbo V8. 350 bhp. The definitive Lotus. Lightweight. Challenging."],
+["🏎️","1998 Porsche 911 GT1","Germany","Le Mans homologation. Mid-engine. Only 25 road cars built."],
+["🏎️","2000 Ferrari 360 Modena","Italy","All-aluminium space frame. 400 bhp. F1 paddle shift option. Perfect."],
+["🏎️","1993 Jaguar XJ220","UK","Originally V12. Became twin-turbo V6. Still fastest Jaguar ever at 217 mph."],
+["🏎️","1989 Vector W8","USA","Twin-turbo V8. 625 bhp. 220 mph claimed. The most extreme American hypercar."],
+["🏎️","2003 Lamborghini Gallardo","Italy","First V10 Lamborghini. Audi group build quality. Baby Lamborghini's big impact."],
+["🏎️","2007 Bugatti Veyron","France","W16. Quad-turbo. 987 bhp. First production car over 250 mph. Engineering miracle."],
+["🏎️","2013 LaFerrari","Italy","Ferrari's first hybrid. 950 bhp total. KERS from F1. Only 499 built."],
+["🏎️","2013 McLaren P1","UK","Porsche 918. Ferrari LaFerrari. The Holy Trinity. Hybrid V8. 903 bhp."],
+["🏎️","2013 Porsche 918 Spyder","Germany","V8 hybrid. Nürburgring in 6:57. The car that proved EVs could be emotional."],
+];var o=[];for(var i=0;i<raw.length;i++){o.push({id:i+1,emoji:raw[i][0],name:raw[i][1],country:raw[i][2],desc:raw[i][3]})}return o;})();
+var CARS_LUXURY=(function(){var raw=[
+["🚗","Mercedes S-Class","Germany","The benchmark luxury sedan for 70 years. Every automotive innovation starts here."],
+["🚗","BMW 7 Series","Germany","Driver-focused luxury saloon. The M760i has V12. The electric i7."],
+["🚗","Audi A8","Germany","Quattro AWD. Air suspension. Aluminium body. Understated German luxury."],
+["🚗","Rolls-Royce Phantom","UK","The most complete luxury car. Starlight headliner. The suicide doors."],
+["🚗","Bentley Flying Spur","UK","W12 engine. Four-door Grand Tourer. The Bentley for those who are driven and drive."],
+["🚗","Maybach S680","Germany","Extended wheelbase. 4-seat configuration. The car for being driven."],
+["🚗","Rolls-Royce Ghost","UK","More driver-focused than the Phantom. Still a Rolls. Post Opulence design."],
+["🚗","Genesis G90","South Korea","Koreans making a statement in the luxury space. The most underrated luxury sedan."],
+["🚗","Lexus LS 500h","Japan","Hybrid V6. Japanese luxury precision. The Toyota standard applied to the S-Class segment."],
+["🚗","Maserati Quattroporte","Italy","V6 or V8. Italian emotional luxury. For when German efficiency feels too cold."],
+["🚗","Bentley Mulsanne","UK","Discontinued. The last bespoke Bentley with V8. Replaced by the Flying Spur."],
+["🚗","Lincoln Continental","USA","American luxury icon. 1960s presidential. Modern revival less successful."],
+["🚗","Cadillac Escalade","USA","The American luxury SUV. 6.2L V8 or diesel. 22-inch standard."],
+["🚗","Land Rover Range Rover","UK","Luxury meets off-road capability. The Chelsea tractor that actually works off-road."],
+["🚗","Porsche Panamera Turbo S","Germany","Executive car performance. 630 bhp. The four-door Porsche nobody needed and everyone wants."],
+["🚗","Ferrari Purosangue","Italy","Ferrari's first SUV. V12. Front-engine. The ultimate expression of the SUV."],
+["🚗","Lamborghini Urus","Italy","Super SUV. 4.0L twin-turbo V8. 650 bhp. The Lamborghini for school runs."],
+["🚗","Aston Martin DBX707","UK","AMG engine. 707 bhp SUV. The most powerful luxury SUV from a sports brand."],
+["🚗","Bentley Bentayga","UK","W12 SUV. The most refined luxury SUV. Bentley DNA in an elevated body."],
+["🚗","Rolls-Royce Cullinan","UK","The Rolls SUV. The most expensive SUV you can buy. A Rolls that does gravel."],
+["🚗","BMW X7 M60i","Germany","Three-row luxury SUV. M performance V8. The BMW flagship SUV."],
+["🚗","Mercedes GLS","Germany","The S-Class of SUVs. AMG 63 model with V8. Three rows, air suspension."],
+["🚗","Volvo XC90","Sweden","Scandinavian luxury SUV. Safety obsession. Air suspension. Serenely quiet."],
+["🚗","Tesla Model S Plaid","USA","1,020 bhp electric. 0-60 in 1.99 seconds. The Ludicrous mode that changed EVs."],
+["🚗","Rivian R1S","USA","Electric adventure SUV. Camp kitchen. The most capable new electric SUV."],
+["🚗","Lucid Air Grand Touring","USA","520 miles range. 800V architecture. The most technologically advanced luxury EV."],
+["🚗","Mercedes EQS","Germany","Electric S-Class. 107.8 kWh battery. 350-mile range. Hyperscreen dashboard."],
+["🚗","BMW iX M60","Germany","Electric luxury SUV. 619 bhp. The M division's first electric vehicle."],
+["🚗","Porsche Taycan 4S","Germany","Electric sports car with four doors. Nürburgring record holder. Porsche survived EV."],
+["🚗","Audi e-tron GT RS","Germany","Taycan platform. Quattro AWD electric. 637 bhp. The most understated EV supercar."],
+];var o=[];for(var i=0;i<raw.length;i++){o.push({id:i+1,emoji:raw[i][0],name:raw[i][1],country:raw[i][2],desc:raw[i][3]})}return o;})();
+var CARS_EVERYDAY=(function(){var raw=[
+["🚗","Toyota Corolla 2022","Japan","The best-selling car in history. 50+ million sold. Reliable, economical, everywhere."],
+["🚗","Honda Civic 2023","Japan","The standard by which compact cars are measured. Sportline. Si. Type R."],
+["🚗","Toyota Camry 2023","Japan","Mid-size sedan. Most reliable car in the US market. Hybrid available."],
+["🚗","Volkswagen Golf 8","Germany","The benchmark European hatchback. GTI. R. The car that set the standard."],
+["🚗","Ford Focus ST 2019","UK","Ecoboost 2.3L. Hot hatch with real driver engagement. Before the model ended."],
+["🚗","Mazda3 2023","Japan","The most beautiful everyday car. Skyactiv X engine. Near-luxury interior."],
+["🚗","Hyundai Ioniq 6","South Korea","Electric sedan. 74 kWh battery. 379 miles range. Korean design maturity."],
+["🚗","Kia EV6 GT","South Korea","800V charging. 577 bhp. 0-60 in 3.4 seconds. Family car as performance car."],
+["🚗","Tesla Model 3 Performance","USA","Long range EV. Over-the-air updates. The car that normalised EVs for mainstream."],
+["🚗","Toyota RAV4 Hybrid","Japan","The family SUV benchmark. Hybrid system that actually makes sense. Reliable."],
+["🚗","Ford Bronco","USA","Off-road revival. Removable roof and doors. The Defender rival from America."],
+["🚗","Jeep Wrangler 4xe","USA","Plug-in hybrid. Still Body-on-frame. Still Rubicon capable. Iconic American 4x4."],
+["🚗","Subaru Outback","Japan","AWD standard. Boxer engine rumble. The overlanding family estate."],
+["🚗","Volvo V60 T8","Sweden","Estate car. PHEV. The most practical premium car for families."],
+["🚗","MINI Cooper S","UK","The original fun small car. Goes-kart handling. BMW underpinnings."],
+["🚗","Fiat 500e","Italy","Electric. Sustainable style. Italian design that survived the EV transition better than most."],
+["🚗","Peugeot 308 SW","France","French family estate. 1.6T. The best value European estate car."],
+["🚗","Renault Clio","France","European compact benchmark. Five-door. Efficient. The second-best-selling European car."],
+["🚗","Skoda Octavia RS","Czech Republic","VW Group value. 2.0T. Estate option. The enthusiast's family car."],
+["🚗","Seat Ibiza FR","Spain","Small car. 1.5 TSI. The budget hot hatch entry point. Spanish engineering."],
+["🚗","Dacia Sandero Stepway","Romania","The best-selling new car in Europe by price. £13,000. Practical. Honest."],
+["🚗","BYD Seal","China","Chinese EV. 350-mile range. The most impressive Chinese car in the European market."],
+["🚗","Toyota yaris Cross","Japan","Small hybrid SUV. Urban mobility. The most economical SUV available."],
+["🚗","Nissan Leaf","Japan","The car that started mass EV adoption. 2011. Still relevant, 40 kWh."],
+["🚗","Chevrolet Bolt EUV","USA","GM's affordable EV. Updated design. Standard range adequate for daily use."],
+["🚗","Volkswagen ID.4","Germany","Electric SUV for the masses. The EV for Golf drivers wanting space."],
+["🚗","Hyundai Tucson PHEV","South Korea","Plug-in hybrid. Striking design. 40-mile EV range for daily commutes."],
+["🚗","Ford Puma ST","UK","Hot crossover. 1.5 Ecoboost. Frunk storage. The best Ford hot hatch in years."],
+["🚗","Honda Jazz e:HEV","Japan","Hybrid. Magic seats. The most practical small car. 60+ mpg real world."],
+["🚗","Toyota Prius 5th Gen","Japan","The car that started the hybrid conversation. Still relevant. Designed to be attractive now."],
+];var o=[];for(var i=0;i<raw.length;i++){o.push({id:i+1,emoji:raw[i][0],name:raw[i][1],country:raw[i][2],desc:raw[i][3]})}return o;})();
+var GAMES_OPENWORLD=(function(){var raw=[
+["🌍","GTA V","Rockstar 2013","Los Santos. Three protagonists. The heist. Still in the top 10 selling games."],
+["🌾","Red Dead Redemption 2","Rockstar 2018","Arthur Morgan. The most beautiful open world ever built. Every 1899 detail present."],
+["⚔️","The Witcher 3","CD Projekt 2015","Geralt. 100-hour story with moral weight. The open-world RPG benchmark."],
+["🌌","Elden Ring","FromSoftware 2022","Open world Souls. George R.R. Martin lore. Most GOTYs won in one year."],
+["🏝️","Breath of the Wild","Nintendo 2017","Physics as gameplay. Every problem has ten solutions. Reinvented open world."],
+["🌃","Cyberpunk 2077","CD Projekt 2020/23","Rough launch. Extraordinary redemption. Night City is gaming's best urban world."],
+["🗡️","Assassin's Creed Origins","Ubisoft 2017","Ancient Egypt. The series rebuilt from scratch. Bayek is the best AC protagonist."],
+["🌿","Horizon Zero Dawn","Guerrilla 2017","Robot dinosaurs. Post-apocalyptic open world. Aloy's story. Beautiful design."],
+["🔮","Death Stranding","Kojima 2019","Walking simulator. Strand game. The most original open world concept in years."],
+["🌊","Subnautica","Unknown Worlds 2018","Underwater alien planet. Open world survival. Beautiful and deeply unsettling."],
+["🏔️","Ghost of Tsushima","Sucker Punch 2020","Feudal Japan. Wind mechanics. The most cinematic open world game."],
+["🌙","Days Gone","Bend Studio 2019","Oregon. Zombies. Motorcycle. Underrated open world with excellent horde system."],
+["🏹","Far Cry 3","Ubisoft 2012","Vaas Montenegro. Tropical island. The first Far Cry that felt like a complete game."],
+["🌍","Just Cause 4","Avalanche 2018","South American sandbox. Maximum chaos as design philosophy. Tornadoes."],
+["⭐","Star Wars Outlaws","Ubisoft 2024","First open world Star Wars game. Kay Vess. Smuggler fantasy finally realised."],
+["🔥","The Elder Scrolls V: Skyrim","Bethesda 2011","Fus Ro Dah. 300 hours minimum. Still purchased in every new format available."],
+["🌿","Fallout 4","Bethesda 2015","Post-nuclear Boston. Building settlements. The best-looking Fallout at launch."],
+["🎪","Saints Row IV","Deep Silver 2013","Superpowers in an open world city. The most fun open world of the 2010s."],
+["🌊","Sea of Thieves","Rare 2018","Pirate sandbox. Multiplayer ocean world. The game that proved live service could work."],
+["⚡","Infamous Second Son","Sucker Punch 2014","Seattle. Neon powers. The best superhero open world before Spider-Man."],
+["🏙️","Marvel's Spider-Man 2","Insomniac 2023","Both Peter and Miles. Wing suits. Symbiote. The best superhero game."],
+["💀","The Last of Us Part II","Naughty Dog 2020","Ellie's revenge. Seattle districts. The most divisive open world game."],
+["🌌","No Man's Sky 2023","Hello Games","Worst launch. Best redemption. Now the most content-rich space game available."],
+["🌿","Valheim","Iron Gate 2021","Norse survival. Early access masterpiece. 10 million copies in a month."],
+["🔮","Outer Worlds","Obsidian 2019","Space RPG. Corporate satire. The game Fallout: New Vegas fans needed."],
+["🏹","Kingdom Come: Deliverance","Warhorse 2018","Medieval Bohemia. Historical accuracy. The most real open world RPG."],
+["🌍","Horizon Forbidden West","Guerrilla 2022","Aloy continues west. Thebes. Cauldrons. The best robot dinosaur designs."],
+["⚔️","Immortals Fenyx Rising","Ubisoft 2020","Greek mythology sandbox. Zelda-adjacent. The most underrated open world game."],
+["🌊","Sunkenland","Vector3 Studio 2023","Post-apocalyptic ocean world. Building on flooded earth. Early access gem."],
+["🌙","S.T.A.L.K.E.R. 2","GSC 2024","Chernobyl exclusion zone. Ukrainian studio. Released during the war. Extraordinary context."],
+];var o=[];for(var i=0;i<raw.length;i++){o.push({id:i+1,emoji:raw[i][0],name:raw[i][1],dev:raw[i][2],desc:raw[i][3]})}return o;})();
+var GAMES_RPG=(function(){var raw=[
+["🎭","Baldur's Gate 3","Larian 2023","D&D faithfully adapted. GOTY 2023. The RPG that made every other RPG look incomplete."],
+["🌌","Mass Effect 2","BioWare 2010","Suicide mission. The best squad RPG. 'We fight or we die'"],
+["🌙","Disco Elysium","ZA/UM 2019","A detective solving his own identity. Nothing like it. Writing as the mechanic."],
+["🔮","Persona 5 Royal","Atlus 2019","Phantom Thieves. Tokyo. Jazz aesthetics. 100+ hours and every one earned."],
+["⚔️","Dragon Age: Origins","BioWare 2009","Origins system. Tactical combat. The last great BioWare RPG before the decline."],
+["💊","Planescape: Torment","Black Isle 1999","'What can change the nature of a man?' The most literary RPG ever made."],
+["🌿","Divinity: Original Sin 2","Larian 2017","Co-op RPG. Turn-based. Four origin stories. The template for BG3."],
+["🌊","Fallout: New Vegas","Obsidian 2010","The best writing in the Fallout series. Factions. Mr House. Wild Wasteland."],
+["💀","Dark Souls","FromSoftware 2011","You died. The original. Lordran still the most cohesive FromSoftware world."],
+["🏹","Dragon's Dogma 2","Capcom 2024","Pawns. Vocations. The most tactile RPG combat system since Dark Souls."],
+["⭐","Star Wars: Knights of the Old Republic","BioWare 2003","The twist. Revan. The best Star Wars story told in any medium."],
+["🎸","Final Fantasy VII Remake","Square Enix 2020","The nostalgia and the subversion. Midgar expanded to a full game. Unexpected depth."],
+["🌍","Final Fantasy XVI","Square Enix 2023","Dark fantasy. Action combat. Clive Rosfield. The most mature Final Fantasy."],
+["🔥","Elden Ring","FromSoftware 2022","Open world Souls. Rennala. Malenia. The most celebrated RPG of the 2020s."],
+["🌌","Cyberpunk 2077 Phantom Liberty","CD Projekt 2023","The expansion that completed the game. Idris Elba. The best DLC of 2023."],
+["💡","Pathfinder: Wrath of the Righteous","Owlcat 2021","The most mechanically complex CRPG ever made. Mythic paths."],
+["🌿","Tyranny","Obsidian 2016","You work for the evil overlord. Most unique RPG premise. Under-played."],
+["🔮","Pillars of Eternity II","Obsidian 2018","Pirate islands. Sea combat. The spiritual successor to Baldur's Gate."],
+["⚔️","Shadowrun Returns","Harebrained 2013","Cyberpunk meets fantasy. Kickstarter success. The turn-based RPG revival."],
+["🌊","Torchlight II","Runic Games 2012","Action RPG. Colourful. The Diablo alternative that perfected the formula."],
+["💀","Path of Exile","GGG 2013","Free-to-play Diablo competitor. Passive skill tree. The most complex ARPG."],
+["🏹","Diablo IV","Blizzard 2023","Dark aesthetic return. Lilith. The most visually complete Diablo. Server issues at launch."],
+["⭐","Vampire: The Masquerade - Bloodlines","Troika 2004","Cult classic. Unfinished and brilliant. The best World of Darkness game."],
+["🎭","Neverwinter Nights 2: Mask of the Betrayer","Obsidian 2007","The best D&D adaptation before Baldur's Gate 3."],
+["🌍","Xenoblade Chronicles 3","Monolith 2022","JRPG epic. Switch exclusive. The most ambitious world-building in Nintendo's catalogue."],
+["🔥","Monster Hunter World","Capcom 2018","The series that became accessible. Hunt. Craft. Repeat. Supremely satisfying loop."],
+["🌌","Tales of Arise","Bandai Namco 2021","The Tales series reinvented. Action combat. Emotional story. Best in series."],
+["💊","Yakuza: Like a Dragon","RGG 2020","Turn-based. Ichiban Kasuga. Parodying JRPGs while being one. Hilarious."],
+["🌿","Octopath Traveler II","Square Enix 2023","HD-2D style. Eight protagonists. The most beautiful sprite-based RPG."],
+["🔮","Chained Echoes","Matthias Linda 2022","One developer. SNES-era JRPG aesthetic. The indie game that proved the genre's future."],
+];var o=[];for(var i=0;i<raw.length;i++){o.push({id:i+1,emoji:raw[i][0],name:raw[i][1],dev:raw[i][2],desc:raw[i][3]})}return o;})();
+var GAMES_INDIE=(function(){var raw=[
+["⚡","Celeste","Maddy Thorson 2018","Climbing a mountain as mental health metaphor. Perfect level design."],
+["🎭","Hades","Supergiant 2020","Greek mythology roguelike. Best writing in the genre. Perpetual motion."],
+["💔","Hollow Knight","Team Cherry 2017","Bug world. Masterwork. Three developers. The Silk Road of indie games."],
+["🌙","Disco Elysium","ZA/UM 2019","Most original RPG. Skill checks as personality. The detective and his past."],
+["🌿","Stardew Valley","ConcernedApe 2016","One developer. 20 million copies. Perfect cozy game."],
+["🔮","Outer Wilds","Mobius Digital 2019","Space exploration time loop. The most unique indie ever made."],
+["🎸","Journey","thatgamecompany 2012","Two hours. Online multiplayer you can't communicate in. Beautiful."],
+["🌊","Subnautica","Unknown Worlds 2018","Underwater horror beauty. The best survival game atmosphere."],
+["💀","Undertale","Toby Fox 2015","You don't have to kill anyone. The morality system that makes you question every game."],
+["⭐","Return of the Obra Dinn","3909 LLC 2018","Deduce 60 deaths. The most original game mechanic in years."],
+["🏹","Ori and the Blind Forest","Moon Studios 2015","The most visually stunning 2D game. Every frame painterly."],
+["🎪","What Remains of Edith Finch","Giant Sparrow 2017","A family house. Each room a death. The fish cannery sequence."],
+["🤖","The Stanley Parable","Galactic Cafe 2013","Following instructions or not. The narrator. Meta-game masterclass."],
+["🌍","Inside","Playdead 2016","Darker than Limbo. The ending sequence. The boy and the blob."],
+["🌙","Cuphead","Studio MDHR 2017","1930s animation as game. Boss rush. The most distinctive visual identity."],
+["🔥","Hades II","Supergiant 2024","Early access. Immediately better than the first. Melinoë vs Chronos."],
+["💡","Tunic","Andrew Shouldice 2022","A fox with a sword. Discovering mechanics without explanation. Secrets everywhere."],
+["🌿","Spiritfarer","Thunder Lotus 2020","A cozy game about death. Saying goodbye to characters you love. Emotional."],
+["🔮","A Short Hike","adamgryu 2019","A small mountain. Two hours. The most efficient joy delivery in gaming."],
+["⚔️","Neon White","Angel Matrix 2022","Card-based platformer. Speed running. Bizarre dating sim dialogue."],
+["🌊","Dredge","Black Salt Games 2023","Fishing. Eldritch horror. Day and night cycle. Surprisingly terrifying."],
+["💀","Signalis","rose-engine 2022","German lo-fi survival horror. The most atmospheric indie horror."],
+["🎭","Venba","Visai Games 2023","Indian family in Canada. Cooking as memory. Short and devastating."],
+["⭐","Cocoon","Geometric Interactive 2023","Puzzle game. Worlds within worlds. The most elegant mechanic of 2023."],
+["🏹","Chants of Sennaar","Rundisc 2023","Decipher ancient languages. Tower of Babel. The most satisfying puzzle game."],
+["🎸","Viewfinder","Sad Owl Studios 2023","Take photos of the environment and place them as platforms. Mindbending."],
+["🌍","Planet of Lana","Wishfully 2023","Planet-hopping puzzle platformer. Mui and Lumi. Beautiful animation."],
+["🌙","Void Stranger","System Erasure 2023","The most cryptic puzzle game ever made. NES aesthetic hiding extreme depth."],
+["🔥","Thank Goodness You're Here!","Coal Supper 2024","British slapstick comedy game. Slap everything. Northern England."],
+["💡","Animal Well","Shared Memory 2024","Metroidvania. Dense secrets. Every pixel is deliberate. The indie game of 2024."],
+];var o=[];for(var i=0;i<raw.length;i++){o.push({id:i+1,emoji:raw[i][0],name:raw[i][1],dev:raw[i][2],desc:raw[i][3]})}return o;})();
+var GAMES_FPS=(function(){var raw=[
+["🔫","Half-Life 2","Valve 2004","The gravity gun. City 17. Gordon Freeman. Changed environmental storytelling."],
+["💀","Doom (2016)","id Software 2016","The rip and tear revival. BFG 9000. The comeback of the year. Perfect pacing."],
+["⚡","Doom Eternal","id Software 2020","Combat chess. Marauder. The most mechanically demanding FPS. Peak."],
+["🌊","Titanfall 2","Respawn 2016","The best single-player FPS campaign ever made. Effect and Cause mission."],
+["🎯","Counter-Strike 2","Valve 2023","The competitive FPS. Decades of esports. Source 2 engine upgrade."],
+["🔮","Valorant","Riot 2020","Agent abilities plus CS precision. The most-played competitive FPS."],
+["🏹","Halo: Combat Evolved","Bungie 2001","The library. Cortana. Changed console FPS permanently. The Warthog."],
+["🌿","Halo 3","Bungie 2007","'Finish the fight.' Co-op campaign. The best Halo multiplayer maps."],
+["⚔️","Destiny 2: The Witch Queen","Bungie 2022","The campaign that justified the entire live service. Savathun."],
+["🌍","Battlefield 1","DICE 2016","WWI setting. 64-player maps. The Operations mode. The most ambitious BF."],
+["🎸","Battlefield V","DICE 2018","Controversial launch. The best movement system in the series. Attrition system."],
+["💡","Rainbow Six Siege","Ubisoft 2015","Destructible environments. Operator system. The most tactical mainstream FPS."],
+["🌙","Escape from Tarkov","Battlestate 2017","The most punishing FPS. Loose a kit on death. The extraction shooter genre creator."],
+["🔥","Hunt: Showdown","Crytek 2019","Bayou Louisiana bounty hunters. PvPvE extraction. Atmosphere unmatched."],
+["💀","Deep Rock Galactic","Ghost Ship 2018","Dwarves mining asteroids vs bugs. Co-op. 'Rock and Stone!' Community perfection."],
+["⭐","Left 4 Dead 2","Valve 2009","Co-op zombie shooter. Director AI. The model for every co-op shooter that followed."],
+["🎭","Back 4 Blood","Turtle Rock 2021","The L4D spiritual sequel. Card system. Ridden mutations. Better than reputation suggests."],
+["🌊","The Division 2","Ubisoft 2019","Washington DC. Endgame content. The best looter-shooter at sustained quality."],
+["🏹","Warframe","Digital Extremes 2013","Free to play. Parkour ninjas in space. The best free-to-play game."],
+["⚡","Apex Legends","Respawn 2019","The best movement in battle royale. Character abilities. The Legends universe."],
+["🔮","Fortnite","Epic 2017","Cultural phenomenon. Zero Build mode made it accessible. Collaborations as events."],
+["🌍","Warzone","Infinity Ward 2020","Battle royale on Verdansk. The COD machine applied to BR. 100 million players."],
+["🎸","Call of Duty 4: Modern Warfare","IW 2007","The campaign that shaped a generation. The airport level. Single-player prestige."],
+["💡","Wolfenstein: The New Order","MachineGames 2014","Nazi alternative history FPS with genuine emotional weight. Surprising depth."],
+["🌙","Prey","Arkane 2017","Immersive sim FPS. Talos 1 space station. The GLOO cannon. Underrated."],
+["🔥","Bioshock","2K 2007","Rapture. Art Deco underwater city. 'Would you kindly.' Narrative FPS peak."],
+["💀","Bioshock Infinite","2K 2013","Columbia. Elizabeth. The vigors. The ending that recontextualised the series."],
+["⭐","Dishonored 2","Arkane 2016","Emily Kaldwin or Corvo. Mechanical Clockwork Mansion. The best Dishonored."],
+["🎭","Deathloop","Arkane 2021","Colt and Julianna. Time loop. Stylish aesthetics. The most original FPS concept."],
+["🌊","Returnal","Housemarque 2021","Third-person but FPS mechanics. Roguelike. The most technically accomplished PS5 game."],
+];var o=[];for(var i=0;i<raw.length;i++){o.push({id:i+1,emoji:raw[i][0],name:raw[i][1],dev:raw[i][2],desc:raw[i][3]})}return o;})();
+
+var CATS_CFG={
+  powers:{data:POWERS,locked:false,sub:'powers'},
+  football:{data:FOOTBALL,locked:true,sub:'football'},
+  nba:{data:NBA,locked:true,sub:'nba'},
+  series:{locked:true,sub:'series',pools:{
+    drama:SERIES_DRAMA,comedy:SERIES_COMEDY,thriller:SERIES_THRILLER,
+    scifi:SERIES_DRAMA,animated:SERIES_COMEDY,reality:SERIES_THRILLER
+  }},
+  films:{locked:true,sub:'films',pools:{
+    action:FILMS_ACTION,comedy:FILMS_COMEDY,scifi:FILMS_SCIFI,
+    drama:FILMS_DRAMA,horror:FILMS_HORROR,animation:FILMS_COMEDY
+  }},
+  brands:{locked:true,sub:'brands',pools:{
+    tech:BRANDS_TECH,food:BRANDS_FOOD,fashion:BRANDS_FASHION,
+    gaming:BRANDS_TECH,sports:BRANDS_FASHION,luxury:BRANDS_FASHION
+  }},
+  cars:{locked:true,sub:'cars',pools:{
+    sports:CARS_SPORTS,classic:CARS_CLASSIC,luxury:CARS_LUXURY,
+    everyday:CARS_EVERYDAY,electric:CARS_LUXURY,offroad:CARS_EVERYDAY
+  }},
+  games:{locked:true,sub:'games',pools:{
+    openworld:GAMES_OPENWORLD,rpg:GAMES_RPG,indie:GAMES_INDIE,
+    fps:GAMES_FPS,strategy:GAMES_RPG,sports:GAMES_INDIE
+  }}
+};
+
+
+function getDataPool(cat, sub) {
+  var cfg = CATS_CFG[cat];
+  if (!cfg) return [];
+  if (cfg.data) return cfg.data;
+  if (cfg.pools) {
+    // Direct match
+    if (cfg.pools[sub] && cfg.pools[sub].length > 0) return cfg.pools[sub];
+    // Fallback mapping for subcats without dedicated pools
+    var fallbacks = {
+      // series
+      scifi:'drama', animated:'comedy', reality:'thriller',
+      // films
+      animation:'comedy',
+      // brands
+      gaming:'tech', sports:'fashion',
+      // cars
+      electric:'luxury', offroad:'everyday',
+      // games
+      strategy:'rpg', sports2:'indie'
+    };
+    var fb = fallbacks[sub];
+    if (fb && cfg.pools[fb]) return cfg.pools[fb];
+    // Last resort: merge all
+    var merged = [];
+    for (var k in cfg.pools) { merged = merged.concat(cfg.pools[k]); }
+    return merged;
+  }
+  return [];
+}
+
+var S={cat:null,sub:null,queue:[],placed:[],curIdx:0,curItem:null,swapSel:[],phase:'landing',cardSelected:false};
 var USER={loggedIn:false,name:'',initials:'',supabaseId:null,demo:false};
 
 function rnd(a){return a.slice().sort(function(){return Math.random()-.5})}
@@ -1367,7 +2370,8 @@ function buildCatGrid(){
     {id:'nba',icon:'🏀',nameKey:'catNBA',descKey:'catNBADesc'},
     {id:'series',icon:'📺',nameKey:'catSeries',descKey:'catSeriesDesc'},
     {id:'films',icon:'🎬',nameKey:'catFilms',descKey:'catFilmsDesc'},
-    {id:'techbrands',icon:'📱',nameKey:'catTechbrands',descKey:'catTechbrandsDesc'},
+    {id:'brands',icon:'🏷️',nameKey:'catBrands',descKey:'catBrandsDesc'},
+    {id:'cars',icon:'🏎️',nameKey:'catCars',descKey:'catCarsDesc'},
     {id:'games',icon:'🎮',nameKey:'catGames',descKey:'catGamesDesc'}
   ];
   cats.forEach(function(c){
@@ -1390,11 +2394,13 @@ function showLockedToast(){
 
 /* ── HELPERS ── */
 function getSubs(cat){
-  var k='subcat'+cat.charAt(0).toUpperCase()+cat.slice(1);
+  // Map new cat IDs to subcat keys
+  var keyMap={brands:'subcatBrands',cars:'subcatCars'};
+  var k=keyMap[cat]||('subcat'+cat.charAt(0).toUpperCase()+cat.slice(1));
   return (LANGS[CL]&&LANGS[CL][k])||LANGS['en'][k]||[];
 }
 function getCatLabel(cat){
-  var m={powers:'⚡ '+T('catPowers'),football:'⚽ '+T('catFootball'),nba:'🏀 '+T('catNBA'),series:'📺 '+T('catSeries'),films:'🎬 '+T('catFilms'),techbrands:'📱 '+T('catTechbrands'),games:'🎮 '+T('catGames')};
+  var m={powers:'⚡ '+T('catPowers'),football:'⚽ '+T('catFootball'),nba:'🏀 '+T('catNBA'),series:'📺 '+T('catSeries'),films:'🎬 '+T('catFilms'),brands:'🏷️ '+T('catBrands'),cars:'🏎️ '+T('catCars'),games:'🎮 '+T('catGames')};
   return m[cat]||cat;
 }
 
@@ -1403,9 +2409,9 @@ function openModal(cat){
   S.cat=cat;S.sub=null;
   // Cat switcher
   var sw=document.getElementById('catSwitch');sw.innerHTML='';
-  ['powers','football','nba','series','films','techbrands','games'].forEach(function(c){
+  ['powers','football','nba','series','films','brands','cars','games'].forEach(function(c){
     var locked=CATS_CFG[c].locked;
-    var labels={powers:'⚡ '+T('catPowers'),football:'⚽ '+T('catFootball'),nba:'🏀 '+T('catNBA'),series:'📺 '+T('catSeries'),films:'🎬 '+T('catFilms'),techbrands:'📱 '+T('catTechbrands'),games:'🎮 '+T('catGames')};
+    var labels={powers:'⚡ '+T('catPowers'),football:'⚽ '+T('catFootball'),nba:'🏀 '+T('catNBA'),series:'📺 '+T('catSeries'),films:'🎬 '+T('catFilms'),brands:'🏷️ '+T('catBrands'),cars:'🏎️ '+T('catCars'),games:'🎮 '+T('catGames')};
     var b=document.createElement('button');
     b.className='cs-btn'+(c===cat?' active':'')+(locked?' locked-cs':'');
     b.textContent=labels[c];
@@ -1415,7 +2421,7 @@ function openModal(cat){
   // Subcats
   var subs=getSubs(cat);
   document.getElementById('mTitle').textContent=getCatLabel(cat);
-  var descKeys={powers:'catPowersDesc',football:'catFootballDesc',nba:'catNBADesc',series:'catSeriesDesc',films:'catFilmsDesc',techbrands:'catTechbrandsDesc',games:'catGamesDesc'};
+  var descKeys={powers:'catPowersDesc',football:'catFootballDesc',nba:'catNBADesc',series:'catSeriesDesc',films:'catFilmsDesc',brands:'catBrandsDesc',cars:'catCarsDesc',games:'catGamesDesc'};
   document.getElementById('mDesc').textContent=T(descKeys[cat])||'';
   var g=document.getElementById('subGrid');g.innerHTML='';
   subs.forEach(function(s){
@@ -1440,12 +2446,14 @@ function closeModal(){document.getElementById('modalOverlay').classList.remove('
 /* ── GAME START ── */
 function startGame(){
   closeModal();
-  var pool=CATS_CFG[S.cat].data;
+  var pool=getDataPool(S.cat, S.sub);
   S.queue=rnd(pool).slice(0,10);
   S.placed=new Array(10).fill(null);
   S.curIdx=0;S.curItem=S.queue[0];S.phase='playing';
   document.getElementById('landing').style.display='none';
   document.getElementById('footerEl').style.display='none';
+  document.querySelector('.top-bar').style.display='none';
+  var as=document.getElementById('analyticsSection');if(as)as.style.display='none';
   document.getElementById('game').style.display='flex';
   document.getElementById('results').style.display='none';
   var sub=getSubs(S.cat).find(function(x){return x.id===S.sub});
@@ -1467,31 +2475,97 @@ function buildDots(){
 function buildSlots(){
   var c=document.getElementById('slots');c.innerHTML='';
   for(var i=0;i<10;i++){
-    var s=document.createElement('div');s.className='slot empty';s.dataset.rank=i;s.id='sl'+i;
-    s.innerHTML='<div class="snum">'+(i+1)+'</div><span class="semoji"></span><div class="s-info"><div class="sname">'+T('placeHere')+'</div><div class="ssub"></div></div><span class="slock">🔒</span>';
-    (function(rank){
-      s.addEventListener('dragover',function(e){
-        e.preventDefault();
-        document.querySelectorAll('.slot').forEach(function(sl){sl.classList.remove('drag-over')});
-        if(canDrop(rank))s.classList.add('drag-over');
+    var s=document.createElement('div');
+    s.className='slot empty';s.dataset.rank=i;s.id='sl'+i;
+    s.innerHTML='<div class="snum">'+(i+1)+'</div><span class="semoji"></span>'
+      +'<div class="s-info"><div class="sname">'+T('placeHere')+'</div>'
+      +'<div class="ssub"></div></div><span class="slock">🔒</span>';
+
+    (function(rank, slotEl){
+
+      /* ── HOVER: highlight only when card is selected ── */
+      slotEl.addEventListener('mouseenter', function(){
+        if(!S.cardSelected) return;
+        /* Clear all highlights first */
+        document.querySelectorAll('.slot').forEach(function(sl){
+          sl.classList.remove('slot-hover');
+        });
+        /* Only highlight if this slot is droppable */
+        if(canDrop(rank)){
+          slotEl.classList.add('slot-hover');
+        }
       });
-      s.addEventListener('dragleave',function(e){if(!s.contains(e.relatedTarget))s.classList.remove('drag-over')});
-      s.addEventListener('drop',function(e){
-        e.preventDefault();
-        document.querySelectorAll('.slot').forEach(function(sl){sl.classList.remove('drag-over')});
-        if(canDrop(rank))placeCard(rank);
+
+      slotEl.addEventListener('mouseleave', function(){
+        slotEl.classList.remove('slot-hover');
       });
-    })(i);
+
+      /* ── CLICK: place card when selected ── */
+      slotEl.addEventListener('click', function(e){
+        e.stopPropagation();
+        if(!S.cardSelected) return;
+        if(canDrop(rank)){
+          clearHighlights();
+          deselectCard();
+          placeCard(rank);
+        }
+      });
+
+      /* ── NATIVE DRAG FALLBACK ── */
+      slotEl.addEventListener('dragover', function(e){
+        if(!S.isDragging) return;
+        e.preventDefault();
+        document.querySelectorAll('.slot').forEach(function(sl){
+          sl.classList.remove('drag-over');
+          sl.classList.remove('slot-hover');
+        });
+        if(canDrop(rank)) slotEl.classList.add('drag-over');
+      });
+
+      slotEl.addEventListener('dragleave', function(e){
+        if(!slotEl.contains(e.relatedTarget)){
+          slotEl.classList.remove('drag-over');
+        }
+      });
+
+      slotEl.addEventListener('drop', function(e){
+        e.preventDefault();
+        clearHighlights();
+        deselectCard();
+        S.isDragging = false;
+        if(canDrop(rank)) placeCard(rank);
+      });
+
+    })(i, s);
     c.appendChild(s);
   }
 }
+
+function clearHighlights(){
+  document.querySelectorAll('.slot').forEach(function(sl){
+    sl.classList.remove('slot-hover');
+    sl.classList.remove('drag-over');
+  });
+}
+
+function deselectCard(){
+  S.cardSelected = false;
+  var card = document.getElementById('inCard');
+  if(card) card.classList.remove('selected');
+}
+
 
 function canDrop(rank){return !(S.placed[rank]&&S.placed[rank].locked)}
 
 /* ── CARD ── */
 function showCard(item){
+  deselectCard();
+  clearHighlights();
+  S.isDragging = false;
   var card=document.getElementById('inCard');
-  card.classList.remove('fly');void card.offsetWidth;card.classList.add('fly');
+  card.classList.remove('fly');
+  void card.offsetWidth;
+  card.classList.add('fly');
   document.getElementById('cEmoji').textContent=item.emoji;
   document.getElementById('cName').textContent=item.name;
   document.getElementById('cDesc').textContent=item.desc;
@@ -1505,6 +2579,17 @@ function showCard(item){
     item.examples.forEach(function(ex){var d=document.createElement('div');d.className='ex-item';d.textContent=ex;list.appendChild(d)});
   } else {exSec.style.display='none'}
 }
+function toggleCardSelect(e){
+  if(e) e.stopPropagation();
+  if(S.phase!=='playing'||!S.curItem) return;
+  if(S.cardSelected){
+    deselectCard();
+    clearHighlights();
+  } else {
+    S.cardSelected = true;
+    document.getElementById('inCard').classList.add('selected');
+  }
+}
 function toggleEx(){
   document.getElementById('exToggle').classList.toggle('open');
   document.getElementById('exBody').classList.toggle('open');
@@ -1512,8 +2597,11 @@ function toggleEx(){
 
 /* ── DRAG ── */
 function dragStart(e){
+  S.isDragging = true;
+  S.cardSelected = true;
   e.dataTransfer.effectAllowed='move';
-  document.querySelectorAll('.slot').forEach(function(sl){sl.classList.remove('drag-over')});
+  clearHighlights();
+  document.getElementById('inCard').classList.add('selected');
   document.getElementById('ghostEmoji').textContent=S.curItem.emoji;
   document.getElementById('ghostName').textContent=S.curItem.name;
   document.getElementById('ghost').style.display='flex';
@@ -1521,20 +2609,22 @@ function dragStart(e){
 }
 function moveGhost(e){var g=document.getElementById('ghost');g.style.left=(e.clientX+14)+'px';g.style.top=(e.clientY-16)+'px'}
 function dragEnd(){
+  S.isDragging = false;
   document.getElementById('ghost').style.display='none';
   document.removeEventListener('mousemove',moveGhost);
-  document.querySelectorAll('.slot').forEach(function(s){s.classList.remove('drag-over')});
+  clearHighlights();
 }
 
 /* ── PLACE ── */
 function placeCard(rank){
   var item=S.curItem;if(!item)return;
-  S.placed[rank]={item:item,locked:false};
-  updateSlotUI(rank,item,false);S.curIdx++;updateDots();
-  // Lock all others
+  // Lock immediately on placement
+  S.placed[rank]={item:item,locked:true};
+  updateSlotUI(rank,item,true);
+  S.curIdx++;updateDots();
+  // Lock all other filled slots too
   for(var j=0;j<10;j++){if(S.placed[j]&&j!==rank){S.placed[j].locked=true;updateSlotUI(j,S.placed[j].item,true)}}
   if(S.curIdx>=10){
-    S.placed[rank].locked=true;updateSlotUI(rank,item,true);
     document.getElementById('inCard').style.opacity='0.3';
     setTimeout(openSwap,550);return;
   }
@@ -1685,6 +2775,7 @@ function getPersonalityMsg(){
 function showResults(){
   if(S.startTime) saveRankingToDB(); // async, fire and forget
   document.getElementById('game').style.display='none';
+  document.querySelector('.top-bar').style.display='flex';
   var sc=document.getElementById('results');sc.style.display='block';
   document.getElementById('footerEl').style.display='block';
   document.getElementById('resTitle').textContent=T('resTitle');
@@ -1721,7 +2812,9 @@ function confetti(){
 
 /* ── NAV ── */
 function goHome(){
+  document.querySelector('.top-bar').style.display='flex';
   document.getElementById('landing').style.display='flex';
+  var as2=document.getElementById('analyticsSection');if(as2)as2.style.display='block';
   document.getElementById('game').style.display='none';
   document.getElementById('results').style.display='none';
   document.getElementById('swap').classList.remove('on');
@@ -1763,8 +2856,21 @@ function sendBug(){
 /* ── INIT ── */
 buildCatGrid();
 document.getElementById('footerEl').style.display='block';
+renderAnalytics();
 checkSession();
 loadRealAnalytics();
+// Cancel card selection when clicking outside card and slots
+document.addEventListener('click',function(e){
+  if(!S.cardSelected || S.isDragging) return;
+  var card=document.getElementById('inCard');
+  var slots=document.getElementById('slots');
+  var modal=document.getElementById('modalOverlay');
+  if(modal&&modal.classList.contains('on')) return;
+  if(card&&!card.contains(e.target)&&slots&&!slots.contains(e.target)){
+    deselectCard();
+    clearHighlights();
+  }
+});
 
 function renderAnalytics(){
   // Age chart
