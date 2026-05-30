@@ -289,6 +289,45 @@ footer{background:var(--sur);border-top:1px solid var(--bor);padding:40px 32px;m
   border-radius:8px;font-family:'Space Mono',monospace;font-size:11px;
   font-weight:700;cursor:pointer;
 }
+
+/* ── ROOM SYSTEM ── */
+.room-strip{display:flex;align-items:center;gap:10px;justify-content:center;margin:16px 0 4px;flex-wrap:wrap}
+.room-create-btn{display:flex;align-items:center;gap:8px;padding:11px 20px;background:transparent;border:1.5px solid var(--acc2);color:var(--acc2);border-radius:12px;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.5px}
+.room-create-btn:hover{background:rgba(255,77,109,.08);transform:translateY(-1px)}
+.room-join-wrap{display:flex;gap:6px}
+.room-code-inp{background:var(--sur2);border:1.5px solid var(--bor);border-radius:10px;padding:9px 12px;color:var(--txt);font-family:'Space Mono',monospace;font-size:13px;width:110px;outline:none;text-transform:uppercase;letter-spacing:2px;transition:border-color .2s;text-align:center}
+.room-code-inp::placeholder{text-transform:none;letter-spacing:0;color:var(--mut);font-size:11px}
+.room-code-inp:focus{border-color:var(--acc3)}
+.room-join-btn{padding:9px 14px;background:var(--acc3);color:#000;border:none;border-radius:10px;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s}
+.room-join-btn:hover{opacity:.85}
+/* Room modal */
+.room-modal{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+.room-modal.on{display:flex}
+.room-box{background:var(--sur);border:1.5px solid var(--bor);border-radius:20px;padding:28px;max-width:420px;width:100%;position:relative}
+.room-box h2{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:1.5px;margin-bottom:4px}
+.room-status{font-size:11px;color:var(--mut);font-family:'Space Mono',monospace;margin-bottom:20px}
+.room-code-display{background:var(--sur2);border:1.5px solid var(--acc);border-radius:14px;padding:18px;text-align:center;margin-bottom:18px}
+.room-code-big{font-family:'Bebas Neue',sans-serif;font-size:42px;letter-spacing:6px;color:var(--acc);line-height:1}
+.room-code-label{font-size:10px;color:var(--mut);font-family:'Space Mono',monospace;margin-top:4px;letter-spacing:2px}
+.room-share-row{display:flex;gap:8px;margin-bottom:18px}
+.room-share-inp{flex:1;background:var(--sur2);border:1px solid var(--bor);border-radius:10px;padding:8px 12px;color:var(--acc3);font-family:'Space Mono',monospace;font-size:11px;outline:none}
+.room-copy-btn{padding:8px 14px;background:var(--acc);color:#000;border:none;border-radius:10px;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;cursor:pointer}
+.room-members{margin-bottom:18px}
+.room-members-label{font-size:10px;color:var(--mut);font-family:'Space Mono',monospace;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.room-member-list{display:flex;flex-wrap:wrap;gap:6px;min-height:36px}
+.room-member{display:flex;align-items:center;gap:6px;background:var(--sur2);border:1px solid var(--bor);border-radius:8px;padding:5px 10px;font-size:12px;font-family:'Space Mono',monospace}
+.room-member.is-admin::after{content:'admin';font-size:9px;color:var(--acc);margin-left:4px}
+.room-member.is-you{border-color:var(--acc3)}
+.room-cat-select{margin-bottom:18px;display:none}
+.room-cat-select label{font-size:10px;color:var(--mut);font-family:'Space Mono',monospace;letter-spacing:2px;text-transform:uppercase;display:block;margin-bottom:8px}
+.room-start-btn{width:100%;padding:13px;background:var(--acc);color:#000;border:none;border-radius:12px;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1.5px;cursor:pointer;transition:all .2s;margin-bottom:10px}
+.room-start-btn:hover{opacity:.9;transform:translateY(-1px)}
+.room-start-btn:disabled{opacity:.4;cursor:default;transform:none}
+.room-leave-btn{width:100%;padding:10px;background:transparent;color:var(--mut);border:1px solid var(--bor);border-radius:10px;font-family:'Space Mono',monospace;font-size:11px;cursor:pointer;transition:all .2s}
+.room-leave-btn:hover{border-color:var(--acc2);color:var(--acc2)}
+.room-waiting{text-align:center;padding:12px 0;font-size:12px;color:var(--mut);font-family:'Space Mono',monospace}
+/* View-only results */
+.view-only-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(71,201,255,.08);border:1px solid rgba(71,201,255,.25);border-radius:8px;padding:5px 12px;font-size:11px;color:var(--acc3);font-family:'Space Mono',monospace;margin-bottom:16px}
 </style>
 </head>
 <body>
@@ -326,6 +365,39 @@ footer{background:var(--sur);border-top:1px solid var(--bor);padding:40px 32px;m
   <p class="tagline" id="tagline">Blind Rankings · Your Gut vs. The World</p>
   <div class="cat-grid" id="catGrid"></div>
   <p class="hint" id="hintTxt">choose a category → pick criteria → start ranking</p>
+  <div class="room-strip" id="roomStrip">
+    <button class="room-create-btn" onclick="openCreateRoom()">🚪 Create Room</button>
+    <div class="room-join-wrap">
+      <input class="room-code-inp" id="roomCodeInp" maxlength="6" placeholder="Room code" oninput="this.value=this.value.toUpperCase()">
+      <button class="room-join-btn" onclick="joinRoomFromInput()">Join</button>
+    </div>
+  </div>
+</div>
+
+<!-- ROOM MODAL -->
+<div class="room-modal" id="roomModal">
+  <div class="room-box">
+    <h2 id="roomTitle">🚪 Room</h2>
+    <p class="room-status" id="roomStatus">Waiting for players...</p>
+    <div class="room-code-display" id="roomCodeDisplay">
+      <div class="room-code-big" id="roomCodeBig">——</div>
+      <div class="room-code-label">ROOM CODE</div>
+    </div>
+    <div class="room-share-row">
+      <input class="room-share-inp" id="roomShareInp" readonly onclick="this.select()">
+      <button class="room-copy-btn" onclick="copyRoomLink()">Copy Link</button>
+    </div>
+    <div class="room-members">
+      <div class="room-members-label">Players <span id="roomMemberCount">(0)</span></div>
+      <div class="room-member-list" id="roomMemberList"></div>
+    </div>
+    <div class="room-cat-select" id="roomCatSelect">
+      <label>Select Category</label>
+      <div id="roomCatGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px"></div>
+    </div>
+    <button class="room-start-btn" id="roomStartBtn" disabled onclick="startRoom()">START RANKING</button>
+    <button class="room-leave-btn" onclick="leaveRoom()">Leave Room</button>
+  </div>
 </div>
 
 <!-- LOGIN MODAL -->
@@ -407,7 +479,6 @@ footer{background:var(--sur);border-top:1px solid var(--bor);padding:40px 32px;m
 <div id="results">
   <div class="res-h">
     <h1 id="resTitle">Your Ranking 🔥</h1>
-    <p id="resSub">—</p>
   </div>
   <div class="personality-msg" id="personalityMsg"></div>
   <div class="res-list" id="resList"></div>
@@ -589,6 +660,28 @@ footer{background:var(--sur);border-top:1px solid var(--bor);padding:40px 32px;m
 /* ═══════════════════════════════════════════════════════════
    SUPABASE CONFIG — ADIM 5'te anon key'i buraya yapıştır
 ═══════════════════════════════════════════════════════════ */
+
+/* SUPABASE SQL — run this in Supabase SQL Editor:
+
+CREATE TABLE IF NOT EXISTS rooms (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  code TEXT UNIQUE NOT NULL,
+  admin_id UUID,
+  admin_name TEXT,
+  status TEXT DEFAULT 'waiting',
+  members JSONB DEFAULT '[]',
+  cat TEXT,
+  sub TEXT,
+  item_ids JSONB DEFAULT '[]',
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE rooms ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Anyone can read rooms" ON rooms FOR SELECT USING (true);
+CREATE POLICY "Authenticated users can create rooms" ON rooms FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
+CREATE POLICY "Authenticated users can update rooms" ON rooms FOR UPDATE USING (true);
+
+*/
 var SUPABASE_URL = 'https://ayqvtcxyjdnqkwzduzsp.supabase.co';
 var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF5cXZ0Y3h5amRucWt3emR1enNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NzI4NDMsImV4cCI6MjA5NTU0ODg0M30.mooYJWGQJysPQB1KHUUIiJpmwKDcPH9-_x1-kk7pqEQ';
 var _sb = null;
@@ -642,6 +735,14 @@ function setUserFromSupabase(u) {
   USER = { loggedIn:true, name:name, initials:ini, id:u.id, email:u.email, demo:false };
   for (var k in CATS_CFG) CATS_CFG[k].locked = false;
   updateAuthUI(); buildCatGrid();
+  // Handle post-login actions
+  if(window._afterLogin){
+    var action = window._afterLogin;
+    window._afterLogin = null;
+    setTimeout(function(){
+      if(action === 'openCreateRoom') openCreateRoom();
+    }, 300);
+  }
 }
 
 async function checkSession() {
@@ -665,13 +766,27 @@ async function checkSession() {
       if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session) {
         setUserFromSupabase(session.user);
         document.getElementById('loginModal').classList.remove('on');
-        // Check both memory and sessionStorage for pending share
+        // Check memory, sessionStorage, AND current hash for pending share
         var _ps = window._pendingShare;
         if(!_ps){ try{ var _ss=sessionStorage.getItem('_vs_share'); if(_ss) _ps=JSON.parse(_ss); }catch(e){} }
-        if(_ps && (_ps.r || _ps.ch)){
+        // Also re-check hash (may still be there after OAuth redirect)
+        if(!_ps){
+          var _hash = window.location.hash.replace('#','');
+          if(_hash){
+            var _parts = _hash.split('/');
+            if(_parts.length >= 4 && (_parts[0]==='view'||_parts[0]==='challenge'||_parts[0]==='room')){
+              var _mode=_parts[0],_cat=_parts[1],_sub=_parts[2]==='all'?null:_parts[2],_ids=_parts[3];
+              _ps = {cat:_cat, sub:_sub, r:_mode==='view'?_ids:null, ch:_mode==='challenge'?_ids:null, room:_mode==='room'?_ids:null};
+            }
+          }
+        }
+        if(_ps && (_ps.r || _ps.ch || _ps.room)){
           window._pendingShare = null;
           try{ sessionStorage.removeItem('_vs_share'); }catch(e){}
-          setTimeout(function(){ _processIncomingURL(_ps.cat, _ps.sub, _ps.r, _ps.ch); }, 300);
+          setTimeout(function(){
+            if(_ps.room) joinRoom(_ps.room);
+            else _processIncomingURL(_ps.cat, _ps.sub, _ps.r, _ps.ch);
+          }, 400);
         }
         // Clean up URL after OAuth redirect (only if it's actually an OAuth code, not a share link)
         var _search = window.location.search;
@@ -692,6 +807,18 @@ async function checkSession() {
   } catch(e) { console.warn('Session check:', e.message); }
 }
 
+async 
+function openLogin(){ document.getElementById('loginModal').classList.add('on'); }
+function overlayClickLogin(e){ if(e.target===document.getElementById('loginModal')) document.getElementById('loginModal').classList.remove('on'); }
+function updateAuthUI(){
+  var area=document.getElementById('authArea');
+  if(!area) return;
+  if(USER && USER.loggedIn){
+    area.innerHTML='<div class="user-chip" onclick="logOut()"><div class="user-avatar">'+USER.initials+'</div><span class="user-name">'+USER.name+'</span></div>';
+  } else {
+    area.innerHTML='<button class="login-btn" onclick="openLogin()"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg><span id="loginBtnTxt">'+T('loginBtnTxt')+'</span></button>';
+  }
+}
 async function logOut() {
   var sb = getSupabase();
   if (sb) await sb.auth.signOut();
@@ -707,23 +834,28 @@ async function logOut() {
 ════════════════════════════════════════ */
 async function saveRankingToDB() {
   var sb = getSupabase(); if (!sb) return;
-  var row = {
+  if (!USER.loggedIn || !USER.id) return; // only save for logged-in users
+  // Serialize row as plain JSON to avoid DataCloneError with Headers
+  var row = JSON.parse(JSON.stringify({
     session_id:   SESSION_ID,
-    user_id:      (USER.loggedIn && USER.id) ? USER.id : null,
+    user_id:      USER.id,
     category:     S.cat,
-    subcategory:  S.sub,
+    subcategory:  S.sub || null,
     lang:         CL,
     used_swap:    S.usedSwap || false,
     duration_sec: S.startTime ? Math.round((Date.now() - S.startTime) / 1000) : null
-  };
+  }));
   for (var i = 0; i < 10; i++) {
-    if (S.placed[i]) row['rank_' + (i+1)] = S.placed[i].item.name;
+    if (S.placed[i]) row['rank_' + (i+1)] = String(S.placed[i].item.name);
   }
-  try {
-    var res = await sb.from('rankings').insert(row);
-    if (res.error) throw res.error;
-    console.log('✓ Ranking saved');
-  } catch(e) { console.warn('Save ranking error:', e.message); }
+  // Use setTimeout to avoid postMessage DataCloneError from Supabase internals
+  setTimeout(async function(){
+    try {
+      var res = await sb.from('rankings').insert(row);
+      if (res.error) console.warn('Ranking save error:', res.error.message);
+      else console.log('✓ Ranking saved');
+    } catch(e) { console.warn('Save ranking error:', e.message); }
+  }, 0);
 }
 
 /* ════════════════════════════════════════
@@ -784,16 +916,7 @@ async function saveBugReport(text, file) {
 }
 
 
-async function logOut(){
-  var sb=getSupabase();
-  if(sb) await sb.auth.signOut();
-  USER={loggedIn:false,name:'',initials:'',supabaseId:null};
-  CATS_CFG.football.locked=true; CATS_CFG.nba.locked=true;
-  CATS_CFG.series.locked=true; CATS_CFG.films.locked=true;
-  CATS_CFG.techbrands.locked=true; CATS_CFG.games.locked=true;
-  updateAuthUI(); buildCatGrid();
-}
-
+async 
 
 var LANGS={
 en:{tagline:"Blind Rankings · Your Gut vs. The World",hint:"choose a category → pick criteria → start ranking",catPowers:"Super Powers",catPowersDesc:"Rank 10 randomly drawn powers. Which is most valuable?",catFootball:"Footballers",catFootballDesc:"Rank 10 random legends by your criteria",catNBA:"NBA Players",catNBADesc:"Rank 10 random NBA greats of all time",badgePowers:"240 POWERS",badgeFootball:"200 PLAYERS",badgeNBA:"200 PLAYERS",catSeries:"Series",catSeriesDesc:"Rank 10 TV shows. Which deserves the top spot?",catFilms:"Films",catFilmsDesc:"Rank 10 films. What's the best?",catBrands:"Brands",catBrandsDesc:"Rank 10 brands — tech, food, fashion and more.",catCars:"Cars",catCarsDesc:"Rank 10 cars — sports, classic, luxury, everyday.",catGames:"Video Games",catGamesDesc:"Rank 10 games. What's the greatest ever made?",nowRank:"now ranking",buildRank:"build your ranking",cancel:"Cancel",start:"Start →",skip:"Skip",swap:"Swap ✓",home:"← Home",again:"Play Again ⚡",resTitle:"Your Ranking 🔥",swapTitle:"Last Move",swapDesc:"1 swap left — choose two items to switch.",selectTwo:"Select two items",willSwap:"will be swapped",seeExamples:"see some examples",placeHere:"Drop here",ranked:"placed here by others",loginBtnTxt:"Sign In",loginTitle:"Sign in to VibeSorting",loginDesc:"Unlock all categories and save your rankings.",googleBtnTxt:"Continue with Google",loginNote:"No spam. No ads. Just rankings.",lockedMsg:"🔒 Sign in to unlock this category",catSeries:"Series",catSeriesDesc:"Rank 10 TV shows.",catFilms:"Films",catFilmsDesc:"Rank 10 films.",catBrands:"Brands",catBrandsDesc:"Rank 10 brands — tech, food, fashion.",catCars:"Cars",catCarsDesc:"Rank 10 cars — sports, classic, luxury.",catGames:"Video Games",catGamesDesc:"Rank 10 games.",dragHint:"Click card to select, then click a slot",communityStats:"Community Stats",footerTagline:"Blind rankings. Your gut vs the world.<br>No right answers. Only vibes.",bugPlaceholder:"Describe the bug...",bugSendBtn:"Send Report",bugSuccess:"Bug report sent! Thanks for the feedback.",bugError:"Please describe the bug first.",bugNoFile:"No file chosen",reportSent:"Report sent ✓",mockDataNote:"* Stats are simulated for demo.",totalRankings:"total rankings",playersToday:"players today",avgReplays:"avg replays",topRanked:"TOP RANKED",statsLoading:"Loading stats...",dragHint:"Click card to select, then click a slot",communityStats:"Community Stats",footerTagline:"Blind rankings. Your gut vs the world.<br>No right answers. Only vibes.",bugPlaceholder:"Describe the bug...",bugSendBtn:"Send Report",bugSuccess:"Report sent! Thanks for the feedback.",bugError:"Please describe the bug first.",mockDataNote:"* Stats are simulated for demo.",totalRankings:"total rankings",playersToday:"players today",avgReplays:"avg replays",sending:"Sending...",subcatPowers:[{id:"overall",icon:"🏆",label:"Overall Power",sub:"Most OP?"},{id:"combat",icon:"⚔️",label:"Combat",sub:"Best in a fight"},{id:"social",icon:"🧠",label:"Social Edge",sub:"Everyday life"},{id:"utility",icon:"🛠️",label:"Utility",sub:"Most useful daily"},{id:"coolness",icon:"😎",label:"Cool Factor",sub:"Most badass"},{id:"rare",icon:"💎",label:"Rarity",sub:"Most unique"}],subcatFootball:[{id:"overall",icon:"🏆",label:"Overall",sub:"Career-based"},{id:"dribbling",icon:"🎭",label:"Dribbling",sub:"Skill & control"},{id:"goals",icon:"🥅",label:"Goalscoring",sub:"Finishing"},{id:"assist",icon:"🎯",label:"Assists",sub:"Vision & last pass"},{id:"defense",icon:"🛡️",label:"Defense",sub:"Duels & defending"},{id:"clutch",icon:"🔥",label:"Big Game",sub:"When it matters"},{id:"legend",icon:"👑",label:"Club Legend",sub:"Legacy"},{id:"speed",icon:"⚡",label:"Speed",sub:"Fastest & fittest"}],subcatNba:[{id:"overall",icon:"🏆",label:"Overall GOAT",sub:"Career-based"},{id:"scoring",icon:"🥅",label:"Scoring",sub:"Points & finishing"},{id:"playmaking",icon:"🎯",label:"Playmaking",sub:"Assists & vision"},{id:"defense",icon:"🛡️",label:"Defense",sub:"Best defenders"},{id:"clutch",icon:"🔥",label:"Clutch",sub:"Under pressure"},{id:"threepoint",icon:"🎯",label:"3-Point",sub:"Long range"},{id:"athleticism",icon:"⚡",label:"Athleticism",sub:"Speed & leaping"}],subcatSeries:[{id:"drama",icon:"🎭",label:"Drama",sub:"Prestige TV"},{id:"comedy",icon:"😂",label:"Comedy",sub:"Sitcoms & dark comedy"},{id:"thriller",icon:"🔍",label:"Thriller & Crime",sub:"Whodunnit & spy"},{id:"scifi",icon:"🚀",label:"Sci-Fi",sub:"Science fiction"},{id:"animated",icon:"🎨",label:"Animated",sub:"Adult animation"},{id:"reality",icon:"📺",label:"Reality & Doc",sub:"Reality TV & docs"}],subcatFilms:[{id:"action",icon:"💥",label:"Action",sub:"Stunts & spectacle"},{id:"comedy",icon:"😂",label:"Comedy",sub:"From absurd to satirical"},{id:"scifi",icon:"🚀",label:"Sci-Fi",sub:"Science fiction"},{id:"drama",icon:"🎭",label:"Drama",sub:"Character & story"},{id:"horror",icon:"💀",label:"Horror",sub:"Fear & dread"},{id:"animation",icon:"🎨",label:"Animation",sub:"Animated films"}],subcatBrands:[{id:"tech",icon:"💻",label:"Tech Brands",sub:"Software & hardware"},{id:"food",icon:"🍔",label:"Food & Drink",sub:"Fast food & snacks"},{id:"fashion",icon:"👟",label:"Fashion",sub:"Clothing & accessories"},{id:"gaming",icon:"🎮",label:"Gaming Brands",sub:"Studios & platforms"},{id:"sports",icon:"⚽",label:"Sports Brands",sub:"Athletic wear"},{id:"luxury",icon:"💎",label:"Luxury Brands",sub:"Premium & prestige"}],subcatCars:[{id:"sports",icon:"🏎️",label:"Sports Cars",sub:"Performance & supercar"},{id:"classic",icon:"🏆",label:"Classic & Iconic",sub:"Legendary cars"},{id:"luxury",icon:"👑",label:"Luxury",sub:"Premium sedans & SUVs"},{id:"everyday",icon:"🚗",label:"Everyday",sub:"Practical & family"},{id:"electric",icon:"⚡",label:"Electric",sub:"EVs & hybrids"},{id:"offroad",icon:"🌲",label:"Off-Road",sub:"4x4 & adventure"}],subcatGames:[{id:"openworld",icon:"🌍",label:"Open World",sub:"Explore & discover"},{id:"rpg",icon:"⚔️",label:"RPG",sub:"Role-playing games"},{id:"indie",icon:"💡",label:"Indie",sub:"Independent gems"},{id:"fps",icon:"🔫",label:"FPS",sub:"First-person shooters"},{id:"strategy",icon:"🧠",label:"Strategy",sub:"Turn-based & RTS"},{id:"sports",icon:"⚽",label:"Sports & Racing",sub:"FIFA, F1, NBA 2K"}]},
@@ -809,6 +932,7 @@ function toggleLangMenu(e){e.stopPropagation();var m=document.getElementById('la
 document.addEventListener('click',function(){var m=document.getElementById('langMenu');if(m)m.style.display='none'})
 function setLang(l){
   CL=l;
+  try{ localStorage.setItem('vs_lang', l); } catch(e){}
   var m=document.getElementById('langMenu');if(m)m.style.display='none';
   var btn=document.getElementById('langSelBtn');
   if(btn){var flags={'en':'🇬🇧','es':'🇪🇸','tr':'🇹🇷','fr':'🇫🇷','ru':'🇷🇺'};document.getElementById('langSelTxt').textContent=flags[l]+' '+l.toUpperCase();}
@@ -823,12 +947,26 @@ function setLang(l){
   }
 }
 function applyLang(){
+  // Core game/modal UI
   var els={tagline:'tagline',hintTxt:'hintTxt',lblNowRank:'lblNowRank',lblBuildRank:'lblBuildRank',btnCancel:'btnCancel',loginBtnTxt:'loginBtnTxt'};
   for(var k in els){var el=document.getElementById(els[k]);if(el)el.textContent=T(k)}
   document.getElementById('loginTitle').textContent=T('loginTitle');
   document.getElementById('loginDesc').textContent=T('loginDesc');
   document.getElementById('googleBtnTxt').textContent=T('googleBtnTxt');
   document.getElementById('loginNote').textContent=T('loginNote');
+  // Drag hint
+  var _dh=document.getElementById('dragHintText'); if(_dh) _dh.textContent=T('dragHint');
+  // Community stats heading
+  var _cs=document.getElementById('communityStatsTitle'); if(_cs) _cs.textContent=T('communityStats');
+  // Footer tagline
+  var _ft=document.getElementById('footerTaglineEl'); if(_ft) _ft.innerHTML=T('footerTagline');
+  // Bug report
+  var _bt=document.getElementById('bugTextArea'); if(_bt) _bt.placeholder=T('bugPlaceholder');
+  var _bb=document.getElementById('bugSendBtnEl'); if(_bb) _bb.textContent=T('bugSendBtn');
+  var _mn=document.getElementById('mockDataNoteEl'); if(_mn) _mn.textContent=T('mockDataNote');
+  // Lang selector button
+  var flags={'en':'🇬🇧','es':'🇪🇸','tr':'🇹🇷','fr':'🇫🇷','ru':'🇷🇺'};
+  var _ls=document.getElementById('langSelTxt'); if(_ls) _ls.textContent=(flags[CL]||'🇬🇧')+' '+CL.toUpperCase();
   buildCatGrid();
 }
 var POWERS = [
@@ -2142,36 +2280,6 @@ var USER={loggedIn:false,name:'',initials:'',supabaseId:null,demo:false};
 function rnd(a){return a.slice().sort(function(){return Math.random()-.5})}
 function mockPct(r){var b=[72,61,55,48,43,39,35,28,22,17];return Math.max(5,Math.min(95,(b[r]||20)+Math.floor(Math.random()*14)-7))}
 
-/* ── AUTH ── */
-function openLogin(){document.getElementById('loginModal').classList.add('on')}
-function overlayClickLogin(e){if(e.target===document.getElementById('loginModal'))document.getElementById('loginModal').classList.remove('on')}
-function doGoogleLogin(){
-  var names=[['Alex Rivera','AR'],['Sam Chen','SC'],['Jordan Park','JP'],['Morgan Lee','ML'],['Casey Kim','CK']];
-  var pick=names[Math.floor(Math.random()*names.length)];
-  USER={loggedIn:true,name:pick[0],initials:pick[1]};
-  document.getElementById('loginModal').classList.remove('on');
-  // Unlock ALL categories
-  for(var k in CATS_CFG){CATS_CFG[k].locked=false;}
-  updateAuthUI();
-  buildCatGrid();
-}
-function updateAuthUI(){
-  var area=document.getElementById('authArea');
-  if(USER.loggedIn){
-    area.innerHTML='<div class="user-chip" onclick="logOut()"><div class="user-avatar">'+USER.initials+'</div><span class="user-name">'+USER.name+'</span></div>';
-  } else {
-    area.innerHTML='<button class="login-btn" onclick="openLogin()"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg><span id="loginBtnTxt">'+T('loginBtnTxt')+'</span></button>';
-  }
-}
-function logOut(){
-  USER={loggedIn:false,name:'',initials:''};
-  CATS_CFG.football.locked=true;
-  CATS_CFG.nba.locked=true;
-  updateAuthUI();
-  buildCatGrid();
-}
-
-/* ── LANDING ── */
 function buildCatGrid(){
   var g=document.getElementById('catGrid');g.innerHTML='';
   var cats=[
@@ -2535,7 +2643,8 @@ function updateSlotUI(rank,item,locked){
   s.className='slot filled'+(locked?' locked':'');
   s.querySelector('.semoji').textContent=item.emoji;
   s.querySelector('.sname').textContent=getItemName(item);
-  s.querySelector('.ssub').textContent=(item.desc||'').substring(0,50)+((item.desc||'').length>50?'…':'');
+  var _sd = getItemDesc(item)||'';
+  s.querySelector('.ssub').textContent=_sd.substring(0,50)+(_sd.length>50?'…':'');
 }
 function updateDots(){
   for(var i=0;i<10;i++){var d=document.getElementById('pd'+i);if(!d)continue;
@@ -2962,13 +3071,14 @@ function handleIncomingURL(){
   var sub  = parts[2] === 'all' ? null : parts[2];
   var ids  = parts[3];
   
-  if(mode !== 'view' && mode !== 'challenge') return;
+  if(mode !== 'view' && mode !== 'challenge' && mode !== 'room') return;
   
   var r  = mode === 'view'      ? ids : null;
   var ch = mode === 'challenge' ? ids : null;
+  var rm = mode === 'room'      ? ids : null; // room code
   
   // Persist so OAuth redirect doesn't lose it
-  var shareData = { cat:cat, sub:sub, r:r, ch:ch };
+  var shareData = { cat:cat, sub:sub, r:r, ch:ch, room:rm };
   try { sessionStorage.setItem('_vs_share', JSON.stringify(shareData)); } catch(e){}
   window._pendingShare = shareData;
 
@@ -2980,9 +3090,10 @@ function handleIncomingURL(){
         if(!USER || !USER.loggedIn) setUserFromSupabase(session.user);
         window._pendingShare = null;
         try { sessionStorage.removeItem('_vs_share'); } catch(e){}
-        _processIncomingURL(cat, sub, r, ch);
+        if(rm) joinRoom(rm);
+        else _processIncomingURL(cat, sub, r, ch);
       } else {
-        _showShareLoginModal(!!r);
+        _showShareLoginModal(!!r || !!rm);
       }
     }).catch(function(){ _showShareLoginModal(!!r); });
   } else {
@@ -3022,14 +3133,22 @@ function _processIncomingURL(cat, sub, r, ch){
     document.querySelector('.top-bar').style.display = 'flex';
     var as = document.getElementById('analyticsSection'); if(as) as.style.display='none';
     showResults();
-    // Add banner
+    // Add view-only banner
     setTimeout(function(){
+      var existing = document.querySelector('.share-banner');
+      if(existing) existing.remove();
       var banner = document.createElement('div');
       banner.className = 'share-banner';
-      banner.innerHTML = '<span>&#128064; Viewing a shared ranking</span>'
+      banner.innerHTML = '<span>&#128064; Viewing ' + (window._sharedByName||'a shared') + ' ranking</span>'
         + '<button onclick="startChallengeFromURL()">Rank these too &#9889;</button>';
       var resH = document.querySelector('.res-h');
-      if(resH && !document.querySelector('.share-banner')) resH.parentNode.insertBefore(banner, resH);
+      if(resH) resH.parentNode.insertBefore(banner, resH);
+      // Hide share section - this is view only
+      var shareSection = document.getElementById('shareSection');
+      if(shareSection){
+        // Replace share section with simple CTA
+        shareSection.innerHTML = '<div style="text-align:center;padding:8px 0"><button class="btn btn-p" onclick="startChallengeFromURL()" style="margin:0 auto">&#9889; Rank these too</button></div>';
+      }
     }, 150);
     window._sharedIds = ids;
     }); // end getDataPoolAsync.then
@@ -3081,27 +3200,395 @@ function startChallengeWithItems(cat, sub, items){
   buildDots(); buildSlots(); showCard(S.curItem);
 }
 
+
+function getResultDesc(item){
+  if(CL === 'en') return item.desc || '';
+  var cacheKey = (item.id||item.name) + '_' + CL;
+  if(_descCache[cacheKey]) return _descCache[cacheKey];
+  if(item['desc_'+CL]) return item['desc_'+CL];
+  // Start async translation, return English for now
+  _translateItemDescAsync(item);
+  return item.desc || '';
+}
+
+function _translateItemDescAsync(item){
+  if(CL === 'en' || !item || !item.desc) return;
+  var cacheKey = (item.id||item.name) + '_' + CL;
+  if(_descCache[cacheKey] || _descCache[cacheKey+'_pending']) return;
+  _descCache[cacheKey+'_pending'] = true;
+  var langNames = {tr:'Turkish',es:'Spanish',fr:'French',ru:'Russian'};
+  var targetLang = langNames[CL];
+  if(!targetLang) return;
+
+  fetch('https://api.anthropic.com/v1/messages', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      model:'claude-sonnet-4-20250514',
+      max_tokens:120,
+      messages:[{
+        role:'user',
+        content:'Translate to '+targetLang+'. Short, punchy, max 60 chars. Return ONLY the translation:\n'+item.desc
+      }]
+    })
+  })
+  .then(function(r){return r.json();})
+  .then(function(data){
+    var t = data.content&&data.content[0]&&data.content[0].text;
+    if(!t) return;
+    t = t.trim();
+    _descCache[cacheKey] = t;
+    delete _descCache[cacheKey+'_pending'];
+    // Update result list if visible
+    var el = document.getElementById('ri-desc-'+(item.id||''));
+    if(el) el.textContent = t.substring(0,60);
+    // Update slot if visible
+    if(S.curItem && (S.curItem.id||S.curItem.name)===(item.id||item.name)){
+      var cDesc = document.getElementById('cDesc');
+      if(cDesc && !S.isChallenge) cDesc.textContent = t;
+    }
+  })
+  .catch(function(){ delete _descCache[cacheKey+'_pending']; });
+}
+
+
+/* ══════════════════════════════════════════════════
+   CREATE ROOM SYSTEM
+   ══════════════════════════════════════════════════ */
+
+var ROOM = {
+  code: null,
+  id: null,
+  isAdmin: false,
+  members: [],
+  cat: null,
+  sub: null,
+  channel: null,
+  status: 'idle' // idle | waiting | selecting | playing
+};
+
+function genRoomCode(){
+  var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  var code = '';
+  for(var i=0;i<6;i++) code += chars[Math.floor(Math.random()*chars.length)];
+  return code;
+}
+
+async function openCreateRoom(){
+  if(!isLoggedIn()){
+    document.getElementById('loginModal').classList.add('on');
+    window._afterLogin = 'openCreateRoom';
+    return;
+  }
+  var sb = getSupabase();
+  if(!sb){ alert('Supabase not configured'); return; }
+
+  var code = genRoomCode();
+  var now = new Date().toISOString();
+
+  // Create room in Supabase
+  try {
+    var res = await sb.from('rooms').insert({
+      code: code,
+      admin_id: USER.id,
+      admin_name: USER.name,
+      status: 'waiting',
+      members: JSON.stringify([{id:USER.id, name:USER.name, initials:USER.initials}]),
+      created_at: now
+    }).select().single();
+
+    if(res.error) throw res.error;
+
+    ROOM.code = code;
+    ROOM.id = res.data.id;
+    ROOM.isAdmin = true;
+    ROOM.members = [{id:USER.id, name:USER.name, initials:USER.initials}];
+    ROOM.status = 'waiting';
+
+    _openRoomModal();
+    _subscribeToRoom(code);
+  } catch(e) {
+    // Table may not exist yet - show graceful fallback
+    console.warn('Room creation error:', e.message);
+    // Fallback: client-only room (no real-time sync, just link sharing)
+    ROOM.code = genRoomCode();
+    ROOM.id = null;
+    ROOM.isAdmin = true;
+    ROOM.members = [{id:USER.id, name:USER.name, initials:USER.initials}];
+    ROOM.status = 'waiting';
+    _openRoomModal();
+  }
+}
+
+async function joinRoom(code){
+  if(!isLoggedIn()){
+    _showShareLoginModal(false);
+    try{ sessionStorage.setItem('_vs_share', JSON.stringify({room:code})); }catch(e){}
+    window._pendingShare = {room:code};
+    return;
+  }
+  code = code.toUpperCase();
+  var sb = getSupabase();
+  if(!sb){ alert('Supabase not configured'); return; }
+
+  try {
+    // Get room
+    var res = await sb.from('rooms').select('*').eq('code', code).single();
+    if(res.error || !res.data){ alert('Room not found: ' + code); return; }
+    var room = res.data;
+
+    if(room.status === 'playing'){
+      // Room already started - catch up
+      var members = JSON.parse(room.members||'[]');
+      var alreadyIn = members.some(function(m){ return m.id===USER.id; });
+      if(!alreadyIn){
+        members.push({id:USER.id, name:USER.name, initials:USER.initials});
+        await sb.from('rooms').update({members: JSON.stringify(members)}).eq('code', code);
+      }
+      ROOM.code = code; ROOM.id = room.id; ROOM.isAdmin = (room.admin_id === USER.id);
+      ROOM.members = members; ROOM.status = 'playing';
+      ROOM.cat = room.cat; ROOM.sub = room.sub;
+      // Start game with room's items
+      var itemIds = JSON.parse(room.item_ids||'[]');
+      if(itemIds.length > 0){
+        startChallengeWithIds(room.cat, room.sub, itemIds);
+      }
+      _openRoomModal();
+      _subscribeToRoom(code);
+      return;
+    }
+
+    // Add self to members
+    var members = JSON.parse(room.members||'[]');
+    var alreadyIn = members.some(function(m){ return m.id===USER.id; });
+    if(!alreadyIn){
+      members.push({id:USER.id, name:USER.name, initials:USER.initials});
+      await sb.from('rooms').update({members: JSON.stringify(members)}).eq('code', code);
+    }
+
+    ROOM.code = code;
+    ROOM.id = room.id;
+    ROOM.isAdmin = (room.admin_id === USER.id);
+    ROOM.members = members;
+    ROOM.status = room.status;
+
+    _openRoomModal();
+    _subscribeToRoom(code);
+
+    // Broadcast join
+    if(ROOM.channel){
+      ROOM.channel.send({type:'broadcast',event:'member_join',payload:{id:USER.id,name:USER.name,initials:USER.initials}});
+    }
+  } catch(e) {
+    alert('Could not join room: ' + e.message);
+  }
+}
+
+function joinRoomFromInput(){
+  var code = document.getElementById('roomCodeInp').value.trim().toUpperCase();
+  if(code.length < 4){ alert('Enter a valid room code'); return; }
+  joinRoom(code);
+}
+
+function _openRoomModal(){
+  document.getElementById('roomModal').classList.add('on');
+  _renderRoomModal();
+}
+
+function _renderRoomModal(){
+  // Code
+  document.getElementById('roomCodeBig').textContent = ROOM.code || '——';
+  document.getElementById('roomTitle').textContent = ROOM.isAdmin ? '🚪 Your Room' : '🚪 Room: ' + ROOM.code;
+
+  // Share link
+  var link = 'https://vibesorting.vercel.app/#room/' + ROOM.code;
+  document.getElementById('roomShareInp').value = link;
+
+  // Members
+  var memberList = document.getElementById('roomMemberList');
+  memberList.innerHTML = '';
+  document.getElementById('roomMemberCount').textContent = '(' + ROOM.members.length + ')';
+  ROOM.members.forEach(function(m){
+    var el = document.createElement('div');
+    el.className = 'room-member' + (m.id === USER.id ? ' is-you' : '');
+    if(ROOM.id && m.id === (window._roomAdminId || ROOM.members[0].id)) el.className += ' is-admin';
+    el.innerHTML = '<span style="width:24px;height:24px;background:var(--acc);color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;font-family:Space Mono,monospace">' + (m.initials||'?') + '</span>' + m.name;
+    memberList.appendChild(el);
+  });
+
+  // Status
+  var statusEl = document.getElementById('roomStatus');
+  if(ROOM.status === 'waiting'){
+    statusEl.textContent = ROOM.members.length + ' player' + (ROOM.members.length!==1?'s':'') + ' in room — waiting to start';
+  } else if(ROOM.status === 'selecting'){
+    statusEl.textContent = 'Admin is selecting a category...';
+  } else if(ROOM.status === 'playing'){
+    statusEl.textContent = 'Game in progress!';
+  }
+
+  // Admin controls
+  var catSelect = document.getElementById('roomCatSelect');
+  var startBtn = document.getElementById('roomStartBtn');
+  if(ROOM.isAdmin){
+    catSelect.style.display = 'block';
+    _buildRoomCatGrid();
+    startBtn.style.display = 'block';
+    startBtn.disabled = !(ROOM.cat);
+    startBtn.textContent = ROOM.cat ? 'START RANKING — ' + getCatLabel(ROOM.cat).toUpperCase() : 'SELECT A CATEGORY FIRST';
+  } else {
+    catSelect.style.display = 'none';
+    startBtn.style.display = 'none';
+    // Show waiting message
+    statusEl.textContent = 'Waiting for admin to start...';
+  }
+}
+
+function _buildRoomCatGrid(){
+  var grid = document.getElementById('roomCatGrid');
+  grid.innerHTML = '';
+  var cats = ['powers','football','nba','series','films','brands','cars','games'];
+  cats.forEach(function(c){
+    var cfg = CATS_CFG[c];
+    var icons = {powers:'⚡',football:'⚽',nba:'🏀',series:'📺',films:'🎬',brands:'🏷️',cars:'🏎️',games:'🎮'};
+    var btn = document.createElement('button');
+    btn.style.cssText = 'padding:10px;background:' + (ROOM.cat===c?'rgba(232,255,71,.12)':'var(--sur2)') + ';border:1.5px solid ' + (ROOM.cat===c?'var(--acc)':'var(--bor)') + ';border-radius:10px;cursor:pointer;font-family:Space Mono,monospace;font-size:11px;color:' + (ROOM.cat===c?'var(--acc)':'var(--txt)') + ';transition:all .2s;text-align:left';
+    btn.innerHTML = icons[c] + ' ' + getCatLabel(c);
+    btn.onclick = function(){ ROOM.cat = c; ROOM.sub = null; _buildRoomCatGrid(); _renderRoomModal(); };
+    grid.appendChild(btn);
+  });
+}
+
+async function startRoom(){
+  if(!ROOM.isAdmin || !ROOM.cat) return;
+  var sb = getSupabase();
+
+  // Pick 10 random items
+  var pool = await getDataPoolAsync(ROOM.cat, ROOM.sub || 'overall');
+  var items = rnd(pool).slice(0,10);
+  var itemIds = items.map(function(x){ return x.id; });
+
+  ROOM.status = 'playing';
+
+  // Update Supabase
+  if(sb && ROOM.id){
+    await sb.from('rooms').update({
+      status: 'playing',
+      cat: ROOM.cat,
+      sub: ROOM.sub,
+      item_ids: JSON.stringify(itemIds)
+    }).eq('id', ROOM.id);
+  }
+
+  // Broadcast to all members
+  if(ROOM.channel){
+    ROOM.channel.send({
+      type: 'broadcast',
+      event: 'room_start',
+      payload: { cat: ROOM.cat, sub: ROOM.sub, item_ids: itemIds }
+    });
+  }
+
+  // Start game for admin too
+  _startRoomGame(ROOM.cat, ROOM.sub, items);
+}
+
+function _startRoomGame(cat, sub, items){
+  document.getElementById('roomModal').classList.remove('on');
+  startChallengeWithItems(cat, sub, items);
+  // After game, show room results
+  ROOM._pendingItems = items;
+}
+
+function _subscribeToRoom(code){
+  var sb = getSupabase();
+  if(!sb) return;
+
+  // Unsubscribe old channel
+  if(ROOM.channel) sb.removeChannel(ROOM.channel);
+
+  ROOM.channel = sb.channel('room:' + code, {
+    config: { broadcast: { self: false } }
+  });
+
+  ROOM.channel
+    .on('broadcast', { event: 'member_join' }, function(payload){
+      var m = payload.payload;
+      if(!ROOM.members.some(function(x){ return x.id===m.id; })){
+        ROOM.members.push(m);
+        _renderRoomModal();
+      }
+    })
+    .on('broadcast', { event: 'room_start' }, function(payload){
+      var p = payload.payload;
+      ROOM.cat = p.cat; ROOM.sub = p.sub; ROOM.status = 'playing';
+      // Load items from ids
+      getDataPoolAsync(p.cat, p.sub||'overall').then(function(pool){
+        var items = p.item_ids.map(function(id){ return pool.find(function(x){ return x.id===id; }); }).filter(Boolean);
+        if(items.length >= 2) _startRoomGame(p.cat, p.sub, items);
+      });
+    })
+    .on('postgres_changes', {
+      event: 'UPDATE', schema: 'public', table: 'rooms', filter: 'code=eq.' + code
+    }, function(payload){
+      var room = payload.new;
+      var members = JSON.parse(room.members||'[]');
+      ROOM.members = members;
+      if(document.getElementById('roomModal').classList.contains('on')){
+        _renderRoomModal();
+      }
+    })
+    .subscribe();
+}
+
+function copyRoomLink(){
+  var inp = document.getElementById('roomShareInp');
+  if(inp){ inp.select(); navigator.clipboard.writeText(inp.value).catch(function(){ document.execCommand('copy'); }); }
+  var btn = inp.nextElementSibling;
+  if(btn){ btn.textContent = 'Copied ✓'; setTimeout(function(){ btn.textContent = 'Copy Link'; }, 2000); }
+}
+
+function leaveRoom(){
+  if(ROOM.channel){ var sb=getSupabase(); if(sb) sb.removeChannel(ROOM.channel); }
+  ROOM = {code:null,id:null,isAdmin:false,members:[],cat:null,sub:null,channel:null,status:'idle'};
+  document.getElementById('roomModal').classList.remove('on');
+}
+
+// Hide room strip when not on landing
+function updateRoomStripVisibility(){
+  var strip = document.getElementById('roomStrip');
+  if(!strip) return;
+  strip.style.display = (S.phase==='landing') ? 'flex' : 'none';
+}
+
 function showResults(){
   if(S.startTime) saveRankingToDB(); // async, fire and forget
   document.getElementById('game').style.display='none';
   document.querySelector('.top-bar').style.display='flex';
   var sc=document.getElementById('results');sc.style.display='block';
+  updateRoomStripVisibility();
   document.getElementById('footerEl').style.display='block';
   document.getElementById('resTitle').textContent=T('resTitle')||'Your Ranking 🔥';
   document.getElementById('btnHome').textContent=T('home');
   document.getElementById('btnAgain').textContent=T('again');
   document.getElementById('btnNewCat').textContent=T('newCat')||'Try Another Category';
   var sub=getSubs(S.cat).find(function(x){return x.id===S.sub});
-  document.getElementById('resSub').textContent=T('resSub')||'Your taste, ranked.';
   var _pm=getPersonalityMsg();
   var _pmEl=document.getElementById('personalityMsg');
   if(_pmEl) _pmEl.innerHTML='<span style="font-size:18px">&#129504;</span> ' + _pm;
+  // Async translate all result item descs if non-English
+  if(CL !== 'en'){
+    setTimeout(function(){
+      S.placed.forEach(function(p){
+        if(p && p.item) _translateItemDescAsync(p.item);
+      });
+    }, 100);
+  }
   var list=document.getElementById('resList');list.innerHTML='';
   for(var i=0;i<10;i++){
     if(!S.placed[i])continue;var item=S.placed[i].item,pct=mockPct(i);
     var el=document.createElement('div');el.className='ri';el.style.animationDelay=(i*.06)+'s';
     el.innerHTML='<div class="ri-rank">'+(i+1)+'</div><div class="ri-emoji">'+item.emoji+'</div>'
-      +'<div class="ri-info"><div class="ri-name">'+item.name+'</div><div class="ri-sub">'+(item.desc||'').substring(0,55)+'</div></div>'
+      +'<div class="ri-info"><div class="ri-name">'+item.name+'</div><div class="ri-sub" id="ri-desc-'+(item.id||i)+'">'+(getResultDesc(item)).substring(0,60)+'</div></div>'
       +'<div class="ri-stat"><div class="bar-row"><div class="bar"><div class="bar-fill" style="width:'+pct+'%;--i:'+i+'"></div></div>'
       +'<div class="pct">'+pct+'%</div></div><div class="plabel">'+T('ranked')+'</div></div>';
     list.appendChild(el);
@@ -3124,6 +3611,7 @@ function confetti(){
 /* ── NAV ── */
 function goHome(){
   resetShareBoxes();
+  updateRoomStripVisibility();
   document.querySelector('.top-bar').style.display='flex';
   document.getElementById('landing').style.display='flex';
   var as2=document.getElementById('analyticsSection');if(as2)as2.style.display='block';
@@ -3260,6 +3748,15 @@ function renderAnalytics(){
 }
 
 renderAnalytics();
+// Load saved language preference
+(function(){
+  try{
+    var saved = localStorage.getItem('vs_lang');
+    if(saved && ['en','tr','es','fr','ru'].indexOf(saved) > -1 && saved !== 'en'){
+      setLang(saved);
+    }
+  } catch(e){}
+})();
 </script>
 </body>
 </html>
