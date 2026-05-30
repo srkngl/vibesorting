@@ -590,12 +590,11 @@ footer{background:var(--sur);border-top:1px solid var(--bor);padding:40px 32px;m
    SUPABASE CONFIG — ADIM 5'te anon key'i buraya yapıştır
 ═══════════════════════════════════════════════════════════ */
 var SUPABASE_URL = 'https://ayqvtcxyjdnqkwzduzsp.supabase.co';
-var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF5cXZ0Y3h5amRucWt3emR1enNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NzI4NDMsImV4cCI6MjA5NTU0ODg0M30.mooYJWGQJysPQB1KHUUIiJpmwKDcPH9-_x1-kk7pqEQ'; // ← sadece bunu değiştir
+var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF5cXZ0Y3h5amRucWt3emR1enNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NzI4NDMsImV4cCI6MjA5NTU0ODg0M30.mooYJWGQJysPQB1KHUUIiJpmwKDcPH9-_x1-kk7pqEQ';
 var _sb = null;
 
 function getSupabase() {
   if (_sb) return _sb;
-  if (SUPABASE_KEY === 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF5cXZ0Y3h5amRucWt3emR1enNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NzI4NDMsImV4cCI6MjA5NTU0ODg0M30.mooYJWGQJysPQB1KHUUIiJpmwKDcPH9-_x1-kk7pqEQ') return null;
   try { _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY); return _sb; }
   catch(e) { return null; }
 }
@@ -615,7 +614,7 @@ async function doGoogleLogin() {
   var sb = getSupabase();
 
   if (!sb) {
-    alert('Supabase is not configured.\nOpen index.html and replace eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF5cXZ0Y3h5amRucWt3emR1enNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NzI4NDMsImV4cCI6MjA5NTU0ODg0M30.mooYJWGQJysPQB1KHUUIiJpmwKDcPH9-_x1-kk7pqEQ with your real anon key.');
+    alert('Supabase bağlantısı kurulamadı. Sayfayı yenileyin.');
     return;
   }
 
@@ -2394,8 +2393,62 @@ function getItemName(item){
   return item.name;
 }
 function getItemDesc(item){
-  if(CL !== 'en' && item['desc_'+CL]) return item['desc_'+CL];
+  if(CL === 'en') return item.desc;
+  // Check if already translated
+  if(item['desc_'+CL]) return item['desc_'+CL];
+  // For non-English: show English desc immediately, then translate async
+  // Translation is triggered separately via translateCurrentCard()
   return item.desc;
+}
+
+// Translation cache: item.id + lang → translated desc
+var _descCache = {};
+
+function translateCurrentCard(item){
+  if(CL === 'en' || !item || !item.desc) return;
+  var cacheKey = (item.id||item.name) + '_' + CL;
+  if(_descCache[cacheKey]) {
+    // Already cached - update display
+    var el = document.getElementById('cDesc');
+    if(el) el.textContent = _descCache[cacheKey];
+    return;
+  }
+  if(item['desc_'+CL]) {
+    // Hardcoded translation (powers)
+    var el = document.getElementById('cDesc');
+    if(el) el.textContent = item['desc_'+CL];
+    return;
+  }
+  // Async translate via Claude
+  var langNames = {tr:'Turkish',es:'Spanish',fr:'French',ru:'Russian'};
+  var targetLang = langNames[CL];
+  if(!targetLang) return;
+  
+  fetch('https://api.anthropic.com/v1/messages', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      model:'claude-sonnet-4-20250514',
+      max_tokens:150,
+      messages:[{
+        role:'user',
+        content:'Translate this short description to '+targetLang+'. Keep it concise and punchy. Return ONLY the translation, nothing else:\n\n'+item.desc
+      }]
+    })
+  })
+  .then(function(r){return r.json();})
+  .then(function(data){
+    var t = data.content&&data.content[0]&&data.content[0].text;
+    if(!t) return;
+    t = t.trim();
+    _descCache[cacheKey] = t;
+    // Update display if this item is still showing
+    if(S.curItem && (S.curItem.id||S.curItem.name) === (item.id||item.name)){
+      var el = document.getElementById('cDesc');
+      if(el && !S.isChallenge) el.textContent = t;
+    }
+  })
+  .catch(function(){});
 }
 function getItemExamples(item){
   if(CL !== 'en' && item['examples_'+CL]) return item['examples_'+CL];
@@ -2414,6 +2467,7 @@ function showCard(item){
   // In challenge mode, hide descriptions to keep it blind
   var _desc = S.isChallenge ? '' : getItemDesc(item);
   document.getElementById('cDesc').textContent=_desc;
+  if(!S.isChallenge && CL !== 'en') translateCurrentCard(item);
   var exSec=document.getElementById('exSection');
   var _exItems=getItemExamples(item);
   if(S.cat==='powers'&&_exItems&&_exItems.length){
@@ -3137,7 +3191,6 @@ buildCatGrid();
 document.getElementById('footerEl').style.display='block';
 renderAnalytics();
 checkSession();
-loadRealAnalytics();
 // Cancel card selection when clicking outside card and slots
 document.addEventListener('click',function(e){
   if(!S.cardSelected || S.isDragging) return;
