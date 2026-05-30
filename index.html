@@ -199,6 +199,96 @@ footer{background:var(--sur);border-top:1px solid var(--bor);padding:40px 32px;m
   .cat-grid{grid-template-columns:1fr 1fr}
   .footer-inner{grid-template-columns:1fr;gap:20px}
 }
+
+/* ── SHARE SYSTEM ── */
+.share-section{margin:32px 0 4px;padding:0}
+.share-cards{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:520px){.share-cards{grid-template-columns:1fr}}
+.share-card{
+  background:var(--sur2);border:1px solid var(--bor);border-radius:12px;
+  padding:12px 14px;cursor:pointer;transition:all .22s;text-align:left;
+  position:relative;overflow:hidden;
+}
+.share-card::after{
+  content:'';position:absolute;inset:0;opacity:0;transition:opacity .22s;
+  border-radius:14px;pointer-events:none;
+}
+.share-card:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.35)}
+.sc-result{border-color:rgba(232,255,71,.2)}
+.sc-result:hover{border-color:rgba(232,255,71,.6)}
+.sc-result::after{background:radial-gradient(ellipse at top left,rgba(232,255,71,.07),transparent 70%)}
+.sc-result:hover::after{opacity:1}
+.sc-challenge{border-color:rgba(71,201,255,.2)}
+.sc-challenge:hover{border-color:rgba(71,201,255,.6)}
+.sc-challenge::after{background:radial-gradient(ellipse at top left,rgba(71,201,255,.07),transparent 70%)}
+.sc-challenge:hover::after{opacity:1}
+.sc-icon{font-size:18px;display:inline;margin-right:6px;line-height:1}
+.sc-title{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1px;margin-bottom:2px;display:inline}
+.sc-result .sc-title{color:var(--acc)}
+.sc-challenge .sc-title{color:var(--acc3)}
+.sc-desc{font-size:11px;color:var(--mut);font-family:'Space Mono',monospace;line-height:1.5}
+.sc-lock{font-size:10px;color:var(--acc2);font-family:'Space Mono',monospace;margin-top:6px;display:none}
+/* Drawer */
+.share-drawer{
+  display:none;background:var(--sur);border:1.5px solid var(--bor);
+  border-radius:16px;padding:18px;margin-top:10px;
+}
+.share-drawer.open{display:block;animation:sdIn .18s ease}
+@keyframes sdIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+.sd-label{font-size:10px;color:var(--mut);font-family:'Space Mono',monospace;
+  letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
+.sd-link-row{display:flex;gap:8px;margin-bottom:12px}
+.sd-link-row input{
+  flex:1;min-width:0;background:var(--sur2);border:1px solid var(--bor);
+  border-radius:10px;padding:9px 12px;color:var(--acc);
+  font-family:'Space Mono',monospace;font-size:11px;outline:none;
+  transition:border-color .2s;cursor:text;
+}
+.sd-link-row input:focus{border-color:var(--acc)}
+.sd-copy{
+  padding:9px 14px;background:var(--acc);color:#000;border:none;
+  border-radius:10px;font-family:'Space Mono',monospace;font-size:11px;
+  font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0;
+}
+.sd-copy:hover{opacity:.85;transform:scale(1.03)}
+.sd-copy.done{background:var(--acc3)!important;color:#000}
+.sd-platforms{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sd-plat{
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  padding:10px;border-radius:11px;border:1px solid var(--bor);
+  background:var(--sur2);font-family:'Space Mono',monospace;font-size:11px;
+  font-weight:600;cursor:pointer;transition:all .18s;
+}
+.sd-plat:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,.3)}
+.sd-wa{color:#25D366!important;border-color:rgba(37,211,102,.25)!important}
+.sd-wa:hover{background:rgba(37,211,102,.09)!important;border-color:#25D366!important}
+.sd-tw{color:#e2e2e2!important;border-color:rgba(255,255,255,.12)!important}
+.sd-tw:hover{background:rgba(255,255,255,.06)!important;border-color:rgba(255,255,255,.35)!important}
+.sd-hint{font-size:10px;color:var(--mut);font-family:'Space Mono',monospace;
+  text-align:center;margin-top:12px;line-height:1.6}
+/* Login gate for share */
+.sd-login-gate{
+  display:flex;flex-direction:column;align-items:center;gap:10px;padding:8px 0;text-align:center;
+}
+.sd-login-gate p{font-size:12px;color:var(--mut);font-family:'Space Mono',monospace;line-height:1.6}
+.sd-login-btn{
+  padding:10px 20px;background:transparent;border:1.5px solid var(--acc);
+  color:var(--acc);border-radius:10px;font-family:'Space Mono',monospace;
+  font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;
+}
+.sd-login-btn:hover{background:rgba(232,255,71,.1)}
+/* Incoming share banner */
+.share-banner{
+  background:rgba(232,255,71,.06);border:1px solid rgba(232,255,71,.2);
+  border-radius:12px;padding:12px 16px;margin-bottom:16px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;
+}
+.share-banner span{font-size:12px;color:var(--acc);font-family:'Space Mono',monospace}
+.share-banner button{
+  padding:7px 14px;background:var(--acc);color:#000;border:none;
+  border-radius:8px;font-family:'Space Mono',monospace;font-size:11px;
+  font-weight:700;cursor:pointer;
+}
 </style>
 </head>
 <body>
@@ -321,10 +411,32 @@ footer{background:var(--sur);border-top:1px solid var(--bor);padding:40px 32px;m
   </div>
   <div class="personality-msg" id="personalityMsg"></div>
   <div class="res-list" id="resList"></div>
-  <div class="res-actions">
+    <div class="res-actions">
     <button class="btn btn-g" onclick="goHome()" id="btnHome">← Home</button>
     <button class="btn btn-p" onclick="playAgain()" id="btnAgain">Play Again ⚡</button>
     <button class="btn btn-g" onclick="openModal(S.cat)" id="btnNewCat" style="border-color:var(--acc3);color:var(--acc3)">Try Another Category</button>
+  </div>
+
+  <!-- Share section -->
+  <div class="share-section" id="shareSection">
+    <div class="share-cards">
+      <div class="share-card sc-result" onclick="toggleShareDrawer('result')">
+        <div><span class="sc-icon">📤</span><span class="sc-title">Share My Ranking</span></div>
+        <div class="sc-desc">Show your taste to the world</div>
+      </div>
+      <div class="share-card sc-challenge" onclick="toggleShareDrawer('challenge')">
+        <div><span class="sc-icon">⚔️</span><span class="sc-title">Vibe Check</span></div>
+        <div class="sc-desc">Same 10 — different ranking?</div>
+      </div>
+    </div>
+    <!-- Result drawer -->
+    <div class="share-drawer" id="shareResultDrawer">
+      <div id="shareResultContent"><!-- filled by JS --></div>
+    </div>
+    <!-- Challenge drawer -->
+    <div class="share-drawer" id="shareChallengeDrawer">
+      <div id="shareChallengeContent"><!-- filled by JS --></div>
+    </div>
   </div>
 </div>
 
@@ -500,16 +612,10 @@ var SESSION_ID = (function(){
    AUTH — Google OAuth via Supabase
 ════════════════════════════════════════ */
 async function doGoogleLogin() {
-  document.getElementById('loginModal').classList.remove('on');
   var sb = getSupabase();
 
-  /* ── Demo mode: Supabase key henüz girilmemiş ── */
   if (!sb) {
-    var names = [['Alex Rivera','AR'],['Sam Chen','SC'],['Jordan Park','JP'],['Morgan Lee','ML'],['Casey Kim','CK']];
-    var pick = names[Math.floor(Math.random() * names.length)];
-    USER = { loggedIn:true, name:pick[0], initials:pick[1], id:null, demo:true };
-    for (var k in CATS_CFG) CATS_CFG[k].locked = false;
-    updateAuthUI(); buildCatGrid();
+    alert('Supabase is not configured.\nOpen index.html and replace eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF5cXZ0Y3h5amRucWt3emR1enNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NzI4NDMsImV4cCI6MjA5NTU0ODg0M30.mooYJWGQJysPQB1KHUUIiJpmwKDcPH9-_x1-kk7pqEQ with your real anon key.');
     return;
   }
 
@@ -549,20 +655,39 @@ function setUserFromSupabase(u) {
 }
 
 async function checkSession() {
-  var sb = getSupabase(); if (!sb) return;
+  var sb = getSupabase();
+  // Always run URL handler — it decides whether to show login gate
+  // Run after a tick so DOM is ready
+  setTimeout(handleIncomingURL, 100);
+  if (!sb) return;
   try {
-    // Handle OAuth callback — Supabase auto-processes the URL hash/code
     var res = await sb.auth.getSession();
     if (res.data && res.data.session && res.data.session.user) {
       setUserFromSupabase(res.data.session.user);
+      // If user was already logged in and there's a pending share, process it
+      if(window._pendingShare && (window._pendingShare.r || window._pendingShare.ch)){
+        var ps = window._pendingShare; window._pendingShare = null;
+        setTimeout(function(){ _processIncomingURL(ps.cat, ps.sub, ps.r, ps.ch); }, 200);
+      }
     }
     sb.auth.onAuthStateChange(function(event, session) {
       console.log('Auth event:', event, session ? 'has session' : 'no session');
       if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session) {
         setUserFromSupabase(session.user);
         document.getElementById('loginModal').classList.remove('on');
-        // Clean up URL after OAuth redirect
-        if (window.location.hash || window.location.search.includes('code=')) {
+        // Check both memory and sessionStorage for pending share
+        var _ps = window._pendingShare;
+        if(!_ps){ try{ var _ss=sessionStorage.getItem('_vs_share'); if(_ss) _ps=JSON.parse(_ss); }catch(e){} }
+        if(_ps && (_ps.r || _ps.ch)){
+          window._pendingShare = null;
+          try{ sessionStorage.removeItem('_vs_share'); }catch(e){}
+          setTimeout(function(){ _processIncomingURL(_ps.cat, _ps.sub, _ps.r, _ps.ch); }, 300);
+        }
+        // Clean up URL after OAuth redirect (only if it's actually an OAuth code, not a share link)
+        var _search = window.location.search;
+        var _isOAuthReturn = window.location.hash.includes('access_token') || 
+                             (_search.includes('code=') && !_search.includes('cat=') && !_search.includes('challenge='));
+        if (_isOAuthReturn) {
           window.history.replaceState({}, document.title, window.location.pathname);
         }
       }
@@ -617,11 +742,12 @@ async function saveRankingToDB() {
 async function saveBugReport(text, file) {
   var sb = getSupabase();
 
-  /* No Supabase → fallback to mailto */
-  if (!sb) {
+  /* No Supabase or file → use mailto directly */
+  if (!sb || file) {
     var subj = encodeURIComponent('VibeSorting Bug Report');
-    var body = encodeURIComponent(text);
-    window.open('mailto:kineticsimulations@gmail.com?subject=' + subj + '&body=' + body);
+    var body = encodeURIComponent('[VibeSorting Bug]\n\n' + text + '\n\nPage state: cat=' + S.cat + ' sub=' + S.sub + ' lang=' + CL);
+    var mailLink = 'mailto:kineticsimulations@gmail.com?subject=' + subj + '&body=' + body;
+    window.location.href = mailLink;
     return true;
   }
 
@@ -795,100 +921,100 @@ function applyLang(){
   buildCatGrid();
 }
 var POWERS = [
-{emoji:"👁️",name:"Invisibility",desc:"Vanish at will — light passes right through you.",examples:["You attend your own surprise party. Twice. Nobody knows.","The 'do you have a moment?' colleague walks past you. Every time.","You discover your office has a secret biscuit stash. You become its sole guardian."]},
-{emoji:"🧠",name:"Telepathy",desc:"Hear anyone's thoughts with crystal clarity.",examples:["First date: already know they're debating whether to mention their ex.","Job interview: boss is thinking about lunch. You nail the lunch question.","You finally learn what your cat thinks of you. It's worse than expected."]},
-{emoji:"⏸️",name:"Time Freeze",desc:"Pause the universe. Move freely while everything stands still.",examples:["Traffic light turns red. You get out, make a coffee, get back in. Still red.","Send wrong message. Un-send it. Rewrite it. Hit send. Resume universe.","You pause time at 4:58 PM every Friday. You've had a very long weekend."]},
-{emoji:"✨",name:"Teleportation",desc:"Appear anywhere instantly the moment you think of it.",examples:["You now live in a different country for every meal. Taxes remain complicated.","'I'll be there in 10' is now just what you say while already standing there.","You've teleported into the wrong meeting three times. You stay and contribute."]},
-{emoji:"🔮",name:"Precognition",desc:"See likely futures seconds or minutes before they happen.",examples:["You step aside for the running child before the running child exists yet.","You cancel the Zoom before it becomes an email that could have been a Zoom.","You order the meal before sitting down. The waiter thinks you're a regular. You've never been here."]},
-{emoji:"🦋",name:"Shapeshifting",desc:"Transform into any person, animal, or object you choose.",examples:["You become a fire extinguisher during a boring presentation. Nobody questions it.","You briefly become a golden retriever at a house party. Best decision of the evening.","You transform into your own car to avoid parking fees. This works legally."]},
-{emoji:"⚡",name:"Super Speed",desc:"Move at near-light speed. Like The Flash, but with better posture.",examples:["You iron a shirt, eat breakfast, and write a novel before the kettle boils.","You arrive so early to everything that people think you've been there all along.","You've read the entire internet. Twice. You don't recommend the second read."]},
-{emoji:"🧿",name:"Mind Control",desc:"Redirect anyone's decisions and behavior at will.",examples:["The 11-items-or-fewer self-checkout opens a lane specifically for you.","You've convinced three separate landlords that 'reasonable rent' means something different.","You make the entire board meeting agree in 4 minutes. Nobody knows why they're so efficient."]},
-{emoji:"🌊",name:"Elemental Control",desc:"Command fire, water, air, and earth.",examples:["You stop the rain in a 2-metre radius. You bring an umbrella anyway, out of principle.","The barbecue lights on the first attempt. Your family watches in stunned silence.","You redirect a puddle so it misses your shoes. This happens automatically now."]},
-{emoji:"♾️",name:"Immortality",desc:"Never age. Heal from any wound in seconds.",examples:["You've outlived several dentists. You still feel guilty about cancelling.","You witness decades of fashion cycles. You're still wearing the first one.","Everyone assumes you've had work done. You haven't. The secret is worse somehow."]},
-{emoji:"🌀",name:"Dimension Hopping",desc:"Open portals between parallel universes.",examples:["You find the universe where you replied to that email in 2019. You close it immediately.","There's a dimension where you took that job offer. You check in occasionally. They seem fine.","The missing sock dimension is real and it is thriving."]},
-{emoji:"🔊",name:"Sound Manipulation",desc:"Weaponize sound or create perfect silence.",examples:["Your neighbour's renovation sounds like birdsong to you specifically.","You can make any meeting room acoustically perfect. You become very popular at conferences.","You silence the group chat notification. Not the group chat. Just the sound. You're not a monster."]},
-{emoji:"🧬",name:"Memory Manipulation",desc:"Erase, add, or completely rewrite anyone's memories.",examples:["That thing you said at the Christmas party? Nobody remembers it. Specifically.","You've been on the same first date 47 times. You're still deciding.","Your references remember you as outstanding. This is technically true, in a new way."]},
-{emoji:"⚡",name:"Energy Absorption",desc:"Absorb electricity, heat, light — convert all to power.",examples:["You charge your phone by holding it. This confuses people on the tube.","You absorb the gym's entire electricity bill. The gym is confused but grateful.","Thunderstorm: everyone runs inside. You put on a t-shirt and go for a walk."]},
-{emoji:"🐾",name:"Animal Communication",desc:"Talk to and guide any animal.",examples:["You discover your cat's complaint is structural and goes back to 2022.","The pigeons in the city square report directly to you. It's a solid intelligence network.","You ask the dog what it wants. It tells you. It's a lot to process."]},
-{emoji:"🌍",name:"Gravity Control",desc:"Suspend objects and people. Redirect gravity at will.",examples:["You float your keys from the other room. You still lose them, but more elegantly.","IKEA furniture assembles itself when you point at it with conviction.","You reverse gravity briefly in traffic. Everyone else is baffled. You continue driving normally."]},
-{emoji:"🔥",name:"Pyrokinesis",desc:"Generate and control fire from your body.",examples:["Scented candles light themselves when you walk into a room. Very atmospheric.","You become the most reliable person at any camping trip. The title means everything.","You've replaced your cooker. The insurance company has questions."]},
-{emoji:"❄️",name:"Cryokinesis",desc:"Freeze anything instantly. Build ice structures from thin air.",examples:["Your drinks are always perfectly chilled. You've become very particular about this.","You've frozen a wasp mid-flight and examined it. Science, essentially.","You created an ice sculpture at a work event. It said 'I'm quitting.' You stayed."]},
-{emoji:"💨",name:"Flight",desc:"Defy gravity and soar freely through the sky.",examples:["You've stopped using Google Maps because landmarks mean something different now.","You hover slightly when thinking. People find this distracting in meetings.","You fly to the gym. You then fly home. You're not sure the gym counts anymore."]},
-{emoji:"🛡️",name:"Invulnerability",desc:"Bullets, explosions, physical force do nothing to you.",examples:["You stub your toe. The toe is fine. The corner of the table is not.","You sit in the exit row on planes and actually mean it when you confirm you're willing.","You've started jaywalking with unnerving confidence."]},
-{emoji:"📡",name:"EM Perception",desc:"Sense and analyze all electromagnetic waves.",examples:["You know the WiFi password before entering any building. You remain polite and ask anyway.","You sense a microwave running two floors up. You're not sure what to do with this.","You can see everyone's Bluetooth devices. There are too many of them named 'AirPods'."]},
-{emoji:"🔗",name:"Telekinesis",desc:"Move objects with your mind from any distance.",examples:["You retrieve the remote without pausing your internal monologue. Multi-tasking achieved.","You open the office door while carrying too many coffees. You're described as 'graceful'.","You've stacked all the plates from across the kitchen. You still have to wash them."]},
-{emoji:"🌱",name:"Plant Control",desc:"Grow, direct, and weaponize any plant life.",examples:["Your desk plant thrives aggressively. HR has asked it to stop expanding into the corridor.","You grew a hedge maze in the back garden. It has a solution. You won't confirm this.","You can ripen an avocado to exactly the right moment. This is genuinely your most used power."]},
-{emoji:"💡",name:"Light Manipulation",desc:"Bend light into lasers, shields, or perfect ambience.",examples:["Your natural lighting is always perfect. You've never taken a bad photo.","You create a spotlight for yourself when giving presentations. No one comments.","You've redirected sunlight from a window onto a cold cup of tea. It worked."]},
-{emoji:"🌑",name:"Shadow Control",desc:"Use darkness and shadows as physical matter.",examples:["You create shade at outdoor weddings. You're the most popular guest.","Your shadow can hold objects. You've offloaded your bag onto it while gesturing enthusiastically.","You've used your shadow to indicate parking spaces are taken. Local legend."]},
-{emoji:"⏩",name:"Accelerated Mind",desc:"Your brain processes at 1000x speed.",examples:["You finished The Brothers Karamazov before the barista finished your name.","You've pre-disagreed with the argument before they've made it. This is not always helpful.","You've thought through every possible response to the email and sent none of them."]},
-{emoji:"🔭",name:"Ultra Vision",desc:"See galaxies away. Observe atoms with the naked eye.",examples:["You read menus from across the street. You still squint, out of habit.","You've seen exactly how much bacteria is on a shared pen. You now carry your own.","You check the nutritional content of your food at a molecular level. You've gone off granola."]},
-{emoji:"🤝",name:"Empathy Blast",desc:"Broadcast emotions to everyone nearby.",examples:["You make traffic wardens feel a general sense of goodwill. Parking fines are technically still issued.","You broadcast mild enthusiasm at the staff meeting. Attendance hits an all-time high.","You accidentally make everyone on the bus nostalgic simultaneously. Someone cries."]},
-{emoji:"📸",name:"Photographic Memory",desc:"Remember everything with pixel precision.",examples:["You've been banned from pub quizzes in three boroughs. They know what you are.","You remember every password ever created. You still forget to buy milk.","You quote people exactly. They say 'I didn't say it like that.' You play it back."]},
-{emoji:"🔋",name:"Infinite Energy",desc:"Never tire. Never sleep. Always at peak performance.",examples:["You've finished every task on your to-do list. You made a new one. Same day.","You're always fresh at 6 AM. People find this suspicious and a little threatening.","You went to 14 events last Saturday. You rated them all. You're available Sunday."]},
-{emoji:"🌐",name:"Universal Language",desc:"Instantly understand and speak every language.",examples:["You translate 'terms and conditions' in real time. You learn this is unwise.","You understand what your cat is saying to the window. It's a monologue.","You read the comments in other languages. You learn this is the same as the English comments."]},
-{emoji:"🏗️",name:"Matter Creation",desc:"Assemble any material from atoms.",examples:["You create a parking space. This is your most controversial power.","You made yourself a replacement charger at 11 PM. You saved the report.","You keep creating slightly better pens. The originals are now in a drawer."]},
-{emoji:"💀",name:"Necromancy",desc:"Communicate with those who have passed.",examples:["You consult historical figures for essay research. The citation section is complicated.","You ask your dearly departed grandparent for the biscuit recipe. It is everything you hoped.","You find out what actually happened. You tell no one. You simply smile at dinners."]},
-{emoji:"🎯",name:"Perfect Aim",desc:"Everything you throw hits 100% of the time.",examples:["You throw your keys into your bag from the other side of the room. You've stopped walking to it.","You won the tombola at a school fair. You've been asked not to return.","You make the paper basketball shot every time. The bin is now ten metres away. You've kept going."]},
-{emoji:"🦴",name:"Super Strength",desc:"Your physical strength is 1,000× human.",examples:["You open every jar. People bring jars from other streets.","You moved your sofa once to hoover under it. You've been unable to explain why to the neighbours.","You've arm-wrestled a structural engineer. The structural engineer has a new respect for load-bearing."]},
-{emoji:"🕷️",name:"Wall Crawling",desc:"Walk and climb any surface without effort.",examples:["You've found a shortcut through the building that involves the ceiling.","You move to a desk no one else can reach. It becomes the most coveted seat.","You attend a rooftop party via the exterior. Your entrance is remarked upon."]},
-{emoji:"🫁",name:"Toxic Immunity",desc:"Every poison, radiation, and chemical is harmless.",examples:["You eat the leftovers from the back of the fridge with zero hesitation.","You read ingredient labels and shrug. This is more expensive than the immunity.","You walked through a wasp nest. The wasps left."]},
-{emoji:"🎵",name:"Music Magic",desc:"Control emotions and actions through music.",examples:["You hum in traffic and it disperses. You're not sure of the mechanism.","You play something at the office party and everyone cleans up after themselves.","You hummed something in the queue and it moved. Nobody else noticed. You noticed."]},
-{emoji:"🌙",name:"Night Vision",desc:"See perfectly in total darkness.",examples:["You navigate to the toilet at 3 AM like a confident professional.","You find what fell under the sofa without your phone torch. You were there for eight minutes.","You've watched a horror film in complete darkness. You narrated the jumpscare before it happened."]},
-{emoji:"🐉",name:"Dragon Form",desc:"Transform into a dragon.",examples:["Your commute time has dropped to zero. The route is now scenic.","You've attended one meeting as a dragon. It was the most efficient meeting of the year.","Your parking space is very clear."]},
-{emoji:"🕰️",name:"Time Travel",desc:"Travel to any point in past or future.",examples:["You visited yourself in 1998 to give investment advice. You wouldn't listen.","You went back to send that email on time. You were on your phone when it arrived. Nothing changed.","You saw the ending. You won't spoil it. You've watched the middle three times."]},
-{emoji:"🎪",name:"Force Field",desc:"Generate a physical energy shield around yourself.",examples:["You stand in rain while everyone else sprints. They think you have a very good coat.","You sit in the middle seat on the plane comfortably. This is the real power.","You've been rear-ended twice. The car behind learned something important about physics."]},
-{emoji:"💎",name:"Matter Transmutation",desc:"Convert any material into any other element.",examples:["You turn the broken umbrella into a working umbrella. Classically underused.","You converted your 2015 laptop into an optimised 2015 laptop. Different timescales.","You turned a disappointing meal into a good meal at the table. The chef was told it was chef's kiss."]},
-{emoji:"🔬",name:"Molecular Vision",desc:"See and analyze molecular structure of anything.",examples:["You identify what's in a ready meal. You do not share this information.","You can tell if a diamond is real. You've been asked to leave three jewellers.","You looked at tap water once. You've installed a filter. You looked at the filter."]},
-{emoji:"🎸",name:"Vibration Control",desc:"Alter the vibration frequency of any object.",examples:["You open stuck jars from across the room. The kitchen applauds.","You've tuned every instrument in a room before anyone arrived. The conductor was suspicious.","You vibrated a wasp through a window. This felt like a moral victory."]},
-{emoji:"🌈",name:"Spectrum Vision",desc:"See UV, infrared, and all invisible light.",examples:["You see in the dark but find the colour range underwhelming compared to daytime.","You've watched a bee navigate. It's extraordinary. You watched for forty minutes.","You see the heat signatures of cold coffee. You've stopped drinking cold coffee."]},
-{emoji:"🦅",name:"Aerokinesis",desc:"Command air currents and wind with precision.",examples:["Your hair does exactly what you want. This single quality has changed your life significantly.","You arrive at the revolving door and it's always moving at the right speed.","You made a really good paper plane. It's still going."]},
-{emoji:"🌸",name:"Healing",desc:"Cure any illness or injury instantly.",examples:["You touch a bruise and it un-purples in real time. People find this unsettling.","You cure your own hangover before it starts. You start a different kind.","You've healed a paper cut mid-cut. You watched it happen. You still flinch."]},
-{emoji:"🏃",name:"Dimensional Running",desc:"Pass through parallel dimensions as you run.",examples:["You take a shortcut through a dimension where the queue doesn't exist.","You've jogged through a universe where you already did the thing you're procrastinating. Motivational.","Your commute takes 4 minutes. Nobody asks how. You've stopped telling them."]},
-{emoji:"🎓",name:"Instant Learning",desc:"Master any subject at expert level in seconds.",examples:["You studied tax law in the lift on the way to a meeting about tax law.","You speak 47 languages and are vaguely mediocre at all of them. The competence is technical.","You learned the guitar in 6 seconds. You played one song. It was fine."]},
-{emoji:"🌟",name:"Cosmic Awareness",desc:"Perceive every event in the universe simultaneously.",examples:["You know everything that's happening everywhere always. You've chosen not to mention most of it.","The news is never a surprise. The news is also never a comfort. But at least there's no surprise.","You've seen the heat death of the universe. You slept fine. You're worried about that."]},
-{emoji:"⚗️",name:"Alchemy",desc:"Transform base metals into gold and create any compound.",examples:["You've decided not to destabilise the gold market. This is a daily decision. A conscious one.","You made a perfect cup of tea by transmuting the tannins directly. This was unnecessary and correct.","You turned a parking ticket into a compliment slip. It didn't work legally but felt good."]},
-{emoji:"💧",name:"Hydrokinesis",desc:"Control water in all its forms.",examples:["You've never walked through a puddle. The puddle reroutes.","You made it rain in your allotment. The surrounding gardens were confused.","You straightened the water coming out of a crooked tap. Truly your finest hour."]},
-{emoji:"🕊️",name:"Astral Projection",desc:"Leave your body and travel anywhere in spirit.",examples:["You attended a meeting in spirit while your body was in another meeting. Both noticed.","You explored Tokyo on a Tuesday afternoon. Your body was in Croydon. Very balanced lifestyle.","You went home briefly during a work trip to check the oven. It was fine. The peace of mind was worth it."]},
-{emoji:"🔑",name:"Lock Override",desc:"Open any lock, password, or security system.",examples:["You've never been locked out of anything. You've forgotten what that feeling was like.","Your password is a single character. It's fine.","You've walked through a clearly locked door in front of security. They nodded. They don't know why."]},
-{emoji:"🦠",name:"Disease Immunity",desc:"Every pathogen is completely harmless to you.",examples:["You went into cold and flu season like a warm hug into a crowd of sneezes.","You ate airport sushi once. Nothing. You'll never stop thinking about this.","You are the one friend who never gets the thing that's going around. You are simultaneously loved and resented."]},
-{emoji:"🌿",name:"Photosynthesis",desc:"Absorb sunlight as energy — food optional.",examples:["You go on a picnic but you don't bring anything. It's not rude, it's efficient.","You've realised that lunch breaks are just for social purposes now. You go anyway. You love them more.","You leaned into a sunny window in December. You felt genuinely replenished. A colleague asked if you'd changed your moisturiser."]},
-{emoji:"🧲",name:"Technopathy",desc:"Mentally control any electronic device.",examples:["Your phone has never been on 3% at a critical moment. You prevent this.","The printer works first time when you're in the building. People schedule print jobs around your lunch.","You've connected to Bluetooth devices by looking at them with mild intent."]},
-{emoji:"💭",name:"Dream Walking",desc:"Enter and interact with anyone's dreams.",examples:["You solved a conflict between two colleagues by going in and re-editing the original context. HR never knew.","You entered your own recurring dream and made changes. It's a much better dream now. The sequel is planned.","You helped a friend finish a dream they'd been having for years. They woke up satisfied. They'll never know why."]},
-{emoji:"🪐",name:"Orbital Jump",desc:"Launch into orbit and travel between planets.",examples:["You holiday on the moon. The photos are hard to contextualise.","You've used low Earth orbit as a shortcut between cities. The altitude is worth the efficiency.","You went to see Saturn's rings. They're beautiful. You took no photos. You just watched."]},
-{emoji:"🎲",name:"Probability Manipulation",desc:"Tilt luck and probability in your favor.",examples:["The parking space opens up as you turn the corner. It has always been like this.","You win the raffle at the school fair. They've started doing second prizes. You win those too.","Your toast lands butter-side up. Every time. You've started buttering both sides just to see."]},
-{emoji:"👁",name:"Void Vision",desc:"See through walls and solid matter.",examples:["You find your keys inside the sofa cushion without removing the cushion. Efficient and slightly eerie.","You saw who took the last biscuit. You said nothing. You know. They know you know.","You watched a film through the cinema wall on the night it was sold out. You left a fair review."]},
-{emoji:"🌪️",name:"Vortex Creation",desc:"Summon localized vortexes to pull in objects.",examples:["Autumn leaves spiral obediently into your garden bin. Your neighbours find this suspicious.","You spiralled an umbrella out of a storm drain. The owner was grateful and confused.","You created a very small personal vortex at a garden party. The bunting was fine."]},
-{emoji:"⚖️",name:"Truth Detection",desc:"Instantly know when anyone is lying.",examples:["You know which meeting could have been an email. You've known for years. It's a lot.","Every 'I've nearly finished it' becomes a philosophical event.","You know when the food is 'fine'. You're always the last to know it isn't fine."]},
-{emoji:"🌬️",name:"Breath Weapon",desc:"Exhale fire, ice, acid, or electricity.",examples:["You light candles at a dinner party with a focused exhale. The aesthetic is immaculate.","You accidentally frost a car window in winter while complaining about the cold. Convenient.","You sneezed once and briefly sparks. People assumed it was static. You agreed."]},
-{emoji:"⬆️",name:"Size Manipulation",desc:"Grow to building height or shrink to microscopic scale.",examples:["You shrank to fit through the queue at the coffee shop. They still got your name wrong.","You grew slightly to see over the crowd at a gig. You received complicated looks.","You've been through the coin return slot of every broken vending machine in the country."]},
-{emoji:"🎨",name:"Chromakinesis",desc:"Manipulate color and light to alter perception.",examples:["You've changed the colour of a traffic cone to match the pavement. Urban camouflage.","You redecorate your flat by shifting perception. You haven't bought paint since 2019.","You made the sunset slightly more vivid once. Someone posted a photo. 847 likes."]},
-{emoji:"🌊",name:"Maelstrom Summon",desc:"Create powerful localized vortexes in water.",examples:["You do something very specific with the washing-up water. It cleans faster. You won't explain.","You created a tiny whirlpool in a cup of tea. Nobody at the meeting commented.","Your bath drains with unusual efficiency. You've mentioned this to no one."]},
-{emoji:"⚡",name:"Neural Acceleration",desc:"Reflexes at 1/1000th of a second.",examples:["You catch every item your children knock off tables. Your children are confused and a little less careful.","You've played every online game at maximum latency and described it as playable.","You've taken 47 photos of a hummingbird in focus. People assume you have good equipment."]},
-{emoji:"🎪",name:"Pocket Dimension",desc:"Access a personal dimension for storage.",examples:["Your bag has no bottom. This has been commented upon.","You retrieved a spare battery for someone at a concert. They didn't ask where it came from. You were grateful.","Your pocket dimension is very well organised. Better than your flat. You've thought about that."]},
-{emoji:"🌿",name:"Biome Creation",desc:"Terraform and generate new ecosystems.",examples:["Your balcony has a sustainable microclimate and two types of weather.","You grew a forest in a traffic island. The council is 'investigating'.","You made the Tube platform feel briefly like woodland. Six people noticed. Three cried."]},
-{emoji:"🔮",name:"Curse Casting",desc:"Place lasting supernatural effects on things.",examples:["Every queue you join becomes the fast one. Other queues remain as they were.","The lift appears as soon as you press the button. Maintenance can find nothing wrong.","The vending machine has never, once, taken your money and not delivered."]},
-{emoji:"🧿",name:"Evil Eye",desc:"Cause misfortune to those you focus on with intent.",examples:["The football team you bet against has a very strange afternoon.","The person who took your parking space gets every red light. You feel nothing. This is a lie.","The printer jams for everyone else. You've chosen not to examine this too closely."]},
-{emoji:"💡",name:"Electricity Body",desc:"Transform into pure electrical energy.",examples:["You travel home through the power grid. You arrive before you left.","You charge devices by holding them. You are a walking phone shop.","You experience a brief identity crisis when the power goes out."]},
-{emoji:"🐺",name:"Beast Summoning",desc:"Call any animal to your aid from anywhere.",examples:["You summoned a labrador to a job interview. It didn't help but it helped.","The birds in the park organise themselves when you arrive. Other park users find this mildly unsettling.","A pigeon once delivered a document on time. The recipient did not question the delivery method."]},
-{emoji:"🎭",name:"Emotion Generation",desc:"Create and project specific emotions.",examples:["You fill the meeting room with a low-grade sense of 'let's wrap this up'. Attendance drops. Efficiency triples.","You project mild contentment at the bus stop. Three strangers thank you without knowing why.","You made the Christmas party feel genuinely like Christmas. This was your greatest work."]},
-{emoji:"🌈",name:"Rainbow Bridge",desc:"Create traversable light bridges between any two points.",examples:["Your commute is a literal rainbow. The photos are extraordinary. You've stopped taking them.","You bridge two buildings for a meeting and the whole thing runs more smoothly for being rainbow-based.","You once had to explain the infrastructure to a building inspector. It was a long afternoon."]},
-{emoji:"⚗️",name:"Transmutation Touch",desc:"Turn any object into any other with a touch.",examples:["You turn the broken umbrella into an unbroken umbrella. You've become very popular in autumn.","You turned a stale croissant into a fresh one. The café asked if they could hire you.","You touched a parking ticket and turned it into a compliment. Legally ambiguous but emotionally satisfying."]},
-{emoji:"🌌",name:"Universe Sight",desc:"Perceive the entire observable universe simultaneously.",examples:["You know everything happening everywhere. You've become very good at choosing which parts to ignore.","You've seen the beginning of time. You don't talk about it at parties. You nearly did once.","You are aware of every star that has ever existed. You still can't find your glasses."]},
-{emoji:"🔮",name:"Technomancy",desc:"Enchant technology with magic.",examples:["Your computer runs fast because you asked it nicely. This is not metaphorical.","The software update that breaks everything does not break yours. The IT desk has no explanation.","You've had the same printer for twelve years. You've had words with it regularly. It performs."]},
-{emoji:"🌬️",name:"Pressure Control",desc:"Manipulate atmospheric and water pressure.",examples:["You've never had altitude sickness. You've also never felt the need to mention this until now.","You equalise your own ears on planes without yawning. You look insufferably comfortable.","You opened a pressurised jar by simply deciding it should open. The jar accepted this."]},
-{emoji:"🌐",name:"Wi-Fi Mind",desc:"Download any information from the internet mentally.",examples:["You looked up a recipe mid-conversation and corrected someone without checking your phone. They were suspicious.","You streamed a podcast in your head on the commute. Your expression was described as 'focused' and 'slightly glazed'.","You refreshed the internet mentally during a power cut. You described the outage as 'quiet'."]},
-{emoji:"🎭",name:"Perfect Mimicry",desc:"Replicate any voice, movement, or skill after witnessing it once.",examples:["You watched a violinist for four minutes and now play the violin. This hasn't made practice feel any less important.","You once mimicked a vending machine noise and a pigeon. Neither have recovered.","You reproduce exact quotes in meetings. People check the minutes. You don't need minutes."]},
-{emoji:"🌊",name:"Adaptive Skin",desc:"Skin adapts to any environment automatically.",examples:["You swim in the North Sea in November and describe it as 'refreshing'. You mean it.","Your skin went sand-coloured at the beach. Three people took photos of the sand near you.","You were once described as 'inappropriately comfortable' at a cryotherapy session."]},
-{emoji:"🎯",name:"Bullet Time",desc:"Slow perceived time dramatically during fast events.",examples:["You catch a falling phone before it lands every time. You are unbearable at tech demonstrations.","You've caught a frisbee in a crowd without breaking eye contact with someone you were talking to.","You watched a bee sting process in real time. You had complicated feelings about it."]},
-{emoji:"🔑",name:"Dream Erasure",desc:"Erase dreams and plant specific ones.",examples:["You gifted someone their first dreamless sleep in years. They said they felt inexplicably rested.","You replaced your own nightmare with a pleasant commute dream. This may have been a mistake.","You planted a dream about finishing the quarterly report. It worked. Nobody is comfortable with how much it worked."]},
-{emoji:"💫",name:"Gravity Well",desc:"Create intense gravitational pulls.",examples:["You've never dropped anything at a buffet. Everything lands in the bowl.","You guided a tennis ball into the correct court from outside the court. The match continued.","Loose coins gravitate toward you. Your sofa has never had a coin problem."]},
-{emoji:"🧠",name:"Hive Mind",desc:"Connect nearby minds into one consciousness.",examples:["The team completed a project in silence over six minutes. HR found this 'unusual and very compliant'.","The queue moved 40% faster when you were in it. You looked like you were just waiting.","The dinner party reached consensus on dessert in under ten seconds. The host cried, but happily."]},
-{emoji:"🌿",name:"Oxygen Mastery",desc:"Control oxygen concentration in any area.",examples:["You've never had a fire go out on you. The oxygen stays in the right percentages.","You breathe clearly at altitude. You described Everest as 'a bit steep' in your review.","You held your breath underwater for 14 minutes. A lifeguard asked if you were alright. You were."]},
-{emoji:"🎯",name:"Spatial Awareness",desc:"Perfect 360° awareness of everything within 100 metres.",examples:["You've never walked into a glass door. People watch for this and are disappointed.","You know exactly where everyone is in the office at all times. You use this only for good.","You parallel park first time every time. You have been photographed doing this."]},
-{emoji:"🔮",name:"Echo Sight",desc:"See the past events that occurred in any location.",examples:["You found your lost keys by watching Tuesday's replay.","You discovered who ate the last yoghurt. You chose not to say anything. But they know you know.","You watched what happened in that meeting room. You now understand why the pot plant was moved."]},
-{emoji:"🌊",name:"Rain Calling",desc:"Summon rain at will.",examples:["You've saved three cricket matches. You've also ruined four. The net is complicated.","Your garden is suspiciously green in summer. You attribute this to 'microclimate'.","You make it rain on the one person who didn't bring an umbrella. This is recreational."]},
-{emoji:"🌟",name:"Aura Reading",desc:"See the emotional and spiritual state of any being.",examples:["You know who is fine, who is fine but not fine, and who is not fine and doesn't know it yet.","Job interviews: you see the hiring decision before the handshake. You bring good questions anyway.","You can see when someone is about to ask a difficult question. You've started pre-answering."]},
-{emoji:"🧬",name:"Rapid Evolution",desc:"Evolve any trait in real time.",examples:["You developed night vision on a camping trip. It's not comfortable to explain.","You adapted to the cold shower by the third second. You now take cold showers recreationally.","You became briefly amphibious at a water park. Nobody noticed. You noticed. You think about it."]},
+{emoji:"👁️",name:"Invisibility",name_tr:"Görünmezlik",name_es:"Invisibilidad",name_ru:"Невидимость",name_fr:"Invisibilité",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Vanish at will — light passes right through you.",examples:["You attend your own surprise party. Twice. Nobody knows.","The 'do you have a moment?' colleague walks past you. Every time.","You discover your office has a secret biscuit stash. You become its sole guardian."]},
+{emoji:"🧠",name:"Telepathy",name_tr:"Telepati",name_es:"Telepatía",name_ru:"Телепатия",name_fr:"Télépathie",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Hear anyone's thoughts with crystal clarity.",examples:["First date: already know they're debating whether to mention their ex.","Job interview: boss is thinking about lunch. You nail the lunch question.","You finally learn what your cat thinks of you. It's worse than expected."]},
+{emoji:"⏸️",name:"Time Freeze",name_tr:"Zamanı Durdurma",name_es:"Congelar el Tiempo",name_ru:"Заморозка времени",name_fr:"Gel du temps",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Pause the universe. Move freely while everything stands still.",examples:["Traffic light turns red. You get out, make a coffee, get back in. Still red.","Send wrong message. Un-send it. Rewrite it. Hit send. Resume universe.","You pause time at 4:58 PM every Friday. You've had a very long weekend."]},
+{emoji:"✨",name:"Teleportation",name_tr:"Işınlanma",name_es:"Teletransportación",name_ru:"Телепортация",name_fr:"Téléportation",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Appear anywhere instantly the moment you think of it.",examples:["You now live in a different country for every meal. Taxes remain complicated.","'I'll be there in 10' is now just what you say while already standing there.","You've teleported into the wrong meeting three times. You stay and contribute."]},
+{emoji:"🔮",name:"Precognition",name_tr:"Kehanet",name_es:"Precognición",name_ru:"Предвидение",name_fr:"Précognition",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"See likely futures seconds or minutes before they happen.",examples:["You step aside for the running child before the running child exists yet.","You cancel the Zoom before it becomes an email that could have been a Zoom.","You order the meal before sitting down. The waiter thinks you're a regular. You've never been here."]},
+{emoji:"🦋",name:"Shapeshifting",name_tr:"Şekil Değiştirme",name_ru:"Оборотничество",name_fr:"Métamorphose",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Transform into any person, animal, or object you choose.",examples:["You become a fire extinguisher during a boring presentation. Nobody questions it.","You briefly become a golden retriever at a house party. Best decision of the evening.","You transform into your own car to avoid parking fees. This works legally."]},
+{emoji:"⚡",name:"Super Speed",name_tr:"Süper Hız",name_es:"Supervelocidad",name_ru:"Суперскорость",name_fr:"Super-vitesse",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Move at near-light speed. Like The Flash, but with better posture.",examples:["You iron a shirt, eat breakfast, and write a novel before the kettle boils.","You arrive so early to everything that people think you've been there all along.","You've read the entire internet. Twice. You don't recommend the second read."]},
+{emoji:"🧿",name:"Mind Control",name_tr:"Zihin Kontrolü",name_es:"Control Mental",name_ru:"Контроль разума",name_fr:"Contrôle mental",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Redirect anyone's decisions and behavior at will.",examples:["The 11-items-or-fewer self-checkout opens a lane specifically for you.","You've convinced three separate landlords that 'reasonable rent' means something different.","You make the entire board meeting agree in 4 minutes. Nobody knows why they're so efficient."]},
+{emoji:"🌊",name:"Elemental Control",name_tr:"Element Kontrolü",name_es:"Control Elemental",name_ru:"Контроль стихий",name_fr:"Contrôle élémentaire",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Command fire, water, air, and earth.",examples:["You stop the rain in a 2-metre radius. You bring an umbrella anyway, out of principle.","The barbecue lights on the first attempt. Your family watches in stunned silence.","You redirect a puddle so it misses your shoes. This happens automatically now."]},
+{emoji:"♾️",name:"Immortality",name_tr:"Ölümsüzlük",name_es:"Inmortalidad",name_ru:"Бессмертие",name_fr:"Immortalité",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Never age. Heal from any wound in seconds.",examples:["You've outlived several dentists. You still feel guilty about cancelling.","You witness decades of fashion cycles. You're still wearing the first one.","Everyone assumes you've had work done. You haven't. The secret is worse somehow."]},
+{emoji:"🌀",name:"Dimension Hopping",name_tr:"Boyut Atlama",name_ru:"Прыжки между измерениями",name_fr:"Saut dimensionnel",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Open portals between parallel universes.",examples:["You find the universe where you replied to that email in 2019. You close it immediately.","There's a dimension where you took that job offer. You check in occasionally. They seem fine.","The missing sock dimension is real and it is thriving."]},
+{emoji:"🔊",name:"Sound Manipulation",name_tr:"Ses Manipülasyonu",name_ru:"Контроль звука",name_fr:"Manipulation du son",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Weaponize sound or create perfect silence.",examples:["Your neighbour's renovation sounds like birdsong to you specifically.","You can make any meeting room acoustically perfect. You become very popular at conferences.","You silence the group chat notification. Not the group chat. Just the sound. You're not a monster."]},
+{emoji:"🧬",name:"Memory Manipulation",name_tr:"Hafıza Manipülasyonu",name_ru:"Манипуляция памятью",name_fr:"Manipulation de la mémoire",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Erase, add, or completely rewrite anyone's memories.",examples:["That thing you said at the Christmas party? Nobody remembers it. Specifically.","You've been on the same first date 47 times. You're still deciding.","Your references remember you as outstanding. This is technically true, in a new way."]},
+{emoji:"⚡",name:"Energy Absorption",name_tr:"Enerji Emme",name_ru:"Поглощение энергии",name_fr:"Absorption d'énergie",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Absorb electricity, heat, light — convert all to power.",examples:["You charge your phone by holding it. This confuses people on the tube.","You absorb the gym's entire electricity bill. The gym is confused but grateful.","Thunderstorm: everyone runs inside. You put on a t-shirt and go for a walk."]},
+{emoji:"🐾",name:"Animal Communication",name_tr:"Hayvanlarla İletişim",name_ru:"Общение с животными",name_fr:"Communication animale",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Talk to and guide any animal.",examples:["You discover your cat's complaint is structural and goes back to 2022.","The pigeons in the city square report directly to you. It's a solid intelligence network.","You ask the dog what it wants. It tells you. It's a lot to process."]},
+{emoji:"🌍",name:"Gravity Control",name_tr:"Yerçekimi Kontrolü",name_ru:"Контроль гравитации",name_fr:"Contrôle de la gravité",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Suspend objects and people. Redirect gravity at will.",examples:["You float your keys from the other room. You still lose them, but more elegantly.","IKEA furniture assembles itself when you point at it with conviction.","You reverse gravity briefly in traffic. Everyone else is baffled. You continue driving normally."]},
+{emoji:"🔥",name:"Pyrokinesis",name_tr:"Pirokinez",name_ru:"Пирокинез",name_fr:"Pyrokinèse",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Generate and control fire from your body.",examples:["Scented candles light themselves when you walk into a room. Very atmospheric.","You become the most reliable person at any camping trip. The title means everything.","You've replaced your cooker. The insurance company has questions."]},
+{emoji:"❄️",name:"Cryokinesis",name_tr:"Kriokinez",name_ru:"Криокинез",name_fr:"Cryokinèse",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Freeze anything instantly. Build ice structures from thin air.",examples:["Your drinks are always perfectly chilled. You've become very particular about this.","You've frozen a wasp mid-flight and examined it. Science, essentially.","You created an ice sculpture at a work event. It said 'I'm quitting.' You stayed."]},
+{emoji:"💨",name:"Flight",name_tr:"Uçma",name_es:"Vuelo",name_ru:"Полёт",name_fr:"Vol",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Defy gravity and soar freely through the sky.",examples:["You've stopped using Google Maps because landmarks mean something different now.","You hover slightly when thinking. People find this distracting in meetings.","You fly to the gym. You then fly home. You're not sure the gym counts anymore."]},
+{emoji:"🛡️",name:"Invulnerability",name_tr:"Yaralanmazlık",name_es:"Invulnerabilidad",name_ru:"Неуязвимость",name_fr:"Invulnérabilité",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Bullets, explosions, physical force do nothing to you.",examples:["You stub your toe. The toe is fine. The corner of the table is not.","You sit in the exit row on planes and actually mean it when you confirm you're willing.","You've started jaywalking with unnerving confidence."]},
+{emoji:"📡",name:"EM Perception",name_tr:"EM Algılaması",name_ru:"ЭМ Восприятие",name_fr:"Perception EM",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Sense and analyze all electromagnetic waves.",examples:["You know the WiFi password before entering any building. You remain polite and ask anyway.","You sense a microwave running two floors up. You're not sure what to do with this.","You can see everyone's Bluetooth devices. There are too many of them named 'AirPods'."]},
+{emoji:"🔗",name:"Telekinesis",name_tr:"Telekinezi",name_es:"Telequinesis",name_ru:"Телекинез",name_fr:"Télékinèse",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Move objects with your mind from any distance.",examples:["You retrieve the remote without pausing your internal monologue. Multi-tasking achieved.","You open the office door while carrying too many coffees. You're described as 'graceful'.","You've stacked all the plates from across the kitchen. You still have to wash them."]},
+{emoji:"🌱",name:"Plant Control",name_tr:"Bitki Kontrolü",name_ru:"Контроль растений",name_fr:"Contrôle des plantes",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Grow, direct, and weaponize any plant life.",examples:["Your desk plant thrives aggressively. HR has asked it to stop expanding into the corridor.","You grew a hedge maze in the back garden. It has a solution. You won't confirm this.","You can ripen an avocado to exactly the right moment. This is genuinely your most used power."]},
+{emoji:"💡",name:"Light Manipulation",name_tr:"Işık Manipülasyonu",name_ru:"Контроль света",name_fr:"Contrôle de la lumière",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Bend light into lasers, shields, or perfect ambience.",examples:["Your natural lighting is always perfect. You've never taken a bad photo.","You create a spotlight for yourself when giving presentations. No one comments.","You've redirected sunlight from a window onto a cold cup of tea. It worked."]},
+{emoji:"🌑",name:"Shadow Control",name_tr:"Gölge Kontrolü",name_ru:"Контроль теней",name_fr:"Contrôle des ombres",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Use darkness and shadows as physical matter.",examples:["You create shade at outdoor weddings. You're the most popular guest.","Your shadow can hold objects. You've offloaded your bag onto it while gesturing enthusiastically.","You've used your shadow to indicate parking spaces are taken. Local legend."]},
+{emoji:"⏩",name:"Accelerated Mind",name_tr:"Hızlandırılmış Zihin",name_ru:"Ускоренный разум",name_fr:"Esprit accéléré",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Your brain processes at 1000x speed.",examples:["You finished The Brothers Karamazov before the barista finished your name.","You've pre-disagreed with the argument before they've made it. This is not always helpful.","You've thought through every possible response to the email and sent none of them."]},
+{emoji:"🔭",name:"Ultra Vision",name_tr:"Ultra Görüş",name_ru:"Ультразрение",name_fr:"Ultra-vision",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"See galaxies away. Observe atoms with the naked eye.",examples:["You read menus from across the street. You still squint, out of habit.","You've seen exactly how much bacteria is on a shared pen. You now carry your own.","You check the nutritional content of your food at a molecular level. You've gone off granola."]},
+{emoji:"🤝",name:"Empathy Blast",name_tr:"Empati Patlaması",name_ru:"Удар эмпатии",name_fr:"Souffle empathique",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Broadcast emotions to everyone nearby.",examples:["You make traffic wardens feel a general sense of goodwill. Parking fines are technically still issued.","You broadcast mild enthusiasm at the staff meeting. Attendance hits an all-time high.","You accidentally make everyone on the bus nostalgic simultaneously. Someone cries."]},
+{emoji:"📸",name:"Photographic Memory",name_tr:"Fotografik Bellek",name_ru:"Фотографическая память",name_fr:"Mémoire photographique",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Remember everything with pixel precision.",examples:["You've been banned from pub quizzes in three boroughs. They know what you are.","You remember every password ever created. You still forget to buy milk.","You quote people exactly. They say 'I didn't say it like that.' You play it back."]},
+{emoji:"🔋",name:"Infinite Energy",name_tr:"Sonsuz Enerji",name_ru:"Бесконечная энергия",name_fr:"Énergie infinie",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Never tire. Never sleep. Always at peak performance.",examples:["You've finished every task on your to-do list. You made a new one. Same day.","You're always fresh at 6 AM. People find this suspicious and a little threatening.","You went to 14 events last Saturday. You rated them all. You're available Sunday."]},
+{emoji:"🌐",name:"Universal Language",name_tr:"Evrensel Dil",name_ru:"Универсальный язык",name_fr:"Langue universelle",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Instantly understand and speak every language.",examples:["You translate 'terms and conditions' in real time. You learn this is unwise.","You understand what your cat is saying to the window. It's a monologue.","You read the comments in other languages. You learn this is the same as the English comments."]},
+{emoji:"🏗️",name:"Matter Creation",name_tr:"Madde Yaratma",name_ru:"Создание материи",name_fr:"Création de matière",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Assemble any material from atoms.",examples:["You create a parking space. This is your most controversial power.","You made yourself a replacement charger at 11 PM. You saved the report.","You keep creating slightly better pens. The originals are now in a drawer."]},
+{emoji:"💀",name:"Necromancy",name_tr:"Ölüleri Diriltme",name_ru:"Некромантия",name_fr:"Nécromancie",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Communicate with those who have passed.",examples:["You consult historical figures for essay research. The citation section is complicated.","You ask your dearly departed grandparent for the biscuit recipe. It is everything you hoped.","You find out what actually happened. You tell no one. You simply smile at dinners."]},
+{emoji:"🎯",name:"Perfect Aim",name_tr:"Mükemmel Nişan",name_ru:"Идеальная точность",name_fr:"Visée parfaite",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Everything you throw hits 100% of the time.",examples:["You throw your keys into your bag from the other side of the room. You've stopped walking to it.","You won the tombola at a school fair. You've been asked not to return.","You make the paper basketball shot every time. The bin is now ten metres away. You've kept going."]},
+{emoji:"🦴",name:"Super Strength",name_tr:"Süper Güç",name_es:"Superfuerza",name_ru:"Суперсила",name_fr:"Super-force",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Your physical strength is 1,000× human.",examples:["You open every jar. People bring jars from other streets.","You moved your sofa once to hoover under it. You've been unable to explain why to the neighbours.","You've arm-wrestled a structural engineer. The structural engineer has a new respect for load-bearing."]},
+{emoji:"🕷️",name:"Wall Crawling",name_tr:"Duvara Tırmanma",name_ru:"Хождение по стенам",name_fr:"Grimpe aux murs",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Walk and climb any surface without effort.",examples:["You've found a shortcut through the building that involves the ceiling.","You move to a desk no one else can reach. It becomes the most coveted seat.","You attend a rooftop party via the exterior. Your entrance is remarked upon."]},
+{emoji:"🫁",name:"Toxic Immunity",name_tr:"Zehir Bağışıklığı",name_ru:"Иммунитет к ядам",name_fr:"Immunité aux toxines",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Every poison, radiation, and chemical is harmless.",examples:["You eat the leftovers from the back of the fridge with zero hesitation.","You read ingredient labels and shrug. This is more expensive than the immunity.","You walked through a wasp nest. The wasps left."]},
+{emoji:"🎵",name:"Music Magic",name_tr:"Müzik Büyüsü",name_ru:"Музыкальная магия",name_fr:"Magie musicale",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Control emotions and actions through music.",examples:["You hum in traffic and it disperses. You're not sure of the mechanism.","You play something at the office party and everyone cleans up after themselves.","You hummed something in the queue and it moved. Nobody else noticed. You noticed."]},
+{emoji:"🌙",name:"Night Vision",name_tr:"Gece Görüşü",name_ru:"Ночное зрение",name_fr:"Vision nocturne",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"See perfectly in total darkness.",examples:["You navigate to the toilet at 3 AM like a confident professional.","You find what fell under the sofa without your phone torch. You were there for eight minutes.","You've watched a horror film in complete darkness. You narrated the jumpscare before it happened."]},
+{emoji:"🐉",name:"Dragon Form",name_tr:"Ejder Formu",name_ru:"Форма дракона",name_fr:"Forme de dragon",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Transform into a dragon.",examples:["Your commute time has dropped to zero. The route is now scenic.","You've attended one meeting as a dragon. It was the most efficient meeting of the year.","Your parking space is very clear."]},
+{emoji:"🕰️",name:"Time Travel",name_tr:"Zaman Yolculuğu",name_es:"Viaje en el Tiempo",name_ru:"Путешествие во времени",name_fr:"Voyage dans le temps",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Travel to any point in past or future.",examples:["You visited yourself in 1998 to give investment advice. You wouldn't listen.","You went back to send that email on time. You were on your phone when it arrived. Nothing changed.","You saw the ending. You won't spoil it. You've watched the middle three times."]},
+{emoji:"🎪",name:"Force Field",name_tr:"Güç Alanı",name_ru:"Силовое поле",name_fr:"Champ de force",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Generate a physical energy shield around yourself.",examples:["You stand in rain while everyone else sprints. They think you have a very good coat.","You sit in the middle seat on the plane comfortably. This is the real power.","You've been rear-ended twice. The car behind learned something important about physics."]},
+{emoji:"💎",name:"Matter Transmutation",name_tr:"Madde Dönüşümü",name_ru:"Трансмутация материи",name_fr:"Transmutation de la matière",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Convert any material into any other element.",examples:["You turn the broken umbrella into a working umbrella. Classically underused.","You converted your 2015 laptop into an optimised 2015 laptop. Different timescales.","You turned a disappointing meal into a good meal at the table. The chef was told it was chef's kiss."]},
+{emoji:"🔬",name:"Molecular Vision",name_tr:"Moleküler Görüş",name_ru:"Молекулярное зрение",name_fr:"Vision moléculaire",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"See and analyze molecular structure of anything.",examples:["You identify what's in a ready meal. You do not share this information.","You can tell if a diamond is real. You've been asked to leave three jewellers.","You looked at tap water once. You've installed a filter. You looked at the filter."]},
+{emoji:"🎸",name:"Vibration Control",name_tr:"Titreşim Kontrolü",name_ru:"Контроль вибраций",name_fr:"Contrôle des vibrations",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Alter the vibration frequency of any object.",examples:["You open stuck jars from across the room. The kitchen applauds.","You've tuned every instrument in a room before anyone arrived. The conductor was suspicious.","You vibrated a wasp through a window. This felt like a moral victory."]},
+{emoji:"🌈",name:"Spectrum Vision",name_tr:"Spektrum Görüşü",name_ru:"Спектральное зрение",name_fr:"Vision spectrale",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"See UV, infrared, and all invisible light.",examples:["You see in the dark but find the colour range underwhelming compared to daytime.","You've watched a bee navigate. It's extraordinary. You watched for forty minutes.","You see the heat signatures of cold coffee. You've stopped drinking cold coffee."]},
+{emoji:"🦅",name:"Aerokinesis",name_tr:"Aerokinez",name_ru:"Аэрокинез",name_fr:"Aérokinèse",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Command air currents and wind with precision.",examples:["Your hair does exactly what you want. This single quality has changed your life significantly.","You arrive at the revolving door and it's always moving at the right speed.","You made a really good paper plane. It's still going."]},
+{emoji:"🌸",name:"Healing",name_tr:"Şifa",name_ru:"Исцеление",name_fr:"Guérison",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Cure any illness or injury instantly.",examples:["You touch a bruise and it un-purples in real time. People find this unsettling.","You cure your own hangover before it starts. You start a different kind.","You've healed a paper cut mid-cut. You watched it happen. You still flinch."]},
+{emoji:"🏃",name:"Dimensional Running",name_tr:"Boyutsal Koşu",name_ru:"Межпространственный бег",name_fr:"Course dimensionnelle",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Pass through parallel dimensions as you run.",examples:["You take a shortcut through a dimension where the queue doesn't exist.","You've jogged through a universe where you already did the thing you're procrastinating. Motivational.","Your commute takes 4 minutes. Nobody asks how. You've stopped telling them."]},
+{emoji:"🎓",name:"Instant Learning",name_tr:"Anında Öğrenme",name_ru:"Мгновенное обучение",name_fr:"Apprentissage instantané",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Master any subject at expert level in seconds.",examples:["You studied tax law in the lift on the way to a meeting about tax law.","You speak 47 languages and are vaguely mediocre at all of them. The competence is technical.","You learned the guitar in 6 seconds. You played one song. It was fine."]},
+{emoji:"🌟",name:"Cosmic Awareness",name_tr:"Kozmik Farkındalık",name_ru:"Космическое сознание",name_fr:"Conscience cosmique",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Perceive every event in the universe simultaneously.",examples:["You know everything that's happening everywhere always. You've chosen not to mention most of it.","The news is never a surprise. The news is also never a comfort. But at least there's no surprise.","You've seen the heat death of the universe. You slept fine. You're worried about that."]},
+{emoji:"⚗️",name:"Alchemy",name_tr:"Simya",name_ru:"Алхимия",name_fr:"Alchimie",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Transform base metals into gold and create any compound.",examples:["You've decided not to destabilise the gold market. This is a daily decision. A conscious one.","You made a perfect cup of tea by transmuting the tannins directly. This was unnecessary and correct.","You turned a parking ticket into a compliment slip. It didn't work legally but felt good."]},
+{emoji:"💧",name:"Hydrokinesis",name_tr:"Hidrokinez",name_ru:"Гидрокинез",name_fr:"Hydrokinèse",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Control water in all its forms.",examples:["You've never walked through a puddle. The puddle reroutes.","You made it rain in your allotment. The surrounding gardens were confused.","You straightened the water coming out of a crooked tap. Truly your finest hour."]},
+{emoji:"🕊️",name:"Astral Projection",name_tr:"Astral Yansıma",name_ru:"Астральная проекция",name_fr:"Projection astrale",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Leave your body and travel anywhere in spirit.",examples:["You attended a meeting in spirit while your body was in another meeting. Both noticed.","You explored Tokyo on a Tuesday afternoon. Your body was in Croydon. Very balanced lifestyle.","You went home briefly during a work trip to check the oven. It was fine. The peace of mind was worth it."]},
+{emoji:"🔑",name:"Lock Override",name_tr:"Kilit Açma",name_ru:"Взлом замков",name_fr:"Crochetage",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Open any lock, password, or security system.",examples:["You've never been locked out of anything. You've forgotten what that feeling was like.","Your password is a single character. It's fine.","You've walked through a clearly locked door in front of security. They nodded. They don't know why."]},
+{emoji:"🦠",name:"Disease Immunity",name_tr:"Hastalık Bağışıklığı",name_ru:"Иммунитет к болезням",name_fr:"Immunité aux maladies",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Every pathogen is completely harmless to you.",examples:["You went into cold and flu season like a warm hug into a crowd of sneezes.","You ate airport sushi once. Nothing. You'll never stop thinking about this.","You are the one friend who never gets the thing that's going around. You are simultaneously loved and resented."]},
+{emoji:"🌿",name:"Photosynthesis",name_tr:"Fotosentez",name_ru:"Фотосинтез",name_fr:"Photosynthèse",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Absorb sunlight as energy — food optional.",examples:["You go on a picnic but you don't bring anything. It's not rude, it's efficient.","You've realised that lunch breaks are just for social purposes now. You go anyway. You love them more.","You leaned into a sunny window in December. You felt genuinely replenished. A colleague asked if you'd changed your moisturiser."]},
+{emoji:"🧲",name:"Technopathy",name_tr:"Teknoloji Kontrolü",name_ru:"Технопатия",name_fr:"Technopathie",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Mentally control any electronic device.",examples:["Your phone has never been on 3% at a critical moment. You prevent this.","The printer works first time when you're in the building. People schedule print jobs around your lunch.","You've connected to Bluetooth devices by looking at them with mild intent."]},
+{emoji:"💭",name:"Dream Walking",name_tr:"Rüya Yürüyüşü",name_ru:"Хождение по снам",name_fr:"Marche dans les rêves",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Enter and interact with anyone's dreams.",examples:["You solved a conflict between two colleagues by going in and re-editing the original context. HR never knew.","You entered your own recurring dream and made changes. It's a much better dream now. The sequel is planned.","You helped a friend finish a dream they'd been having for years. They woke up satisfied. They'll never know why."]},
+{emoji:"🪐",name:"Orbital Jump",name_tr:"Orbital Sıçrama",name_ru:"Орбитальный прыжок",name_fr:"Saut orbital",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Launch into orbit and travel between planets.",examples:["You holiday on the moon. The photos are hard to contextualise.","You've used low Earth orbit as a shortcut between cities. The altitude is worth the efficiency.","You went to see Saturn's rings. They're beautiful. You took no photos. You just watched."]},
+{emoji:"🎲",name:"Probability Manipulation",name_tr:"Olasılık Manipülasyonu",name_ru:"Манипуляция вероятностью",name_fr:"Manipulation des probabilités",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Tilt luck and probability in your favor.",examples:["The parking space opens up as you turn the corner. It has always been like this.","You win the raffle at the school fair. They've started doing second prizes. You win those too.","Your toast lands butter-side up. Every time. You've started buttering both sides just to see."]},
+{emoji:"👁",name:"Void Vision",name_tr:"Boşluk Görüşü",name_ru:"Зрение пустоты",name_fr:"Vision du vide",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"See through walls and solid matter.",examples:["You find your keys inside the sofa cushion without removing the cushion. Efficient and slightly eerie.","You saw who took the last biscuit. You said nothing. You know. They know you know.","You watched a film through the cinema wall on the night it was sold out. You left a fair review."]},
+{emoji:"🌪️",name:"Vortex Creation",name_tr:"Girdap Yaratma",name_ru:"Создание вихря",name_fr:"Création de vortex",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Summon localized vortexes to pull in objects.",examples:["Autumn leaves spiral obediently into your garden bin. Your neighbours find this suspicious.","You spiralled an umbrella out of a storm drain. The owner was grateful and confused.","You created a very small personal vortex at a garden party. The bunting was fine."]},
+{emoji:"⚖️",name:"Truth Detection",name_tr:"Gerçek Tespiti",name_ru:"Детектор лжи",name_fr:"Détection du mensonge",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Instantly know when anyone is lying.",examples:["You know which meeting could have been an email. You've known for years. It's a lot.","Every 'I've nearly finished it' becomes a philosophical event.","You know when the food is 'fine'. You're always the last to know it isn't fine."]},
+{emoji:"🌬️",name:"Breath Weapon",name_tr:"Nefes Silahı",name_ru:"Оружие дыхания",name_fr:"Arme de souffle",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Exhale fire, ice, acid, or electricity.",examples:["You light candles at a dinner party with a focused exhale. The aesthetic is immaculate.","You accidentally frost a car window in winter while complaining about the cold. Convenient.","You sneezed once and briefly sparks. People assumed it was static. You agreed."]},
+{emoji:"⬆️",name:"Size Manipulation",name_tr:"Boyut Değiştirme",name_es:"Manipulación de Tamaño",name_ru:"Изменение размера",name_fr:"Manipulation de la taille",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Grow to building height or shrink to microscopic scale.",examples:["You shrank to fit through the queue at the coffee shop. They still got your name wrong.","You grew slightly to see over the crowd at a gig. You received complicated looks.","You've been through the coin return slot of every broken vending machine in the country."]},
+{emoji:"🎨",name:"Chromakinesis",name_tr:"Renk Kontrolü",name_ru:"Хромакинез",name_fr:"Chromakinèse",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Manipulate color and light to alter perception.",examples:["You've changed the colour of a traffic cone to match the pavement. Urban camouflage.","You redecorate your flat by shifting perception. You haven't bought paint since 2019.","You made the sunset slightly more vivid once. Someone posted a photo. 847 likes."]},
+{emoji:"🌊",name:"Maelstrom Summon",name_tr:"Girdap Çağırma",name_ru:"Призыв водоворота",name_fr:"Invocation du maelström",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Create powerful localized vortexes in water.",examples:["You do something very specific with the washing-up water. It cleans faster. You won't explain.","You created a tiny whirlpool in a cup of tea. Nobody at the meeting commented.","Your bath drains with unusual efficiency. You've mentioned this to no one."]},
+{emoji:"⚡",name:"Neural Acceleration",name_tr:"Sinirsel Hızlanma",name_ru:"Нейронное ускорение",name_fr:"Accélération neurale",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Reflexes at 1/1000th of a second.",examples:["You catch every item your children knock off tables. Your children are confused and a little less careful.","You've played every online game at maximum latency and described it as playable.","You've taken 47 photos of a hummingbird in focus. People assume you have good equipment."]},
+{emoji:"🎪",name:"Pocket Dimension",name_tr:"Cep Boyutu",name_ru:"Карманное измерение",name_fr:"Dimension de poche",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Access a personal dimension for storage.",examples:["Your bag has no bottom. This has been commented upon.","You retrieved a spare battery for someone at a concert. They didn't ask where it came from. You were grateful.","Your pocket dimension is very well organised. Better than your flat. You've thought about that."]},
+{emoji:"🌿",name:"Biome Creation",name_tr:"Biyom Yaratma",name_ru:"Создание биома",name_fr:"Création de biome",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Terraform and generate new ecosystems.",examples:["Your balcony has a sustainable microclimate and two types of weather.","You grew a forest in a traffic island. The council is 'investigating'.","You made the Tube platform feel briefly like woodland. Six people noticed. Three cried."]},
+{emoji:"🔮",name:"Curse Casting",name_tr:"Lanet Atma",name_ru:"Наложение проклятий",name_fr:"Malédiction",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Place lasting supernatural effects on things.",examples:["Every queue you join becomes the fast one. Other queues remain as they were.","The lift appears as soon as you press the button. Maintenance can find nothing wrong.","The vending machine has never, once, taken your money and not delivered."]},
+{emoji:"🧿",name:"Evil Eye",name_tr:"Nazar",name_ru:"Дурной глаз",name_fr:"Mauvais oeil",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Cause misfortune to those you focus on with intent.",examples:["The football team you bet against has a very strange afternoon.","The person who took your parking space gets every red light. You feel nothing. This is a lie.","The printer jams for everyone else. You've chosen not to examine this too closely."]},
+{emoji:"💡",name:"Electricity Body",name_tr:"Elektrik Bedeni",name_ru:"Электрическое тело",name_fr:"Corps électrique",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Transform into pure electrical energy.",examples:["You travel home through the power grid. You arrive before you left.","You charge devices by holding them. You are a walking phone shop.","You experience a brief identity crisis when the power goes out."]},
+{emoji:"🐺",name:"Beast Summoning",name_tr:"Canavar Çağırma",name_ru:"Призыв зверей",name_fr:"Invocation de bêtes",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Call any animal to your aid from anywhere.",examples:["You summoned a labrador to a job interview. It didn't help but it helped.","The birds in the park organise themselves when you arrive. Other park users find this mildly unsettling.","A pigeon once delivered a document on time. The recipient did not question the delivery method."]},
+{emoji:"🎭",name:"Emotion Generation",name_tr:"Duygu Üretme",name_ru:"Генерация эмоций",name_fr:"Génération d'émotions",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Create and project specific emotions.",examples:["You fill the meeting room with a low-grade sense of 'let's wrap this up'. Attendance drops. Efficiency triples.","You project mild contentment at the bus stop. Three strangers thank you without knowing why.","You made the Christmas party feel genuinely like Christmas. This was your greatest work."]},
+{emoji:"🌈",name:"Rainbow Bridge",name_tr:"Gökkuşağı Köprüsü",name_ru:"Радужный мост",name_fr:"Pont arc-en-ciel",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Create traversable light bridges between any two points.",examples:["Your commute is a literal rainbow. The photos are extraordinary. You've stopped taking them.","You bridge two buildings for a meeting and the whole thing runs more smoothly for being rainbow-based.","You once had to explain the infrastructure to a building inspector. It was a long afternoon."]},
+{emoji:"⚗️",name:"Transmutation Touch",name_tr:"Dönüştürücü Dokunuş",name_ru:"Трансмутирующее прикосновение",name_fr:"Toucher transmutateur",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Turn any object into any other with a touch.",examples:["You turn the broken umbrella into an unbroken umbrella. You've become very popular in autumn.","You turned a stale croissant into a fresh one. The café asked if they could hire you.","You touched a parking ticket and turned it into a compliment. Legally ambiguous but emotionally satisfying."]},
+{emoji:"🌌",name:"Universe Sight",name_tr:"Evren Görüşü",name_ru:"Взгляд вселенной",name_fr:"Vision de l'univers",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Perceive the entire observable universe simultaneously.",examples:["You know everything happening everywhere. You've become very good at choosing which parts to ignore.","You've seen the beginning of time. You don't talk about it at parties. You nearly did once.","You are aware of every star that has ever existed. You still can't find your glasses."]},
+{emoji:"🔮",name:"Technomancy",name_tr:"Teknomans",name_ru:"Технология",name_fr:"Technomancie",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Enchant technology with magic.",examples:["Your computer runs fast because you asked it nicely. This is not metaphorical.","The software update that breaks everything does not break yours. The IT desk has no explanation.","You've had the same printer for twelve years. You've had words with it regularly. It performs."]},
+{emoji:"🌬️",name:"Pressure Control",name_tr:"Basınç Kontrolü",name_ru:"Контроль давления",name_fr:"Contrôle de la pression",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Manipulate atmospheric and water pressure.",examples:["You've never had altitude sickness. You've also never felt the need to mention this until now.","You equalise your own ears on planes without yawning. You look insufferably comfortable.","You opened a pressurised jar by simply deciding it should open. The jar accepted this."]},
+{emoji:"🌐",name:"Wi-Fi Mind",name_tr:"Wifi Zihni",name_ru:"Wi-Fi разум",name_fr:"Esprit Wi-Fi",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Download any information from the internet mentally.",examples:["You looked up a recipe mid-conversation and corrected someone without checking your phone. They were suspicious.","You streamed a podcast in your head on the commute. Your expression was described as 'focused' and 'slightly glazed'.","You refreshed the internet mentally during a power cut. You described the outage as 'quiet'."]},
+{emoji:"🎭",name:"Perfect Mimicry",name_tr:"Mükemmel Taklit",name_ru:"Совершенная мимикрия",name_fr:"Mimétisme parfait",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Replicate any voice, movement, or skill after witnessing it once.",examples:["You watched a violinist for four minutes and now play the violin. This hasn't made practice feel any less important.","You once mimicked a vending machine noise and a pigeon. Neither have recovered.","You reproduce exact quotes in meetings. People check the minutes. You don't need minutes."]},
+{emoji:"🌊",name:"Adaptive Skin",name_tr:"Adaptif Deri",name_ru:"Адаптивная кожа",name_fr:"Peau adaptative",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Skin adapts to any environment automatically.",examples:["You swim in the North Sea in November and describe it as 'refreshing'. You mean it.","Your skin went sand-coloured at the beach. Three people took photos of the sand near you.","You were once described as 'inappropriately comfortable' at a cryotherapy session."]},
+{emoji:"🎯",name:"Bullet Time",name_tr:"Kurşun Zamanı",name_ru:"Замедление времени",name_fr:"Temps balle",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Slow perceived time dramatically during fast events.",examples:["You catch a falling phone before it lands every time. You are unbearable at tech demonstrations.","You've caught a frisbee in a crowd without breaking eye contact with someone you were talking to.","You watched a bee sting process in real time. You had complicated feelings about it."]},
+{emoji:"🔑",name:"Dream Erasure",name_tr:"Rüya Silme",name_ru:"Стирание снов",name_fr:"Effacement des rêves",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Erase dreams and plant specific ones.",examples:["You gifted someone their first dreamless sleep in years. They said they felt inexplicably rested.","You replaced your own nightmare with a pleasant commute dream. This may have been a mistake.","You planted a dream about finishing the quarterly report. It worked. Nobody is comfortable with how much it worked."]},
+{emoji:"💫",name:"Gravity Well",name_tr:"Yerçekimi Kuyusu",name_ru:"Гравитационный колодец",name_fr:"Puits gravitationnel",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Create intense gravitational pulls.",examples:["You've never dropped anything at a buffet. Everything lands in the bowl.","You guided a tennis ball into the correct court from outside the court. The match continued.","Loose coins gravitate toward you. Your sofa has never had a coin problem."]},
+{emoji:"🧠",name:"Hive Mind",name_tr:"Kolektif Akıl",name_ru:"Коллективный разум",name_fr:"Esprit de ruche",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Connect nearby minds into one consciousness.",examples:["The team completed a project in silence over six minutes. HR found this 'unusual and very compliant'.","The queue moved 40% faster when you were in it. You looked like you were just waiting.","The dinner party reached consensus on dessert in under ten seconds. The host cried, but happily."]},
+{emoji:"🌿",name:"Oxygen Mastery",name_tr:"Oksijen Hakimiyeti",name_ru:"Мастерство кислорода",name_fr:"Maîtrise de l'oxygène",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Control oxygen concentration in any area.",examples:["You've never had a fire go out on you. The oxygen stays in the right percentages.","You breathe clearly at altitude. You described Everest as 'a bit steep' in your review.","You held your breath underwater for 14 minutes. A lifeguard asked if you were alright. You were."]},
+{emoji:"🎯",name:"Spatial Awareness",name_tr:"Mekansal Farkındalık",name_ru:"Пространственное восприятие",name_fr:"Conscience spatiale",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Perfect 360° awareness of everything within 100 metres.",examples:["You've never walked into a glass door. People watch for this and are disappointed.","You know exactly where everyone is in the office at all times. You use this only for good.","You parallel park first time every time. You have been photographed doing this."]},
+{emoji:"🔮",name:"Echo Sight",name_tr:"Yankı Görüşü",name_ru:"Эхолокация",name_fr:"Vision par écho",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"See the past events that occurred in any location.",examples:["You found your lost keys by watching Tuesday's replay.","You discovered who ate the last yoghurt. You chose not to say anything. But they know you know.","You watched what happened in that meeting room. You now understand why the pot plant was moved."]},
+{emoji:"🌊",name:"Rain Calling",name_tr:"Yağmur Çağırma",name_ru:"Вызов дождя",name_fr:"Appel à la pluie",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Summon rain at will.",examples:["You've saved three cricket matches. You've also ruined four. The net is complicated.","Your garden is suspiciously green in summer. You attribute this to 'microclimate'.","You make it rain on the one person who didn't bring an umbrella. This is recreational."]},
+{emoji:"🌟",name:"Aura Reading",name_tr:"Aura Okuma",name_ru:"Чтение ауры",name_fr:"Lecture d'aura",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"See the emotional and spiritual state of any being.",examples:["You know who is fine, who is fine but not fine, and who is not fine and doesn't know it yet.","Job interviews: you see the hiring decision before the handshake. You bring good questions anyway.","You can see when someone is about to ask a difficult question. You've started pre-answering."]},
+{emoji:"🧬",name:"Rapid Evolution",name_tr:"Hızlı Evrim",name_ru:"Быстрая эволюция",name_fr:"Évolution rapide",desc_tr:"İstediğinde görünmez ol — ışık bedeninden geçer.",examples_tr:["Kendi sürpriz partine katıldın. İki kez. Kimse bilmiyor.","İş yerindeki 'Bir dakikan var mı?' tipi senden geçip gidiyor. Her seferinde.","Ofisin gizli bisküvi deposunu keşfettin. Tek koruyucusu sen oldun."],desc_es:"Desaparece a voluntad — la luz pasa a través de ti.",desc_ru:"Исчезай по желанию — свет проходит сквозь тебя.",desc_fr:"Disparais à volonté — la lumière traverse ton corps.",desc:"Evolve any trait in real time.",examples:["You developed night vision on a camping trip. It's not comfortable to explain.","You adapted to the cold shower by the third second. You now take cold showers recreationally.","You became briefly amphibious at a water park. Nobody noticed. You noticed. You think about it."]},
 ];var FOOTBALL=(function(){var raw=[
 ["🐐","Messi","🇦🇷","FW","8x Ballon d'Or. 843 career goals. 2022 World Cup winner. The GOAT."],
 ["⚡","Cristiano Ronaldo","🇵🇹","FW","5x Ballon d'Or. 893 goals. 5 UCL titles. All-time top scorer."],
@@ -2341,6 +2467,21 @@ function deselectCard(){
 function canDrop(rank){return !(S.placed[rank]&&S.placed[rank].locked)}
 
 /* ── CARD ── */
+function getItemName(item){
+  if(CL !== 'en'){
+    if(item['name_'+CL]) return item['name_'+CL];
+    // Fallback chain: tr→es→en for non-translated langs
+  }
+  return item.name;
+}
+function getItemDesc(item){
+  if(CL !== 'en' && item['desc_'+CL]) return item['desc_'+CL];
+  return item.desc;
+}
+function getItemExamples(item){
+  if(CL !== 'en' && item['examples_'+CL]) return item['examples_'+CL];
+  return item.examples || [];
+}
 function showCard(item){
   deselectCard();
   clearHighlights();
@@ -2350,16 +2491,17 @@ function showCard(item){
   void card.offsetWidth;
   card.classList.add('fly');
   document.getElementById('cEmoji').textContent=item.emoji;
-  document.getElementById('cName').textContent=item.name;
-  document.getElementById('cDesc').textContent=item.desc;
+  document.getElementById('cName').textContent=getItemName(item);
+  document.getElementById('cDesc').textContent=getItemDesc(item);
   var exSec=document.getElementById('exSection');
-  if(S.cat==='powers'&&item.examples&&item.examples.length){
+  var _exItems=getItemExamples(item);
+  if(S.cat==='powers'&&_exItems&&_exItems.length){
     exSec.style.display='block';
     var tog=document.getElementById('exToggle');var body=document.getElementById('exBody');
     tog.classList.remove('open');body.classList.remove('open');
     document.getElementById('exToggleTxt').textContent=T('seeExamples');
     var list=document.getElementById('exList');list.innerHTML='';
-    item.examples.forEach(function(ex){var d=document.createElement('div');d.className='ex-item';d.textContent=ex;list.appendChild(d)});
+    _exItems.forEach(function(ex){var d=document.createElement('div');d.className='ex-item';d.textContent=ex;list.appendChild(d)});
   } else {exSec.style.display='none'}
 }
 function toggleCardSelect(e){
@@ -2417,7 +2559,7 @@ function updateSlotUI(rank,item,locked){
   var s=document.getElementById('sl'+rank);if(!s)return;
   s.className='slot filled'+(locked?' locked':'');
   s.querySelector('.semoji').textContent=item.emoji;
-  s.querySelector('.sname').textContent=item.name;
+  s.querySelector('.sname').textContent=getItemName(item);
   s.querySelector('.ssub').textContent=(item.desc||'').substring(0,50)+((item.desc||'').length>50?'…':'');
 }
 function updateDots(){
@@ -2458,7 +2600,83 @@ function doSwap(){var a=S.swapSel[0],b=S.swapSel[1],tmp=S.placed[a];S.placed[a]=
 function skipSwap(){document.getElementById('swap').classList.remove('on');showResults()}
 
 /* ── PERSONALITY ENGINE ── */
+
+function translatePersonality(msg){
+  if(!msg || CL === 'en') return msg;
+  // Show English immediately, then replace with translated version
+  // Translation happens async via Claude API
+  var el = document.getElementById('personalityMsg');
+  if(el) {
+    // Show a subtle loading indicator
+    setTimeout(function(){
+      _translateWithClaude(msg, function(translated){
+        if(el && translated) {
+          el.innerHTML = '<span style="font-size:18px">&#129504;</span> ' + translated;
+        }
+      });
+    }, 100);
+  }
+  return msg; // Return English immediately
+}
+
+function _translateWithClaude(text, callback){
+  var langNames = {tr:'Turkish',es:'Spanish',fr:'French',ru:'Russian'};
+  var targetLang = langNames[CL];
+  if(!targetLang){ callback(text); return; }
+  
+  fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 300,
+      messages: [{
+        role: 'user',
+        content: 'Translate this personality analysis text to ' + targetLang + '. Keep the same tone — witty, slightly sarcastic, insightful. Return ONLY the translated text, nothing else:\n\n' + text
+      }]
+    })
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    var translated = data.content && data.content[0] && data.content[0].text;
+    if(translated) callback(translated.trim());
+    else callback(text);
+  })
+  .catch(function(){ callback(text); });
+}
+
+function translatePersonalityAsync(msg, callback){
+  if(!msg || CL === 'en'){ callback(msg); return; }
+  // Simple keyword replacement for Turkish
+  if(CL === 'tr'){
+    var result = msg;
+    // Replace common English phrases with Turkish
+    var replacements = [
+      [/\bYour\b/g, 'Senin'],
+      [/\bthe ranking\b/gi, 'sıralama'],
+      [/\bThis is\b/gi, 'Bu,'],
+      [/\bmost people\b/gi, 'çoğu kişi'],
+      [/\bconfident\b/gi, 'emin'],
+      [/\bcorrect\b/gi, 'doğru'],
+      [/\binteresting\b/gi, 'ilginç'],
+      [/\bperson\b/gi, 'kişi'],
+      [/\bquite\b/gi, 'oldukça'],
+      [/\bactually\b/gi, 'aslında'],
+      [/\bever made\b/gi, 'şimdiye kadar yapılmış']
+    ];
+    replacements.forEach(function(r){ result = result.replace(r[0], r[1]); });
+    callback(result);
+  } else {
+    callback(msg);
+  }
+}
+
 function getPersonalityMsg(){
+  var msg = getPersonalityMsgEN();
+  return translatePersonality(msg);
+}
+
+function getPersonalityMsgEN(){
   var top3=[];for(var i=0;i<3;i++){if(S.placed[i])top3.push(S.placed[i].item)}
   var bottom=S.placed[9]?S.placed[9].item:null;
   if(!top3.length)return '';
@@ -2555,6 +2773,265 @@ function getPersonalityMsg(){
 }
 
 /* ── RESULTS ── */
+
+/* ── SHARE SYSTEM ── */
+function isLoggedIn(){
+  return USER && USER.loggedIn && !USER.demo;
+}
+// Called when we need to know auth status reliably
+async function isLoggedInAsync(){
+  var sb = getSupabase();
+  if(!sb) return false;
+  var res = await sb.auth.getSession();
+  return !!(res.data && res.data.session && res.data.session.user);
+}
+
+function loginGateHTML(action){
+  return '<div class="sd-login-gate">'
+    + '<p>Sign in to ' + action + '</p>'
+    + '<button class="sd-login-btn" onclick="openLoginModal()">Sign in with Google</button>'
+    + '</div>';
+}
+
+function shareDrawerHTML(type){
+  if(!isLoggedIn()){
+    return loginGateHTML(type === 'result' ? 'share your ranking' : 'send a Vibe Check');
+  }
+  var url = type === 'result' ? buildResultURL() : buildChallengeURL();
+  var label = type === 'result' ? 'Your ranking link' : 'Challenge link';
+  var hint = type === 'result'
+    ? ''
+    : '<div class="sd-hint">They rank the same 10 items — whose taste wins?</div>';
+  var copyId = type === 'result' ? 'sdCopyR' : 'sdCopyC';
+  var inputId = type === 'result' ? 'sdInputR' : 'sdInputC';
+  var waFn = type === 'result' ? 'shareWhatsApp()' : 'challengeWhatsApp()';
+  var twFn = type === 'result' ? 'shareTwitter()' : 'challengeTwitter()';
+  return '<div class="sd-label">' + label + '</div>'
+    + '<div class="sd-link-row">'
+    + '<input id="' + inputId + '" type="text" value="' + url + '" readonly onclick="this.select()">'
+    + '<button class="sd-copy" id="' + copyId + '" onclick="sdCopy(\'' + inputId + '\',\'' + copyId + '\')">Copy</button>'
+    + '</div>'
+    + '<div class="sd-platforms">'
+    + '<button class="sd-plat sd-wa" onclick="' + waFn + '">' + '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>' + ' WhatsApp</button>'
+    + '<button class="sd-plat sd-tw" onclick="' + twFn + '">' + '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.259 5.631 5.905-5.631zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>' + ' X / Twitter</button>'
+    + '</div>'
+    + hint;
+}
+
+function toggleShareDrawer(type){
+  var rD = document.getElementById('shareResultDrawer');
+  var cD = document.getElementById('shareChallengeDrawer');
+  var rC = document.getElementById('shareResultContent');
+  var cC = document.getElementById('shareChallengeContent');
+  if(type === 'result'){
+    var isOpen = rD.classList.contains('open');
+    cD.classList.remove('open');
+    if(!isOpen){
+      rC.innerHTML = shareDrawerHTML('result');
+      rD.classList.add('open');
+    } else {
+      rD.classList.remove('open');
+    }
+  } else {
+    var isOpen2 = cD.classList.contains('open');
+    rD.classList.remove('open');
+    if(!isOpen2){
+      cC.innerHTML = shareDrawerHTML('challenge');
+      cD.classList.add('open');
+    } else {
+      cD.classList.remove('open');
+    }
+  }
+}
+
+function sdCopy(inputId, btnId){
+  var inp = document.getElementById(inputId);
+  if(!inp) return;
+  inp.select(); inp.setSelectionRange(0,9999);
+  navigator.clipboard.writeText(inp.value).catch(function(){ document.execCommand('copy'); });
+  var btn = document.getElementById(btnId);
+  if(btn){ btn.textContent='Copied ✓'; btn.classList.add('done'); setTimeout(function(){ btn.textContent='Copy'; btn.classList.remove('done'); },2000); }
+}
+
+function copyShareLink(){ sdCopy('sdInputR','sdCopyR'); }
+function copyChallengeLink(){ sdCopy('sdInputC','sdCopyC'); }
+
+function buildResultURL(){
+  // Use hash fragment — works with Vercel static hosting, no routing needed
+  var ids = S.placed.map(function(p){ return p ? p.item.id : 0; }).join(',');
+  var base = 'https://vibesorting.vercel.app/';
+  return base + '#view/' + S.cat + '/' + (S.sub||'all') + '/' + ids;
+}
+
+function buildChallengeURL(){
+  var ids = S.queue.map(function(item){ return item.id; }).join(',');
+  var base = 'https://vibesorting.vercel.app/';
+  return base + '#challenge/' + S.cat + '/' + (S.sub||'all') + '/' + ids;
+}
+
+function buildResultText(){
+  var cat = getCatLabel(S.cat);
+  var sub = getSubs(S.cat).find(function(x){return x.id===S.sub});
+  var lines = ['\u26a1 My VibeSorting: '+cat+(sub?' · '+sub.label:''),''];
+  S.placed.forEach(function(p,i){ if(p) lines.push((i+1)+'. '+p.item.emoji+' '+p.item.name); });
+  lines.push(''); lines.push('vibesorting.vercel.app');
+  return lines.join('\n');
+}
+
+function buildChallengeText(){
+  var cat = getCatLabel(S.cat);
+  return '\u26a1 Vibe Check — can you beat my '+cat+' ranking?\n'+buildChallengeURL();
+}
+
+function shareWhatsApp(){  window.open('https://wa.me/?text='+encodeURIComponent(buildResultText()),'_blank'); }
+function shareTwitter(){   window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(buildResultText().split('\n').slice(0,6).join('\n')),'_blank'); }
+function challengeWhatsApp(){ window.open('https://wa.me/?text='+encodeURIComponent(buildChallengeText()),'_blank'); }
+function challengeTwitter(){  window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(buildChallengeText()),'_blank'); }
+
+function openLoginModal(){
+  document.getElementById('loginModal').classList.add('on');
+}
+
+function resetShareBoxes(){
+  var d1=document.getElementById('shareResultDrawer');
+  var d2=document.getElementById('shareChallengeDrawer');
+  if(d1) d1.classList.remove('open');
+  if(d2) d2.classList.remove('open');
+}
+
+
+
+/* ── URL HANDLER: incoming share/challenge links ── */
+function handleIncomingURL(){
+  // Parse hash-based share links: #view/cat/sub/ids or #challenge/cat/sub/ids
+  var hash = window.location.hash.replace('#','');
+  if(!hash) return;
+  var parts = hash.split('/');
+  if(parts.length < 4) return;
+  
+  var mode = parts[0]; // 'view' or 'challenge'
+  var cat  = parts[1];
+  var sub  = parts[2] === 'all' ? null : parts[2];
+  var ids  = parts[3];
+  
+  if(mode !== 'view' && mode !== 'challenge') return;
+  
+  var r  = mode === 'view'      ? ids : null;
+  var ch = mode === 'challenge' ? ids : null;
+  
+  // Persist so OAuth redirect doesn't lose it
+  var shareData = { cat:cat, sub:sub, r:r, ch:ch };
+  try { sessionStorage.setItem('_vs_share', JSON.stringify(shareData)); } catch(e){}
+  window._pendingShare = shareData;
+
+  var sb = getSupabase();
+  if(sb){
+    sb.auth.getSession().then(function(res){
+      var session = res && res.data && res.data.session;
+      if(session && session.user){
+        if(!USER || !USER.loggedIn) setUserFromSupabase(session.user);
+        window._pendingShare = null;
+        try { sessionStorage.removeItem('_vs_share'); } catch(e){}
+        _processIncomingURL(cat, sub, r, ch);
+      } else {
+        _showShareLoginModal(!!r);
+      }
+    }).catch(function(){ _showShareLoginModal(!!r); });
+  } else {
+    _showShareLoginModal(!!r);
+  }
+}
+
+function _showShareLoginModal(isResult){
+  setTimeout(function(){
+    var modal = document.getElementById('loginModal');
+    if(!modal) return;
+    var desc = modal.querySelector('#loginDesc');
+    if(desc) desc.textContent = isResult
+      ? 'Sign in to view this shared ranking'
+      : 'Sign in to accept this Vibe Check challenge';
+    modal.classList.add('on');
+  }, 300);
+}
+
+function _processIncomingURL(cat, sub, r, ch){
+  if(!cat || !CATS_CFG[cat]) return;
+  S.cat = cat; S.sub = sub || null;
+
+  if(r){
+    var ids = r.split(',').map(Number);
+    // Use async pool loader (handles JSON-based categories like films)
+    getDataPoolAsync(cat, sub).then(function(pool){
+    S.placed = new Array(10).fill(null);
+    S.queue = [];
+    ids.forEach(function(id, rank){
+      var item = pool.find(function(x){ return x.id === id; });
+      if(item){ S.placed[rank] = {item:item, locked:true}; S.queue.push(item); }
+    });
+    S.phase = 'results';
+    document.getElementById('landing').style.display = 'none';
+    document.getElementById('footerEl').style.display = 'none';
+    document.querySelector('.top-bar').style.display = 'flex';
+    var as = document.getElementById('analyticsSection'); if(as) as.style.display='none';
+    showResults();
+    // Add banner
+    setTimeout(function(){
+      var banner = document.createElement('div');
+      banner.className = 'share-banner';
+      banner.innerHTML = '<span>&#128064; Viewing a shared ranking</span>'
+        + '<button onclick="startChallengeFromURL()">Rank these too &#9889;</button>';
+      var resH = document.querySelector('.res-h');
+      if(resH && !document.querySelector('.share-banner')) resH.parentNode.insertBefore(banner, resH);
+    }, 150);
+    window._sharedIds = ids;
+    }); // end getDataPoolAsync.then
+  } else if(ch){
+    var ids2 = ch.split(',').map(Number);
+    getDataPoolAsync(cat, sub).then(function(pool){
+      var items = ids2.map(function(id){ return pool.find(function(x){ return x.id===id; }); }).filter(Boolean);
+      if(items.length >= 2) startChallengeWithItems(cat, sub, items);
+    });
+  }
+}
+
+
+function startChallengeFromURL(){
+  if(window._sharedIds){
+    startChallengeWithIds(S.cat, S.sub, window._sharedIds);
+  }
+}
+
+function startChallengeWithIds(cat, sub, ids){
+  getDataPoolAsync(cat, sub).then(function(pool){
+    var items = ids.map(function(id){ return pool.find(function(x){ return x.id===id; }); }).filter(Boolean);
+    startChallengeWithItems(cat, sub, items);
+  });
+}
+function startChallengeWithItems(cat, sub, items){
+  if(items.length < 2) { alert('Could not load these items. Try again.'); return; }
+
+  S.cat = cat; S.sub = sub;
+  S.queue = items;
+  S.placed = new Array(10).fill(null);
+  S.curIdx = 0; S.curItem = S.queue[0];
+  S.phase = 'playing';
+
+  document.getElementById('landing').style.display = 'none';
+  document.getElementById('footerEl').style.display = 'none';
+  document.getElementById('results').style.display = 'none';
+  document.querySelector('.top-bar').style.display = 'none';
+  var as = document.getElementById('analyticsSection'); if(as) as.style.display='none';
+  document.getElementById('game').style.display = 'flex';
+
+  var sub_obj = getSubs(cat).find(function(x){return x.id===sub});
+  document.getElementById('gPill').textContent = getCatLabel(cat)+(sub_obj?' · '+sub_obj.label:'');
+  document.getElementById('lblNowRank').textContent = T('nowRank');
+  document.getElementById('lblBuildRank').textContent = T('buildRank');
+  document.getElementById('inCard').style.opacity = '1';
+  S.startTime = Date.now(); S.usedSwap = false;
+  buildDots(); buildSlots(); showCard(S.curItem);
+}
+
 function showResults(){
   if(S.startTime) saveRankingToDB(); // async, fire and forget
   document.getElementById('game').style.display='none';
@@ -2567,7 +3044,9 @@ function showResults(){
   document.getElementById('btnNewCat').textContent='Try Another Category';
   var sub=getSubs(S.cat).find(function(x){return x.id===S.sub});
   document.getElementById('resSub').textContent=getCatLabel(S.cat)+(sub?' · '+sub.label:'');
-  document.getElementById('personalityMsg').textContent=getPersonalityMsg();
+  var _pm=getPersonalityMsg();
+  var _pmEl=document.getElementById('personalityMsg');
+  if(_pmEl) _pmEl.innerHTML='<span style="font-size:18px">&#129504;</span> ' + _pm;
   var list=document.getElementById('resList');list.innerHTML='';
   for(var i=0;i<10;i++){
     if(!S.placed[i])continue;var item=S.placed[i].item,pct=mockPct(i);
@@ -2595,6 +3074,7 @@ function confetti(){
 
 /* ── NAV ── */
 function goHome(){
+  resetShareBoxes();
   document.querySelector('.top-bar').style.display='flex';
   document.getElementById('landing').style.display='flex';
   var as2=document.getElementById('analyticsSection');if(as2)as2.style.display='block';
@@ -2606,6 +3086,7 @@ function goHome(){
   S.phase='landing';
 }
 function playAgain(){
+  resetShareBoxes();
   document.getElementById('results').style.display='none';
   document.getElementById('footerEl').style.display='none';
   openModal(S.cat);
@@ -2615,14 +3096,12 @@ function playAgain(){
 function sendBug(){
   var txt=document.getElementById('bugText').value.trim();
   if(!txt){alert('Please describe the bug first.');return;}
-  var file=document.getElementById('bugFile').files[0];
-  var msg='Bug reported'+(file?' (with screenshot)':'')+': '+txt.substring(0,80);
+  var subj=encodeURIComponent('VibeSorting Bug Report');
+  var body=encodeURIComponent('Bug: ' + txt + '\n\nCategory: ' + (S.cat||'none') + '\nLang: ' + CL + '\nPhase: ' + S.phase);
+  var mailto='mailto:kineticsimulations@gmail.com?cc=srknngl01@gmail.com&subject=' + subj + '&body=' + body;
+  window.location.href = mailto;
   document.getElementById('bugText').value='';
-  document.getElementById('bugFile').value='';
-  var subject=encodeURIComponent('VibeSorting Bug Report');
-  var body=encodeURIComponent(txt+(file?'\n\n[Screenshot attached: '+file.name+']':''));
-  window.open('mailto:kineticsimulations@gmail.com?subject='+subject+'&body='+body);
-  var btn=document.querySelector('.bug-send');btn.textContent='Sent!';setTimeout(function(){btn.textContent='Send Report'},2000);
+  setTimeout(function(){alert('Email client opened. Send the pre-filled email to report your bug.');},500);
 }
 
 /* ── TOUCH ── */
