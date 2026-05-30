@@ -380,7 +380,7 @@ footer{background:var(--sur);border-top:1px solid var(--bor);padding:40px 32px;m
           <div class="ex-body" id="exBody"><div class="ex-list" id="exList"></div></div>
         </div>
       </div>
-      <div class="drag-hint"><span id="dragHintText">Click card to select, then click a slot</span></div>
+      <div class="drag-hint" id="dragHintEl"><span id="dragHintText">Click card to select, then click a slot</span></div>
     </div>
     <div class="right-panel">
       <div class="panel-label" id="lblBuildRank">build your ranking</div>
@@ -445,7 +445,7 @@ footer{background:var(--sur);border-top:1px solid var(--bor);padding:40px 32px;m
 <!-- ANALYTICS SECTION -->
 <section id="analyticsSection" style="max-width:900px;margin:0 auto 0;padding:50px 36px 0">
   <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:28px">
-    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:2px;background:linear-gradient(135deg,var(--acc),var(--acc3));-webkit-background-clip:text;-webkit-text-fill-color:transparent">Community Stats</h2>
+    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:2px;background:linear-gradient(135deg,var(--acc),var(--acc3));-webkit-background-clip:text;-webkit-text-fill-color:transparent" id="communityStatsTitle">Community Stats</h2>
     <span style="font-size:11px;font-family:'Space Mono',monospace;color:var(--mut)">LIVE · 24H SNAPSHOT</span>
   </div>
 
@@ -559,7 +559,7 @@ footer{background:var(--sur);border-top:1px solid var(--bor);padding:40px 32px;m
   <div class="footer-inner">
     <div class="footer-section">
       <h4>VibeSorting</h4>
-      <p>Blind rankings. Your gut vs the world.<br>No right answers. Only vibes.</p>
+      <p id="footerTaglineEl">Blind rankings. Your gut vs the world.<br>No right answers. Only vibes.</p>
     </div>
     <div class="footer-section">
       <h4>Contact</h4>
@@ -569,9 +569,9 @@ footer{background:var(--sur);border-top:1px solid var(--bor);padding:40px 32px;m
     <div class="footer-section">
       <h4>Bug Report</h4>
       <div class="bug-form">
-        <textarea id="bugText" placeholder="Describe the bug..."></textarea>
+        <textarea id="bugText" id="bugTextArea" placeholder="Describe the bug..."></textarea>
         <input type="file" id="bugFile" accept="image/*,.jpg,.jpeg,.png,.gif,.webp,.bmp,.tiff,.svg,.heic,.heif" style="font-size:11px;color:var(--mut)">
-        <button class="bug-send" onclick="sendBug()">Send Report</button>
+        <button class="bug-send" onclick="sendBug()" id="bugSendBtnEl">Send Report</button>
       </div>
     </div>
   </div>
@@ -620,29 +620,20 @@ async function doGoogleLogin() {
   }
 
   /* ── Real Google OAuth ── */
-  var redirectUrl = window.location.origin + window.location.pathname;
-  console.log('OAuth redirectTo:', redirectUrl);
-
-  // Show what redirect URI to whitelist in Google Cloud Console
-  var warnEl = document.getElementById('loginSetupWarn');
-  if (warnEl) {
-    warnEl.style.display = 'block';
-    warnEl.innerHTML = 'Redirecting to Google...<br>If nothing happens, check:<br>'
-      + '1. Google Cloud → OAuth → Redirect URIs includes:<br>'
-      + '<b>https://ayqvtcxyjdnqkwzduzsp.supabase.co/auth/v1/callback</b><br>'
-      + '2. Supabase → Auth → URL Configuration → Site URL = <b>' + window.location.origin + '</b>';
-  }
+  // redirectTo = where Supabase sends user AFTER auth completes
+  // Must match an entry in: Supabase → Auth → URL Configuration → Redirect URLs
+  var redirectTo = 'https://vibesorting.vercel.app/';
 
   var oauthResult = await sb.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: redirectUrl,
+      redirectTo: redirectTo,
       queryParams: { access_type: 'offline', prompt: 'select_account' }
     }
   });
   if (oauthResult.error) {
     console.error('Login error:', oauthResult.error.message);
-    alert('Google login failed: ' + oauthResult.error.message + '\n\nMake sure:\n1. Google provider enabled in Supabase Auth\n2. Client ID + Secret added\n3. Redirect URI: ' + redirectUrl);
+    alert('Google login failed: ' + oauthResult.error.message);
   }
 }
 
@@ -742,136 +733,57 @@ async function saveRankingToDB() {
 async function saveBugReport(text, file) {
   var sb = getSupabase();
 
-  /* No Supabase or file → use mailto directly */
-  if (!sb || file) {
-    var subj = encodeURIComponent('VibeSorting Bug Report');
-    var body = encodeURIComponent('[VibeSorting Bug]\n\n' + text + '\n\nPage state: cat=' + S.cat + ' sub=' + S.sub + ' lang=' + CL);
-    var mailLink = 'mailto:kineticsimulations@gmail.com?subject=' + subj + '&body=' + body;
-    window.location.href = mailLink;
-    return true;
-  }
-
-  var screenshotUrl = null;
-
-  /* Upload screenshot to Storage */
-  if (file) {
+  // Try Supabase first (if configured)
+  if (sb) {
+    var screenshotUrl = null;
+    if (file) {
+      try {
+        var ext = file.name.split('.').pop().toLowerCase();
+        var path = 'bugs/' + Date.now() + '.' + ext;
+        var up = await sb.storage.from('screenshots').upload(path, file, {upsert:false});
+        if (!up.error) {
+          var pub = sb.storage.from('screenshots').getPublicUrl(path);
+          screenshotUrl = pub.data.publicUrl;
+        }
+      } catch(e) { console.warn('Screenshot upload:', e.message); }
+    }
     try {
-      var ext  = file.name.split('.').pop().toLowerCase();
-      var path = 'bugs/' + Date.now() + '_' + Math.random().toString(36).slice(2) + '.' + ext;
-      var up   = await sb.storage.from('screenshots').upload(path, file, { upsert: false });
-      if (!up.error) {
-        var pub = sb.storage.from('screenshots').getPublicUrl(path);
-        screenshotUrl = pub.data.publicUrl;
-      }
-    } catch(e) { console.warn('Screenshot upload:', e.message); }
+      var ins = await sb.from('bug_reports').insert({
+        user_id: (USER.loggedIn && USER.id) ? USER.id : null,
+        message: text,
+        screenshot_url: screenshotUrl,
+        user_agent: navigator.userAgent,
+        page_state: JSON.stringify({cat:S.cat,sub:S.sub,phase:S.phase,lang:CL})
+      });
+      if (ins.error) throw ins.error;
+      return true;
+    } catch(e) { console.warn('Supabase bug report error:', e.message); }
   }
 
-  /* Insert bug report row */
+  // Fallback: FormSubmit (no mailto popup, stays on page)
   try {
-    var ins = await sb.from('bug_reports').insert({
-      user_id:        (USER.loggedIn && USER.id) ? USER.id : null,
-      message:        text,
-      screenshot_url: screenshotUrl,
-      user_agent:     navigator.userAgent,
-      page_state:     JSON.stringify({ cat:S.cat, sub:S.sub, phase:S.phase, lang:CL })
+    var formData = new FormData();
+    formData.append('bug', text);
+    formData.append('category', S.cat || 'none');
+    formData.append('lang', CL);
+    formData.append('phase', S.phase || 'unknown');
+    formData.append('_subject', 'VibeSorting Bug Report');
+    formData.append('_cc', 'srknngl01@gmail.com');
+    formData.append('_captcha', 'false');
+    formData.append('_template', 'box');
+    if (file) formData.append('screenshot', file);
+
+    var res = await fetch('https://formsubmit.co/kineticsimulations@gmail.com', {
+      method: 'POST',
+      body: formData
     });
-    if (ins.error) throw ins.error;
-    return true;
+    return res.ok;
   } catch(e) {
-    console.warn('Bug report DB error:', e.message);
-    /* Fallback */
-    var subj2 = encodeURIComponent('VibeSorting Bug Report');
-    var body2 = encodeURIComponent(text);
-    window.open('mailto:kineticsimulations@gmail.com?subject=' + subj2 + '&body=' + body2);
+    console.warn('FormSubmit error:', e.message);
     return false;
   }
 }
 
-/* ════════════════════════════════════════
-   REAL ANALYTICS from Supabase
-════════════════════════════════════════ */
-async function loadRealAnalytics() {
-  var sb = getSupabase(); if (!sb) { renderAnalytics(); return; }
-
-  try {
-    var since = new Date(Date.now() - 86400000).toISOString();
-
-    /* Total games today */
-    var tot = await sb.from('rankings').select('id', { count:'exact', head:true }).gte('created_at', since);
-    var todayCount = tot.count || 0;
-
-    /* Games per category today */
-    var cats = await sb.from('rankings').select('category').gte('created_at', since);
-    var catCounts = {};
-    if (cats.data) cats.data.forEach(function(r){ catCounts[r.category] = (catCounts[r.category]||0)+1; });
-
-    /* All-time total */
-    var allTime = await sb.from('rankings').select('id', { count:'exact', head:true });
-    var allCount = allTime.count || 0;
-
-    /* Unique users today (by session_id) */
-    var sess = await sb.from('rankings').select('session_id').gte('created_at', since);
-    var uniqueSess = 0;
-    if (sess.data) {
-      var seen = {};
-      sess.data.forEach(function(r){ seen[r.session_id] = 1; });
-      uniqueSess = Object.keys(seen).length;
-    }
-
-    /* Top items per category (avg rank) */
-    var topItems = await sb.from('item_stats').select('category,item_name,avg_rank,rank_1_count,total_appearances').order('avg_rank',{ascending:true}).limit(50);
-
-    /* Update analytics UI with real data */
-    updateAnalyticsUI(todayCount, uniqueSess, allCount, catCounts, topItems.data || []);
-
-  } catch(e) {
-    console.warn('Analytics load error:', e.message);
-    renderAnalytics();
-  }
-}
-
-function updateAnalyticsUI(todayGames, uniqueUsers, allTime, catCounts, topItems) {
-  /* Stat pills */
-  var pills = document.querySelectorAll('[data-stat]');
-  pills.forEach(function(p){
-    if (p.dataset.stat === 'total')   p.textContent = allTime > 0 ? allTime.toLocaleString() : '—';
-    if (p.dataset.stat === 'today')   p.textContent = todayGames > 0 ? todayGames.toLocaleString() : '—';
-    if (p.dataset.stat === 'players') p.textContent = uniqueUsers > 0 ? uniqueUsers.toLocaleString() : '—';
-  });
-
-  /* Top 3 categories */
-  var sorted = Object.entries(catCounts).sort(function(a,b){ return b[1]-a[1]; });
-  var catNames = { powers:'⚡ Super Powers', football:'⚽ Footballers', nba:'🏀 NBA Players',
-                   series:'📺 TV Series', films:'🎬 Films', techbrands:'📱 Tech Brands', games:'🎮 Games' };
-  ['first','second','third'].forEach(function(rank, i){
-    var el = document.getElementById('topCat_' + rank);
-    if (el && sorted[i]) {
-      el.querySelector('.topcat-name').textContent = catNames[sorted[i][0]] || sorted[i][0];
-      el.querySelector('.topcat-count').textContent = sorted[i][1].toLocaleString() + ' rankings today';
-      var bar = el.querySelector('.topcat-bar');
-      if (bar && sorted[0][1] > 0) bar.style.width = Math.round(sorted[i][1]/sorted[0][1]*100) + '%';
-    }
-  });
-
-  /* Top items table */
-  if (topItems.length > 0) {
-    var tbl = document.getElementById('topItemsTable');
-    if (tbl) {
-      var catFilter = 'football'; // default
-      var filtered = topItems.filter(function(x){ return x.category === catFilter; }).slice(0,10);
-      tbl.innerHTML = filtered.map(function(item, i){
-        return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--bor)">'
-          + '<span style="font-family:Bebas Neue,sans-serif;font-size:18px;color:var(--acc);width:24px">' + (i+1) + '</span>'
-          + '<span style="flex:1;font-size:13px;font-weight:600">' + item.item_name + '</span>'
-          + '<span style="font-size:11px;color:var(--mut);font-family:Space Mono,monospace">avg #' + (item.avg_rank||'?') + '</span>'
-          + '<span style="font-size:11px;color:var(--acc);font-family:Space Mono,monospace;margin-left:8px">' + (item.rank_1_count||0) + 'x #1</span>'
-          + '</div>';
-      }).join('');
-    }
-  }
-
-  renderAnalytics(); // also render the charts
-}
 
 async function logOut(){
   var sb=getSupabase();
@@ -885,11 +797,11 @@ async function logOut(){
 
 
 var LANGS={
-en:{tagline:"Blind Rankings · Your Gut vs. The World",hint:"choose a category → pick criteria → start ranking",catPowers:"Super Powers",catPowersDesc:"Rank 10 randomly drawn powers. Which is most valuable?",catFootball:"Footballers",catFootballDesc:"Rank 10 random legends by your criteria",catNBA:"NBA Players",catNBADesc:"Rank 10 random NBA greats of all time",badgePowers:"240 POWERS",badgeFootball:"200 PLAYERS",badgeNBA:"200 PLAYERS",catSeries:"Series",catSeriesDesc:"Rank 10 TV shows. Which deserves the top spot?",catFilms:"Films",catFilmsDesc:"Rank 10 films. What's the best?",catBrands:"Brands",catBrandsDesc:"Rank 10 brands — tech, food, fashion and more.",catCars:"Cars",catCarsDesc:"Rank 10 cars — sports, classic, luxury, everyday.",catGames:"Video Games",catGamesDesc:"Rank 10 games. What's the greatest ever made?",nowRank:"now ranking",buildRank:"build your ranking",cancel:"Cancel",start:"Start →",skip:"Skip",swap:"Swap ✓",home:"← Home",again:"Play Again ⚡",resTitle:"Your Ranking 🔥",swapTitle:"Last Move",swapDesc:"1 swap left — choose two items to switch.",selectTwo:"Select two items",willSwap:"will be swapped",seeExamples:"see some examples",placeHere:"Drop here",ranked:"placed here by others",loginBtnTxt:"Sign In",loginTitle:"Sign in to VibeSorting",loginDesc:"Unlock all categories and save your rankings.",googleBtnTxt:"Continue with Google",loginNote:"No spam. No ads. Just rankings.",lockedMsg:"🔒 Sign in to unlock this category",catSeries:"Series",catSeriesDesc:"Rank 10 TV shows.",catFilms:"Films",catFilmsDesc:"Rank 10 films.",catBrands:"Brands",catBrandsDesc:"Rank 10 brands — tech, food, fashion.",catCars:"Cars",catCarsDesc:"Rank 10 cars — sports, classic, luxury.",catGames:"Video Games",catGamesDesc:"Rank 10 games.",subcatPowers:[{id:"overall",icon:"🏆",label:"Overall Power",sub:"Most OP?"},{id:"combat",icon:"⚔️",label:"Combat",sub:"Best in a fight"},{id:"social",icon:"🧠",label:"Social Edge",sub:"Everyday life"},{id:"utility",icon:"🛠️",label:"Utility",sub:"Most useful daily"},{id:"coolness",icon:"😎",label:"Cool Factor",sub:"Most badass"},{id:"rare",icon:"💎",label:"Rarity",sub:"Most unique"}],subcatFootball:[{id:"overall",icon:"🏆",label:"Overall",sub:"Career-based"},{id:"dribbling",icon:"🎭",label:"Dribbling",sub:"Skill & control"},{id:"goals",icon:"🥅",label:"Goalscoring",sub:"Finishing"},{id:"assist",icon:"🎯",label:"Assists",sub:"Vision & last pass"},{id:"defense",icon:"🛡️",label:"Defense",sub:"Duels & defending"},{id:"clutch",icon:"🔥",label:"Big Game",sub:"When it matters"},{id:"legend",icon:"👑",label:"Club Legend",sub:"Legacy"},{id:"speed",icon:"⚡",label:"Speed",sub:"Fastest & fittest"}],subcatNba:[{id:"overall",icon:"🏆",label:"Overall GOAT",sub:"Career-based"},{id:"scoring",icon:"🥅",label:"Scoring",sub:"Points & finishing"},{id:"playmaking",icon:"🎯",label:"Playmaking",sub:"Assists & vision"},{id:"defense",icon:"🛡️",label:"Defense",sub:"Best defenders"},{id:"clutch",icon:"🔥",label:"Clutch",sub:"Under pressure"},{id:"threepoint",icon:"🎯",label:"3-Point",sub:"Long range"},{id:"athleticism",icon:"⚡",label:"Athleticism",sub:"Speed & leaping"}],subcatSeries:[{id:"drama",icon:"🎭",label:"Drama",sub:"Prestige TV"},{id:"comedy",icon:"😂",label:"Comedy",sub:"Sitcoms & dark comedy"},{id:"thriller",icon:"🔍",label:"Thriller & Crime",sub:"Whodunnit & spy"},{id:"scifi",icon:"🚀",label:"Sci-Fi",sub:"Science fiction"},{id:"animated",icon:"🎨",label:"Animated",sub:"Adult animation"},{id:"reality",icon:"📺",label:"Reality & Doc",sub:"Reality TV & docs"}],subcatFilms:[{id:"action",icon:"💥",label:"Action",sub:"Stunts & spectacle"},{id:"comedy",icon:"😂",label:"Comedy",sub:"From absurd to satirical"},{id:"scifi",icon:"🚀",label:"Sci-Fi",sub:"Science fiction"},{id:"drama",icon:"🎭",label:"Drama",sub:"Character & story"},{id:"horror",icon:"💀",label:"Horror",sub:"Fear & dread"},{id:"animation",icon:"🎨",label:"Animation",sub:"Animated films"}],subcatBrands:[{id:"tech",icon:"💻",label:"Tech Brands",sub:"Software & hardware"},{id:"food",icon:"🍔",label:"Food & Drink",sub:"Fast food & snacks"},{id:"fashion",icon:"👟",label:"Fashion",sub:"Clothing & accessories"},{id:"gaming",icon:"🎮",label:"Gaming Brands",sub:"Studios & platforms"},{id:"sports",icon:"⚽",label:"Sports Brands",sub:"Athletic wear"},{id:"luxury",icon:"💎",label:"Luxury Brands",sub:"Premium & prestige"}],subcatCars:[{id:"sports",icon:"🏎️",label:"Sports Cars",sub:"Performance & supercar"},{id:"classic",icon:"🏆",label:"Classic & Iconic",sub:"Legendary cars"},{id:"luxury",icon:"👑",label:"Luxury",sub:"Premium sedans & SUVs"},{id:"everyday",icon:"🚗",label:"Everyday",sub:"Practical & family"},{id:"electric",icon:"⚡",label:"Electric",sub:"EVs & hybrids"},{id:"offroad",icon:"🌲",label:"Off-Road",sub:"4x4 & adventure"}],subcatGames:[{id:"openworld",icon:"🌍",label:"Open World",sub:"Explore & discover"},{id:"rpg",icon:"⚔️",label:"RPG",sub:"Role-playing games"},{id:"indie",icon:"💡",label:"Indie",sub:"Independent gems"},{id:"fps",icon:"🔫",label:"FPS",sub:"First-person shooters"},{id:"strategy",icon:"🧠",label:"Strategy",sub:"Turn-based & RTS"},{id:"sports",icon:"⚽",label:"Sports & Racing",sub:"FIFA, F1, NBA 2K"}]},
-es:{tagline:"Rankings Ciegos · Tu Instinto vs. El Mundo",hint:"elige categoría → criterio → ¡clasifica!",catPowers:"Superpoderes",catPowersDesc:"Clasifica 10 poderes aleatorios. ¿Cuál es más valioso?",catFootball:"Futbolistas",catFootballDesc:"Clasifica 10 leyendas al azar por tu criterio",catNBA:"Jugadores NBA",catNBADesc:"Clasifica 10 grandes de la NBA",badgePowers:"240 PODERES",badgeFootball:"200 JUGADORES",badgeNBA:"200 JUGADORES",nowRank:"clasifica ahora",buildRank:"construye tu ranking",cancel:"Cancelar",start:"Empezar →",skip:"Saltar",swap:"Cambiar ✓",home:"← Inicio",again:"Jugar de nuevo ⚡",resTitle:"Tu Ranking 🔥",swapTitle:"Último Movimiento",swapDesc:"1 cambio — elige dos para intercambiar.",selectTwo:"Selecciona dos",willSwap:"se intercambiarán",seeExamples:"ver ejemplos",placeHere:"Soltar aquí",ranked:"otros lo pusieron aquí",loginBtnTxt:"Iniciar Sesión",loginTitle:"Inicia sesión en VibeSorting",loginDesc:"Desbloquea todas las categorías.",googleBtnTxt:"Continuar con Google",loginNote:"Sin spam. Sin anuncios.",lockedMsg:"🔒 Inicia sesión para desbloquear",catSeries:"Series",catSeriesDesc:"Clasifica 10 series.",catFilms:"Peliculas",catFilmsDesc:"Clasifica 10 pelis.",catBrands:"Marcas",catBrandsDesc:"Clasifica 10 marcas.",catCars:"Coches",catCarsDesc:"Clasifica 10 coches.",catGames:"Videojuegos",catGamesDesc:"Clasifica 10 juegos.",subcatSeries:[{id:"drama",icon:"🎭",label:"Drama",sub:"Prestige TV"},{id:"comedy",icon:"😂",label:"Comedy",sub:"Sitcoms & dark comedy"},{id:"thriller",icon:"🔍",label:"Thriller & Crime",sub:"Whodunnit & spy"},{id:"scifi",icon:"🚀",label:"Sci-Fi",sub:"Science fiction"},{id:"animated",icon:"🎨",label:"Animated",sub:"Adult animation"},{id:"reality",icon:"📺",label:"Reality & Doc",sub:"Reality TV & docs"}],subcatFilms:[{id:"action",icon:"💥",label:"Action",sub:"Stunts & spectacle"},{id:"comedy",icon:"😂",label:"Comedy",sub:"From absurd to satirical"},{id:"scifi",icon:"🚀",label:"Sci-Fi",sub:"Science fiction"},{id:"drama",icon:"🎭",label:"Drama",sub:"Character & story"},{id:"horror",icon:"💀",label:"Horror",sub:"Fear & dread"},{id:"animation",icon:"🎨",label:"Animation",sub:"Animated films"}],subcatPowers:[{id:"overall",icon:"🏆",label:"Poder General",sub:"¿El más OP?"},{id:"combat",icon:"⚔️",label:"Combate",sub:"Pelea"},{id:"social",icon:"🧠",label:"Social",sub:"Vida diaria"},{id:"utility",icon:"🛠️",label:"Utilidad",sub:"Útil"},{id:"coolness",icon:"😎",label:"Cool",sub:"Chulo"},{id:"rare",icon:"💎",label:"Rareza",sub:"Único"}],subcatFootball:[{id:"overall",icon:"🏆",label:"General",sub:"Carrera"},{id:"dribbling",icon:"🎭",label:"Regate",sub:"Habilidad"},{id:"goals",icon:"🥅",label:"Goleador",sub:"Marcar"},{id:"assist",icon:"🎯",label:"Asistencias",sub:"Pase"},{id:"defense",icon:"🛡️",label:"Defensa",sub:"Defender"},{id:"clutch",icon:"🔥",label:"Partido Grande",sub:"Clave"},{id:"legend",icon:"👑",label:"Leyenda",sub:"Legado"},{id:"speed",icon:"⚡",label:"Velocidad",sub:"Rápidos"}],subcatNba:[{id:"overall",icon:"🏆",label:"GOAT",sub:"Carrera"},{id:"scoring",icon:"🥅",label:"Anotación",sub:"Puntos"},{id:"playmaking",icon:"🎯",label:"Juego",sub:"Asistencias"},{id:"defense",icon:"🛡️",label:"Defensa",sub:"Defensores"},{id:"clutch",icon:"🔥",label:"Clutch",sub:"Presión"},{id:"threepoint",icon:"🎯",label:"Triples",sub:"Especialistas"},{id:"athleticism",icon:"⚡",label:"Atletismo",sub:"Fuerza"}],subcatBrands:[{id:"tech",icon:"💻",label:"Tech Brands",sub:"Software & hardware"},{id:"food",icon:"🍔",label:"Food & Drink",sub:"Fast food & snacks"},{id:"fashion",icon:"👟",label:"Fashion",sub:"Clothing & accessories"},{id:"gaming",icon:"🎮",label:"Gaming Brands",sub:"Studios & platforms"},{id:"sports",icon:"⚽",label:"Sports Brands",sub:"Athletic wear"},{id:"luxury",icon:"💎",label:"Luxury Brands",sub:"Premium & prestige"}],subcatCars:[{id:"sports",icon:"🏎️",label:"Sports Cars",sub:"Performance & supercar"},{id:"classic",icon:"🏆",label:"Classic & Iconic",sub:"Legendary cars"},{id:"luxury",icon:"👑",label:"Luxury",sub:"Premium sedans & SUVs"},{id:"everyday",icon:"🚗",label:"Everyday",sub:"Practical & family"},{id:"electric",icon:"⚡",label:"Electric",sub:"EVs & hybrids"},{id:"offroad",icon:"🌲",label:"Off-Road",sub:"4x4 & adventure"}],subcatGames:[{id:"openworld",icon:"🌍",label:"Open World",sub:"Explore & discover"},{id:"rpg",icon:"⚔️",label:"RPG",sub:"Role-playing games"},{id:"indie",icon:"💡",label:"Indie",sub:"Independent gems"},{id:"fps",icon:"🔫",label:"FPS",sub:"First-person shooters"},{id:"strategy",icon:"🧠",label:"Strategy",sub:"Turn-based & RTS"},{id:"sports",icon:"⚽",label:"Sports & Racing",sub:"FIFA, F1, NBA 2K"}]},
-tr:{tagline:"Kör Sıralama · İçgüdün vs. Dünya",hint:"kategori seç → kriter seç → sırala",catPowers:"Süper Güçler",catPowersDesc:"Rastgele 10 güç sırala. Hangisi en değerli?",catFootball:"Futbolcular",catFootballDesc:"Rastgele 10 efsaneyi kendi kriterinle sırala",catNBA:"NBA Oyuncuları",catNBADesc:"Rastgele 10 NBA efsanesini sırala",badgePowers:"240 GÜÇ",badgeFootball:"200 OYUNCU",badgeNBA:"200 OYUNCU",nowRank:"şu an sırala",buildRank:"sıralamani oluştur",cancel:"İptal",start:"Başla →",skip:"Geç",swap:"Değiştir ✓",home:"← Ana Sayfa",again:"Tekrar Oyna ⚡",resTitle:"Sıralaman 🔥",swapTitle:"Son Hamle",swapDesc:"1 değiştirme hakkı — iki öğe seç.",selectTwo:"İki öğe seç",willSwap:"yer değiştirilecek",seeExamples:"örneklere bak",placeHere:"Buraya bırak",ranked:"başkaları tarafından",loginBtnTxt:"Giriş Yap",loginTitle:"VibeSorting'e Giriş Yap",loginDesc:"Tüm kategorileri aç ve sıralamalarını kaydet.",googleBtnTxt:"Google ile Devam Et",loginNote:"Spam yok. Reklam yok. Sadece sıralama.",lockedMsg:"🔒 Bu kategoriyi açmak için giriş yap",catSeries:"Diziler",catSeriesDesc:"10 dizi sirala.",catFilms:"Filmler",catFilmsDesc:"10 film sirala.",catBrands:"Markalar",catBrandsDesc:"10 marka sirala.",catCars:"Arabalar",catCarsDesc:"10 araba sirala.",catGames:"Oyunlar",catGamesDesc:"10 oyun sirala.",subcatSeries:[{id:"drama",icon:"🎭",label:"Drama",sub:"Prestige TV"},{id:"comedy",icon:"😂",label:"Comedy",sub:"Sitcoms & dark comedy"},{id:"thriller",icon:"🔍",label:"Thriller & Crime",sub:"Whodunnit & spy"},{id:"scifi",icon:"🚀",label:"Sci-Fi",sub:"Science fiction"},{id:"animated",icon:"🎨",label:"Animated",sub:"Adult animation"},{id:"reality",icon:"📺",label:"Reality & Doc",sub:"Reality TV & docs"}],subcatFilms:[{id:"action",icon:"💥",label:"Action",sub:"Stunts & spectacle"},{id:"comedy",icon:"😂",label:"Comedy",sub:"From absurd to satirical"},{id:"scifi",icon:"🚀",label:"Sci-Fi",sub:"Science fiction"},{id:"drama",icon:"🎭",label:"Drama",sub:"Character & story"},{id:"horror",icon:"💀",label:"Horror",sub:"Fear & dread"},{id:"animation",icon:"🎨",label:"Animation",sub:"Animated films"}],subcatPowers:[{id:"overall",icon:"🏆",label:"Genel Güç",sub:"En OP?"},{id:"combat",icon:"⚔️",label:"Savaş",sub:"Dövüşte"},{id:"social",icon:"🧠",label:"Sosyal",sub:"Günlük"},{id:"utility",icon:"🛠️",label:"Kullanışlılık",sub:"Pratik"},{id:"coolness",icon:"😎",label:"Cool",sub:"Havalı"},{id:"rare",icon:"💎",label:"Nadirlik",sub:"Unikal"}],subcatFootball:[{id:"overall",icon:"🏆",label:"Genel",sub:"Kariyer"},{id:"dribbling",icon:"🎭",label:"Dribbling",sub:"Top"},{id:"goals",icon:"🥅",label:"Golcülük",sub:"Gol"},{id:"assist",icon:"🎯",label:"Asist",sub:"Pas"},{id:"defense",icon:"🛡️",label:"Defans",sub:"Savunma"},{id:"clutch",icon:"🔥",label:"Büyük Maç",sub:"Kritik"},{id:"legend",icon:"👑",label:"Efsane",sub:"Kulüp"},{id:"speed",icon:"⚡",label:"Hız",sub:"Hızlı"}],subcatNba:[{id:"overall",icon:"🏆",label:"Genel GOAT",sub:"Kariyer"},{id:"scoring",icon:"🥅",label:"Sayı",sub:"Puan"},{id:"playmaking",icon:"🎯",label:"Oyun Kurma",sub:"Asist"},{id:"defense",icon:"🛡️",label:"Defans",sub:"Savunma"},{id:"clutch",icon:"🔥",label:"Kritik An",sub:"Baskı"},{id:"threepoint",icon:"🎯",label:"Üçlük",sub:"Uzak"},{id:"athleticism",icon:"⚡",label:"Atletizm",sub:"Hız"}],subcatBrands:[{id:"tech",icon:"💻",label:"Tech Brands",sub:"Software & hardware"},{id:"food",icon:"🍔",label:"Food & Drink",sub:"Fast food & snacks"},{id:"fashion",icon:"👟",label:"Fashion",sub:"Clothing & accessories"},{id:"gaming",icon:"🎮",label:"Gaming Brands",sub:"Studios & platforms"},{id:"sports",icon:"⚽",label:"Sports Brands",sub:"Athletic wear"},{id:"luxury",icon:"💎",label:"Luxury Brands",sub:"Premium & prestige"}],subcatCars:[{id:"sports",icon:"🏎️",label:"Sports Cars",sub:"Performance & supercar"},{id:"classic",icon:"🏆",label:"Classic & Iconic",sub:"Legendary cars"},{id:"luxury",icon:"👑",label:"Luxury",sub:"Premium sedans & SUVs"},{id:"everyday",icon:"🚗",label:"Everyday",sub:"Practical & family"},{id:"electric",icon:"⚡",label:"Electric",sub:"EVs & hybrids"},{id:"offroad",icon:"🌲",label:"Off-Road",sub:"4x4 & adventure"}],subcatGames:[{id:"openworld",icon:"🌍",label:"Open World",sub:"Explore & discover"},{id:"rpg",icon:"⚔️",label:"RPG",sub:"Role-playing games"},{id:"indie",icon:"💡",label:"Indie",sub:"Independent gems"},{id:"fps",icon:"🔫",label:"FPS",sub:"First-person shooters"},{id:"strategy",icon:"🧠",label:"Strategy",sub:"Turn-based & RTS"},{id:"sports",icon:"⚽",label:"Sports & Racing",sub:"FIFA, F1, NBA 2K"}]},
-fr:{tagline:"Rankings à l'Aveugle · Ton Instinct vs. Le Monde",hint:"choisis une catégorie → critère → classe",catPowers:"Super Pouvoirs",catPowersDesc:"Classe 10 pouvoirs aléatoires. Lequel est le plus précieux?",catFootball:"Footballeurs",catFootballDesc:"Classe 10 légendes aléatoires selon ton critère",catNBA:"Joueurs NBA",catNBADesc:"Classe 10 grands joueurs NBA",badgePowers:"240 POUVOIRS",badgeFootball:"200 JOUEURS",badgeNBA:"200 JOUEURS",nowRank:"classez maintenant",buildRank:"construisez votre classement",cancel:"Annuler",start:"Commencer →",skip:"Passer",swap:"Échanger ✓",home:"← Accueil",again:"Rejouer ⚡",resTitle:"Votre Classement 🔥",swapTitle:"Dernier Move",swapDesc:"1 échange — choisissez deux éléments.",selectTwo:"Sélectionnez deux",willSwap:"seront échangés",seeExamples:"voir des exemples",placeHere:"Déposer ici",ranked:"placé ici par d'autres",loginBtnTxt:"Connexion",loginTitle:"Connexion à VibeSorting",loginDesc:"Déverrouillez toutes les catégories.",googleBtnTxt:"Continuer avec Google",loginNote:"Pas de spam. Pas de pubs.",lockedMsg:"🔒 Connectez-vous pour déverrouiller",catSeries:"Series TV",catSeriesDesc:"Classez 10 series.",catFilms:"Films",catFilmsDesc:"Classez 10 films.",catBrands:"Marques",catBrandsDesc:"Classez 10 marques.",catCars:"Voitures",catCarsDesc:"Classez 10 voitures.",catGames:"Jeux",catGamesDesc:"Classez 10 jeux.",subcatSeries:[{id:"drama",icon:"🎭",label:"Drama",sub:"Prestige TV"},{id:"comedy",icon:"😂",label:"Comedy",sub:"Sitcoms & dark comedy"},{id:"thriller",icon:"🔍",label:"Thriller & Crime",sub:"Whodunnit & spy"},{id:"scifi",icon:"🚀",label:"Sci-Fi",sub:"Science fiction"},{id:"animated",icon:"🎨",label:"Animated",sub:"Adult animation"},{id:"reality",icon:"📺",label:"Reality & Doc",sub:"Reality TV & docs"}],subcatFilms:[{id:"action",icon:"💥",label:"Action",sub:"Stunts & spectacle"},{id:"comedy",icon:"😂",label:"Comedy",sub:"From absurd to satirical"},{id:"scifi",icon:"🚀",label:"Sci-Fi",sub:"Science fiction"},{id:"drama",icon:"🎭",label:"Drama",sub:"Character & story"},{id:"horror",icon:"💀",label:"Horror",sub:"Fear & dread"},{id:"animation",icon:"🎨",label:"Animation",sub:"Animated films"}],subcatPowers:[{id:"overall",icon:"🏆",label:"Général",sub:"Le plus OP?"},{id:"combat",icon:"⚔️",label:"Combat",sub:"En combat"},{id:"social",icon:"🧠",label:"Social",sub:"Quotidien"},{id:"utility",icon:"🛠️",label:"Utilité",sub:"Pratique"},{id:"coolness",icon:"😎",label:"Cool",sub:"Stylé"},{id:"rare",icon:"💎",label:"Rareté",sub:"Unique"}],subcatFootball:[{id:"overall",icon:"🏆",label:"Général",sub:"Carrière"},{id:"dribbling",icon:"🎭",label:"Dribble",sub:"Technique"},{id:"goals",icon:"🥅",label:"Buteur",sub:"Marquer"},{id:"assist",icon:"🎯",label:"Passes",sub:"Dernier pass"},{id:"defense",icon:"🛡️",label:"Défense",sub:"Défendre"},{id:"clutch",icon:"🔥",label:"Grand Match",sub:"Clé"},{id:"legend",icon:"👑",label:"Légende",sub:"Héritage"},{id:"speed",icon:"⚡",label:"Vitesse",sub:"Rapides"}],subcatNba:[{id:"overall",icon:"🏆",label:"GOAT",sub:"Carrière"},{id:"scoring",icon:"🥅",label:"Scoring",sub:"Points"},{id:"playmaking",icon:"🎯",label:"Jeu",sub:"Passes"},{id:"defense",icon:"🛡️",label:"Défense",sub:"Défenseurs"},{id:"clutch",icon:"🔥",label:"Clutch",sub:"Pression"},{id:"threepoint",icon:"🎯",label:"3 Points",sub:"Spécialistes"},{id:"athleticism",icon:"⚡",label:"Athlétisme",sub:"Vitesse"}],subcatBrands:[{id:"tech",icon:"💻",label:"Tech Brands",sub:"Software & hardware"},{id:"food",icon:"🍔",label:"Food & Drink",sub:"Fast food & snacks"},{id:"fashion",icon:"👟",label:"Fashion",sub:"Clothing & accessories"},{id:"gaming",icon:"🎮",label:"Gaming Brands",sub:"Studios & platforms"},{id:"sports",icon:"⚽",label:"Sports Brands",sub:"Athletic wear"},{id:"luxury",icon:"💎",label:"Luxury Brands",sub:"Premium & prestige"}],subcatCars:[{id:"sports",icon:"🏎️",label:"Sports Cars",sub:"Performance & supercar"},{id:"classic",icon:"🏆",label:"Classic & Iconic",sub:"Legendary cars"},{id:"luxury",icon:"👑",label:"Luxury",sub:"Premium sedans & SUVs"},{id:"everyday",icon:"🚗",label:"Everyday",sub:"Practical & family"},{id:"electric",icon:"⚡",label:"Electric",sub:"EVs & hybrids"},{id:"offroad",icon:"🌲",label:"Off-Road",sub:"4x4 & adventure"}],subcatGames:[{id:"openworld",icon:"🌍",label:"Open World",sub:"Explore & discover"},{id:"rpg",icon:"⚔️",label:"RPG",sub:"Role-playing games"},{id:"indie",icon:"💡",label:"Indie",sub:"Independent gems"},{id:"fps",icon:"🔫",label:"FPS",sub:"First-person shooters"},{id:"strategy",icon:"🧠",label:"Strategy",sub:"Turn-based & RTS"},{id:"sports",icon:"⚽",label:"Sports & Racing",sub:"FIFA, F1, NBA 2K"}]},
-ru:{tagline:"Слепые Рейтинги · Твой Инстинкт vs. Мир",hint:"выбери категорию → критерий → ранжируй",catPowers:"Суперспособности",catPowersDesc:"Ранжируй 10 случайных сил. Какая самая ценная?",catFootball:"Футболисты",catFootballDesc:"Ранжируй 10 случайных легенд",catNBA:"Игроки НБА",catNBADesc:"Ранжируй 10 великих игроков НБА",badgePowers:"240 СИЛ",badgeFootball:"200 ИГРОКОВ",badgeNBA:"200 ИГРОКОВ",nowRank:"ранжируй сейчас",buildRank:"создай рейтинг",cancel:"Отмена",start:"Начать →",skip:"Пропустить",swap:"Поменять ✓",home:"← Главная",again:"Играть снова ⚡",resTitle:"Твой Рейтинг 🔥",swapTitle:"Последний Ход",swapDesc:"1 обмен — выбери два элемента.",selectTwo:"Выбери два",willSwap:"будут обменяны",seeExamples:"посмотреть примеры",placeHere:"Бросить сюда",ranked:"поставили другие",loginBtnTxt:"Войти",loginTitle:"Войти в VibeSorting",loginDesc:"Открой все категории.",googleBtnTxt:"Продолжить с Google",loginNote:"Без спама. Без рекламы.",lockedMsg:"🔒 Войдите чтобы открыть",catSeries:"Сериалы",catSeriesDesc:"Ранж.",catFilms:"Фильмы",catFilmsDesc:"Ранж.",catBrands:"Бренды",catBrandsDesc:"Ранж.",catCars:"Авто",catCarsDesc:"Ранж.",catGames:"Игры",catGamesDesc:"Ранж.",subcatPowers:[{id:"overall",icon:"🏆",label:"Общая Сила",sub:"Самая OP?"},{id:"combat",icon:"⚔️",label:"Бой",sub:"В бою"},{id:"social",icon:"🧠",label:"Социальное",sub:"В жизни"},{id:"utility",icon:"🛠️",label:"Полезность",sub:"Практичная"},{id:"coolness",icon:"😎",label:"Крутость",sub:"Стильная"},{id:"rare",icon:"💎",label:"Редкость",sub:"Уникальная"}],subcatFootball:[{id:"overall",icon:"🏆",label:"Общий",sub:"Карьера"},{id:"dribbling",icon:"🎭",label:"Дриблинг",sub:"Контроль"},{id:"goals",icon:"🥅",label:"Голы",sub:"Забивать"},{id:"assist",icon:"🎯",label:"Передачи",sub:"Последний пас"},{id:"defense",icon:"🛡️",label:"Защита",sub:"Оборона"},{id:"clutch",icon:"🔥",label:"Матч",sub:"Ключевые моменты"},{id:"legend",icon:"👑",label:"Легенда",sub:"Наследие"},{id:"speed",icon:"⚡",label:"Скорость",sub:"Быстрейшие"}],subcatNba:[{id:"overall",icon:"🏆",label:"GOAT",sub:"Карьера"},{id:"scoring",icon:"🥅",label:"Очки",sub:"Результат"},{id:"playmaking",icon:"🎯",label:"Разыгрывание",sub:"Передачи"},{id:"defense",icon:"🛡️",label:"Защита",sub:"Защитники"},{id:"clutch",icon:"🔥",label:"Клатч",sub:"Давление"},{id:"threepoint",icon:"🎯",label:"Трёхочковые",sub:"Снайперы"},{id:"athleticism",icon:"⚡",label:"Атлетизм",sub:"Сила и скорость"}],subcatSeries:[{id:"drama",icon:"🎭",label:"Drama",sub:"Prestige TV"},{id:"comedy",icon:"😂",label:"Comedy",sub:"Sitcoms & dark comedy"},{id:"thriller",icon:"🔍",label:"Thriller & Crime",sub:"Whodunnit & spy"},{id:"scifi",icon:"🚀",label:"Sci-Fi",sub:"Science fiction"},{id:"animated",icon:"🎨",label:"Animated",sub:"Adult animation"},{id:"reality",icon:"📺",label:"Reality & Doc",sub:"Reality TV & docs"}],subcatFilms:[{id:"action",icon:"💥",label:"Action",sub:"Stunts & spectacle"},{id:"comedy",icon:"😂",label:"Comedy",sub:"From absurd to satirical"},{id:"scifi",icon:"🚀",label:"Sci-Fi",sub:"Science fiction"},{id:"drama",icon:"🎭",label:"Drama",sub:"Character & story"},{id:"horror",icon:"💀",label:"Horror",sub:"Fear & dread"},{id:"animation",icon:"🎨",label:"Animation",sub:"Animated films"}],subcatBrands:[{id:"tech",icon:"💻",label:"Tech Brands",sub:"Software & hardware"},{id:"food",icon:"🍔",label:"Food & Drink",sub:"Fast food & snacks"},{id:"fashion",icon:"👟",label:"Fashion",sub:"Clothing & accessories"},{id:"gaming",icon:"🎮",label:"Gaming Brands",sub:"Studios & platforms"},{id:"sports",icon:"⚽",label:"Sports Brands",sub:"Athletic wear"},{id:"luxury",icon:"💎",label:"Luxury Brands",sub:"Premium & prestige"}],subcatCars:[{id:"sports",icon:"🏎️",label:"Sports Cars",sub:"Performance & supercar"},{id:"classic",icon:"🏆",label:"Classic & Iconic",sub:"Legendary cars"},{id:"luxury",icon:"👑",label:"Luxury",sub:"Premium sedans & SUVs"},{id:"everyday",icon:"🚗",label:"Everyday",sub:"Practical & family"},{id:"electric",icon:"⚡",label:"Electric",sub:"EVs & hybrids"},{id:"offroad",icon:"🌲",label:"Off-Road",sub:"4x4 & adventure"}],subcatGames:[{id:"openworld",icon:"🌍",label:"Open World",sub:"Explore & discover"},{id:"rpg",icon:"⚔️",label:"RPG",sub:"Role-playing games"},{id:"indie",icon:"💡",label:"Indie",sub:"Independent gems"},{id:"fps",icon:"🔫",label:"FPS",sub:"First-person shooters"},{id:"strategy",icon:"🧠",label:"Strategy",sub:"Turn-based & RTS"},{id:"sports",icon:"⚽",label:"Sports & Racing",sub:"FIFA, F1, NBA 2K"}]}
+en:{tagline:"Blind Rankings · Your Gut vs. The World",hint:"choose a category → pick criteria → start ranking",catPowers:"Super Powers",catPowersDesc:"Rank 10 randomly drawn powers. Which is most valuable?",catFootball:"Footballers",catFootballDesc:"Rank 10 random legends by your criteria",catNBA:"NBA Players",catNBADesc:"Rank 10 random NBA greats of all time",badgePowers:"240 POWERS",badgeFootball:"200 PLAYERS",badgeNBA:"200 PLAYERS",catSeries:"Series",catSeriesDesc:"Rank 10 TV shows. Which deserves the top spot?",catFilms:"Films",catFilmsDesc:"Rank 10 films. What's the best?",catBrands:"Brands",catBrandsDesc:"Rank 10 brands — tech, food, fashion and more.",catCars:"Cars",catCarsDesc:"Rank 10 cars — sports, classic, luxury, everyday.",catGames:"Video Games",catGamesDesc:"Rank 10 games. What's the greatest ever made?",nowRank:"now ranking",buildRank:"build your ranking",cancel:"Cancel",start:"Start →",skip:"Skip",swap:"Swap ✓",home:"← Home",again:"Play Again ⚡",resTitle:"Your Ranking 🔥",swapTitle:"Last Move",swapDesc:"1 swap left — choose two items to switch.",selectTwo:"Select two items",willSwap:"will be swapped",seeExamples:"see some examples",placeHere:"Drop here",ranked:"placed here by others",loginBtnTxt:"Sign In",loginTitle:"Sign in to VibeSorting",loginDesc:"Unlock all categories and save your rankings.",googleBtnTxt:"Continue with Google",loginNote:"No spam. No ads. Just rankings.",lockedMsg:"🔒 Sign in to unlock this category",catSeries:"Series",catSeriesDesc:"Rank 10 TV shows.",catFilms:"Films",catFilmsDesc:"Rank 10 films.",catBrands:"Brands",catBrandsDesc:"Rank 10 brands — tech, food, fashion.",catCars:"Cars",catCarsDesc:"Rank 10 cars — sports, classic, luxury.",catGames:"Video Games",catGamesDesc:"Rank 10 games.",dragHint:"Click card to select, then click a slot",communityStats:"Community Stats",footerTagline:"Blind rankings. Your gut vs the world.<br>No right answers. Only vibes.",bugPlaceholder:"Describe the bug...",bugSendBtn:"Send Report",bugSuccess:"Bug report sent! Thanks for the feedback.",bugError:"Please describe the bug first.",bugNoFile:"No file chosen",reportSent:"Report sent ✓",mockDataNote:"* Stats are simulated for demo.",totalRankings:"total rankings",playersToday:"players today",avgReplays:"avg replays",topRanked:"TOP RANKED",statsLoading:"Loading stats...",dragHint:"Click card to select, then click a slot",communityStats:"Community Stats",footerTagline:"Blind rankings. Your gut vs the world.<br>No right answers. Only vibes.",bugPlaceholder:"Describe the bug...",bugSendBtn:"Send Report",bugSuccess:"Report sent! Thanks for the feedback.",bugError:"Please describe the bug first.",mockDataNote:"* Stats are simulated for demo.",totalRankings:"total rankings",playersToday:"players today",avgReplays:"avg replays",sending:"Sending...",subcatPowers:[{id:"overall",icon:"🏆",label:"Overall Power",sub:"Most OP?"},{id:"combat",icon:"⚔️",label:"Combat",sub:"Best in a fight"},{id:"social",icon:"🧠",label:"Social Edge",sub:"Everyday life"},{id:"utility",icon:"🛠️",label:"Utility",sub:"Most useful daily"},{id:"coolness",icon:"😎",label:"Cool Factor",sub:"Most badass"},{id:"rare",icon:"💎",label:"Rarity",sub:"Most unique"}],subcatFootball:[{id:"overall",icon:"🏆",label:"Overall",sub:"Career-based"},{id:"dribbling",icon:"🎭",label:"Dribbling",sub:"Skill & control"},{id:"goals",icon:"🥅",label:"Goalscoring",sub:"Finishing"},{id:"assist",icon:"🎯",label:"Assists",sub:"Vision & last pass"},{id:"defense",icon:"🛡️",label:"Defense",sub:"Duels & defending"},{id:"clutch",icon:"🔥",label:"Big Game",sub:"When it matters"},{id:"legend",icon:"👑",label:"Club Legend",sub:"Legacy"},{id:"speed",icon:"⚡",label:"Speed",sub:"Fastest & fittest"}],subcatNba:[{id:"overall",icon:"🏆",label:"Overall GOAT",sub:"Career-based"},{id:"scoring",icon:"🥅",label:"Scoring",sub:"Points & finishing"},{id:"playmaking",icon:"🎯",label:"Playmaking",sub:"Assists & vision"},{id:"defense",icon:"🛡️",label:"Defense",sub:"Best defenders"},{id:"clutch",icon:"🔥",label:"Clutch",sub:"Under pressure"},{id:"threepoint",icon:"🎯",label:"3-Point",sub:"Long range"},{id:"athleticism",icon:"⚡",label:"Athleticism",sub:"Speed & leaping"}],subcatSeries:[{id:"drama",icon:"🎭",label:"Drama",sub:"Prestige TV"},{id:"comedy",icon:"😂",label:"Comedy",sub:"Sitcoms & dark comedy"},{id:"thriller",icon:"🔍",label:"Thriller & Crime",sub:"Whodunnit & spy"},{id:"scifi",icon:"🚀",label:"Sci-Fi",sub:"Science fiction"},{id:"animated",icon:"🎨",label:"Animated",sub:"Adult animation"},{id:"reality",icon:"📺",label:"Reality & Doc",sub:"Reality TV & docs"}],subcatFilms:[{id:"action",icon:"💥",label:"Action",sub:"Stunts & spectacle"},{id:"comedy",icon:"😂",label:"Comedy",sub:"From absurd to satirical"},{id:"scifi",icon:"🚀",label:"Sci-Fi",sub:"Science fiction"},{id:"drama",icon:"🎭",label:"Drama",sub:"Character & story"},{id:"horror",icon:"💀",label:"Horror",sub:"Fear & dread"},{id:"animation",icon:"🎨",label:"Animation",sub:"Animated films"}],subcatBrands:[{id:"tech",icon:"💻",label:"Tech Brands",sub:"Software & hardware"},{id:"food",icon:"🍔",label:"Food & Drink",sub:"Fast food & snacks"},{id:"fashion",icon:"👟",label:"Fashion",sub:"Clothing & accessories"},{id:"gaming",icon:"🎮",label:"Gaming Brands",sub:"Studios & platforms"},{id:"sports",icon:"⚽",label:"Sports Brands",sub:"Athletic wear"},{id:"luxury",icon:"💎",label:"Luxury Brands",sub:"Premium & prestige"}],subcatCars:[{id:"sports",icon:"🏎️",label:"Sports Cars",sub:"Performance & supercar"},{id:"classic",icon:"🏆",label:"Classic & Iconic",sub:"Legendary cars"},{id:"luxury",icon:"👑",label:"Luxury",sub:"Premium sedans & SUVs"},{id:"everyday",icon:"🚗",label:"Everyday",sub:"Practical & family"},{id:"electric",icon:"⚡",label:"Electric",sub:"EVs & hybrids"},{id:"offroad",icon:"🌲",label:"Off-Road",sub:"4x4 & adventure"}],subcatGames:[{id:"openworld",icon:"🌍",label:"Open World",sub:"Explore & discover"},{id:"rpg",icon:"⚔️",label:"RPG",sub:"Role-playing games"},{id:"indie",icon:"💡",label:"Indie",sub:"Independent gems"},{id:"fps",icon:"🔫",label:"FPS",sub:"First-person shooters"},{id:"strategy",icon:"🧠",label:"Strategy",sub:"Turn-based & RTS"},{id:"sports",icon:"⚽",label:"Sports & Racing",sub:"FIFA, F1, NBA 2K"}]},
+es:{tagline:"Rankings Ciegos · Tu Instinto vs. El Mundo",hint:"elige categoría → criterio → ¡clasifica!",catPowers:"Superpoderes",catPowersDesc:"Clasifica 10 poderes aleatorios. ¿Cuál es más valioso?",catFootball:"Futbolistas",catFootballDesc:"Clasifica 10 leyendas al azar por tu criterio",catNBA:"Jugadores NBA",catNBADesc:"Clasifica 10 grandes de la NBA",badgePowers:"240 PODERES",badgeFootball:"200 JUGADORES",badgeNBA:"200 JUGADORES",nowRank:"clasifica ahora",buildRank:"construye tu ranking",cancel:"Cancelar",start:"Empezar →",skip:"Saltar",swap:"Cambiar ✓",home:"← Inicio",again:"Jugar de nuevo ⚡",resTitle:"Tu Ranking 🔥",swapTitle:"Último Movimiento",swapDesc:"1 cambio — elige dos para intercambiar.",selectTwo:"Selecciona dos",willSwap:"se intercambiarán",seeExamples:"ver ejemplos",placeHere:"Soltar aquí",ranked:"otros lo pusieron aquí",loginBtnTxt:"Iniciar Sesión",loginTitle:"Inicia sesión en VibeSorting",loginDesc:"Desbloquea todas las categorías.",googleBtnTxt:"Continuar con Google",loginNote:"Sin spam. Sin anuncios.",lockedMsg:"🔒 Inicia sesión para desbloquear",catSeries:"Series",catSeriesDesc:"Clasifica 10 series.",catFilms:"Peliculas",catFilmsDesc:"Clasifica 10 pelis.",catBrands:"Marcas",catBrandsDesc:"Clasifica 10 marcas.",catCars:"Coches",catCarsDesc:"Clasifica 10 coches.",catGames:"Videojuegos",catGamesDesc:"Clasifica 10 juegos.",subcatSeries:[{id:"drama",icon:"🎭",label:"Drama",sub:"Prestige TV"},{id:"comedy",icon:"😂",label:"Comedy",sub:"Sitcoms & dark comedy"},{id:"thriller",icon:"🔍",label:"Thriller & Crime",sub:"Whodunnit & spy"},{id:"scifi",icon:"🚀",label:"Sci-Fi",sub:"Science fiction"},{id:"animated",icon:"🎨",label:"Animated",sub:"Adult animation"},{id:"reality",icon:"📺",label:"Reality & Doc",sub:"Reality TV & docs"}],subcatFilms:[{id:"action",icon:"💥",label:"Action",sub:"Stunts & spectacle"},{id:"comedy",icon:"😂",label:"Comedy",sub:"From absurd to satirical"},{id:"scifi",icon:"🚀",label:"Sci-Fi",sub:"Science fiction"},{id:"drama",icon:"🎭",label:"Drama",sub:"Character & story"},{id:"horror",icon:"💀",label:"Horror",sub:"Fear & dread"},{id:"animation",icon:"🎨",label:"Animation",sub:"Animated films"}],dragHint:"Haz clic en la carta para seleccionar, luego en una ranura",communityStats:"Estadísticas de la Comunidad",footerTagline:"Rankings ciegos. Tu instinto vs. el mundo.<br>No hay respuestas correctas. Solo vibes.",bugPlaceholder:"Describe el error...",bugSendBtn:"Enviar Reporte",bugSuccess:"¡Reporte enviado! Gracias por el feedback.",bugError:"Por favor describe el error primero.",bugNoFile:"Ningún archivo elegido",reportSent:"Reporte enviado ✓",mockDataNote:"* Las estadísticas son simuladas para la demo.",totalRankings:"rankings totales",playersToday:"jugadores hoy",avgReplays:"repeticiones prom.",topRanked:"MÁS VALORADOS",statsLoading:"Cargando estadísticas...",subcatPowers:[{id:"overall",icon:"🏆",label:"Poder General",sub:"¿El más OP?"},{id:"combat",icon:"⚔️",label:"Combate",sub:"Pelea"},{id:"social",icon:"🧠",label:"Social",sub:"Vida diaria"},{id:"utility",icon:"🛠️",label:"Utilidad",sub:"Útil"},{id:"coolness",icon:"😎",label:"Cool",sub:"Chulo"},{id:"rare",icon:"💎",label:"Rareza",sub:"Único"}],subcatFootball:[{id:"overall",icon:"🏆",label:"General",sub:"Carrera"},{id:"dribbling",icon:"🎭",label:"Regate",sub:"Habilidad"},{id:"goals",icon:"🥅",label:"Goleador",sub:"Marcar"},{id:"assist",icon:"🎯",label:"Asistencias",sub:"Pase"},{id:"defense",icon:"🛡️",label:"Defensa",sub:"Defender"},{id:"clutch",icon:"🔥",label:"Partido Grande",sub:"Clave"},{id:"legend",icon:"👑",label:"Leyenda",sub:"Legado"},{id:"speed",icon:"⚡",label:"Velocidad",sub:"Rápidos"}],subcatNba:[{id:"overall",icon:"🏆",label:"GOAT",sub:"Carrera"},{id:"scoring",icon:"🥅",label:"Anotación",sub:"Puntos"},{id:"playmaking",icon:"🎯",label:"Juego",sub:"Asistencias"},{id:"defense",icon:"🛡️",label:"Defensa",sub:"Defensores"},{id:"clutch",icon:"🔥",label:"Clutch",sub:"Presión"},{id:"threepoint",icon:"🎯",label:"Triples",sub:"Especialistas"},{id:"athleticism",icon:"⚡",label:"Atletismo",sub:"Fuerza"}],subcatBrands:[{id:"tech",icon:"💻",label:"Tech Brands",sub:"Software & hardware"},{id:"food",icon:"🍔",label:"Food & Drink",sub:"Fast food & snacks"},{id:"fashion",icon:"👟",label:"Fashion",sub:"Clothing & accessories"},{id:"gaming",icon:"🎮",label:"Gaming Brands",sub:"Studios & platforms"},{id:"sports",icon:"⚽",label:"Sports Brands",sub:"Athletic wear"},{id:"luxury",icon:"💎",label:"Luxury Brands",sub:"Premium & prestige"}],subcatCars:[{id:"sports",icon:"🏎️",label:"Sports Cars",sub:"Performance & supercar"},{id:"classic",icon:"🏆",label:"Classic & Iconic",sub:"Legendary cars"},{id:"luxury",icon:"👑",label:"Luxury",sub:"Premium sedans & SUVs"},{id:"everyday",icon:"🚗",label:"Everyday",sub:"Practical & family"},{id:"electric",icon:"⚡",label:"Electric",sub:"EVs & hybrids"},{id:"offroad",icon:"🌲",label:"Off-Road",sub:"4x4 & adventure"}],subcatGames:[{id:"openworld",icon:"🌍",label:"Open World",sub:"Explore & discover"},{id:"rpg",icon:"⚔️",label:"RPG",sub:"Role-playing games"},{id:"indie",icon:"💡",label:"Indie",sub:"Independent gems"},{id:"fps",icon:"🔫",label:"FPS",sub:"First-person shooters"},{id:"strategy",icon:"🧠",label:"Strategy",sub:"Turn-based & RTS"},{id:"sports",icon:"⚽",label:"Sports & Racing",sub:"FIFA, F1, NBA 2K"}]},
+tr:{tagline:"Kör Sıralama · İçgüdün vs. Dünya",hint:"kategori seç → kriter seç → sırala",catPowers:"Süper Güçler",catPowersDesc:"Rastgele 10 güç sırala. Hangisi en değerli?",catFootball:"Futbolcular",catFootballDesc:"Rastgele 10 efsaneyi kendi kriterinle sırala",catNBA:"NBA Oyuncuları",catNBADesc:"Rastgele 10 NBA efsanesini sırala",badgePowers:"240 GÜÇ",badgeFootball:"200 OYUNCU",badgeNBA:"200 OYUNCU",nowRank:"şu an sırala",buildRank:"sıralamani oluştur",cancel:"İptal",start:"Başla →",skip:"Geç",swap:"Değiştir ✓",home:"← Ana Sayfa",again:"Tekrar Oyna ⚡",resTitle:"Sıralaman 🔥",swapTitle:"Son Hamle",swapDesc:"1 değiştirme hakkı — iki öğe seç.",selectTwo:"İki öğe seç",willSwap:"yer değiştirilecek",seeExamples:"örneklere bak",placeHere:"Buraya bırak",ranked:"başkaları tarafından",loginBtnTxt:"Giriş Yap",loginTitle:"VibeSorting'e Giriş Yap",loginDesc:"Tüm kategorileri aç ve sıralamalarını kaydet.",googleBtnTxt:"Google ile Devam Et",loginNote:"Spam yok. Reklam yok. Sadece sıralama.",lockedMsg:"🔒 Bu kategoriyi açmak için giriş yap",catSeries:"Diziler",catSeriesDesc:"10 dizi sirala.",catFilms:"Filmler",catFilmsDesc:"10 film sirala.",catBrands:"Markalar",catBrandsDesc:"10 marka sirala.",catCars:"Arabalar",catCarsDesc:"10 araba sirala.",catGames:"Oyunlar",catGamesDesc:"10 oyun sirala.",subcatSeries:[{id:"drama",icon:"🎭",label:"Drama",sub:"Prestige TV"},{id:"comedy",icon:"😂",label:"Comedy",sub:"Sitcoms & dark comedy"},{id:"thriller",icon:"🔍",label:"Thriller & Crime",sub:"Whodunnit & spy"},{id:"scifi",icon:"🚀",label:"Sci-Fi",sub:"Science fiction"},{id:"animated",icon:"🎨",label:"Animated",sub:"Adult animation"},{id:"reality",icon:"📺",label:"Reality & Doc",sub:"Reality TV & docs"}],subcatFilms:[{id:"action",icon:"💥",label:"Action",sub:"Stunts & spectacle"},{id:"comedy",icon:"😂",label:"Comedy",sub:"From absurd to satirical"},{id:"scifi",icon:"🚀",label:"Sci-Fi",sub:"Science fiction"},{id:"drama",icon:"🎭",label:"Drama",sub:"Character & story"},{id:"horror",icon:"💀",label:"Horror",sub:"Fear & dread"},{id:"animation",icon:"🎨",label:"Animation",sub:"Animated films"}],dragHint:"Kartı seçmek için tıkla, sonra bir slota tıkla",communityStats:"Topluluk İstatistikleri",footerTagline:"Kör sıralama. Sezgin vs. dünya.<br>Doğru cevap yok. Sadece vibes.",bugPlaceholder:"Hatayı açıkla...",bugSendBtn:"Rapor Gönder",bugSuccess:"Hata raporu gönderildi! Geri bildirim için teşekkürler.",bugError:"Lütfen önce hatayı açıkla.",bugNoFile:"Dosya seçilmedi",reportSent:"Rapor gönderildi ✓",mockDataNote:"* İstatistikler demo için simüle edilmiştir.",totalRankings:"toplam sıralama",playersToday:"bugün oyuncu",avgReplays:"ort. tekrar",topRanked:"EN ÜST SIRALAMA",statsLoading:"İstatistikler yükleniyor...",subcatPowers:[{id:"overall",icon:"🏆",label:"Genel Güç",sub:"En OP?"},{id:"combat",icon:"⚔️",label:"Savaş",sub:"Dövüşte"},{id:"social",icon:"🧠",label:"Sosyal",sub:"Günlük"},{id:"utility",icon:"🛠️",label:"Kullanışlılık",sub:"Pratik"},{id:"coolness",icon:"😎",label:"Cool",sub:"Havalı"},{id:"rare",icon:"💎",label:"Nadirlik",sub:"Unikal"}],subcatFootball:[{id:"overall",icon:"🏆",label:"Genel",sub:"Kariyer"},{id:"dribbling",icon:"🎭",label:"Dribbling",sub:"Top"},{id:"goals",icon:"🥅",label:"Golcülük",sub:"Gol"},{id:"assist",icon:"🎯",label:"Asist",sub:"Pas"},{id:"defense",icon:"🛡️",label:"Defans",sub:"Savunma"},{id:"clutch",icon:"🔥",label:"Büyük Maç",sub:"Kritik"},{id:"legend",icon:"👑",label:"Efsane",sub:"Kulüp"},{id:"speed",icon:"⚡",label:"Hız",sub:"Hızlı"}],subcatNba:[{id:"overall",icon:"🏆",label:"Genel GOAT",sub:"Kariyer"},{id:"scoring",icon:"🥅",label:"Sayı",sub:"Puan"},{id:"playmaking",icon:"🎯",label:"Oyun Kurma",sub:"Asist"},{id:"defense",icon:"🛡️",label:"Defans",sub:"Savunma"},{id:"clutch",icon:"🔥",label:"Kritik An",sub:"Baskı"},{id:"threepoint",icon:"🎯",label:"Üçlük",sub:"Uzak"},{id:"athleticism",icon:"⚡",label:"Atletizm",sub:"Hız"}],subcatBrands:[{id:"tech",icon:"💻",label:"Tech Brands",sub:"Software & hardware"},{id:"food",icon:"🍔",label:"Food & Drink",sub:"Fast food & snacks"},{id:"fashion",icon:"👟",label:"Fashion",sub:"Clothing & accessories"},{id:"gaming",icon:"🎮",label:"Gaming Brands",sub:"Studios & platforms"},{id:"sports",icon:"⚽",label:"Sports Brands",sub:"Athletic wear"},{id:"luxury",icon:"💎",label:"Luxury Brands",sub:"Premium & prestige"}],subcatCars:[{id:"sports",icon:"🏎️",label:"Sports Cars",sub:"Performance & supercar"},{id:"classic",icon:"🏆",label:"Classic & Iconic",sub:"Legendary cars"},{id:"luxury",icon:"👑",label:"Luxury",sub:"Premium sedans & SUVs"},{id:"everyday",icon:"🚗",label:"Everyday",sub:"Practical & family"},{id:"electric",icon:"⚡",label:"Electric",sub:"EVs & hybrids"},{id:"offroad",icon:"🌲",label:"Off-Road",sub:"4x4 & adventure"}],subcatGames:[{id:"openworld",icon:"🌍",label:"Open World",sub:"Explore & discover"},{id:"rpg",icon:"⚔️",label:"RPG",sub:"Role-playing games"},{id:"indie",icon:"💡",label:"Indie",sub:"Independent gems"},{id:"fps",icon:"🔫",label:"FPS",sub:"First-person shooters"},{id:"strategy",icon:"🧠",label:"Strategy",sub:"Turn-based & RTS"},{id:"sports",icon:"⚽",label:"Sports & Racing",sub:"FIFA, F1, NBA 2K"}]},
+fr:{tagline:"Rankings à l'Aveugle · Ton Instinct vs. Le Monde",hint:"choisis une catégorie → critère → classe",catPowers:"Super Pouvoirs",catPowersDesc:"Classe 10 pouvoirs aléatoires. Lequel est le plus précieux?",catFootball:"Footballeurs",catFootballDesc:"Classe 10 légendes aléatoires selon ton critère",catNBA:"Joueurs NBA",catNBADesc:"Classe 10 grands joueurs NBA",badgePowers:"240 POUVOIRS",badgeFootball:"200 JOUEURS",badgeNBA:"200 JOUEURS",nowRank:"classez maintenant",buildRank:"construisez votre classement",cancel:"Annuler",start:"Commencer →",skip:"Passer",swap:"Échanger ✓",home:"← Accueil",again:"Rejouer ⚡",resTitle:"Votre Classement 🔥",swapTitle:"Dernier Move",swapDesc:"1 échange — choisissez deux éléments.",selectTwo:"Sélectionnez deux",willSwap:"seront échangés",seeExamples:"voir des exemples",placeHere:"Déposer ici",ranked:"placé ici par d'autres",loginBtnTxt:"Connexion",loginTitle:"Connexion à VibeSorting",loginDesc:"Déverrouillez toutes les catégories.",googleBtnTxt:"Continuer avec Google",loginNote:"Pas de spam. Pas de pubs.",lockedMsg:"🔒 Connectez-vous pour déverrouiller",catSeries:"Series TV",catSeriesDesc:"Classez 10 series.",catFilms:"Films",catFilmsDesc:"Classez 10 films.",catBrands:"Marques",catBrandsDesc:"Classez 10 marques.",catCars:"Voitures",catCarsDesc:"Classez 10 voitures.",catGames:"Jeux",catGamesDesc:"Classez 10 jeux.",subcatSeries:[{id:"drama",icon:"🎭",label:"Drama",sub:"Prestige TV"},{id:"comedy",icon:"😂",label:"Comedy",sub:"Sitcoms & dark comedy"},{id:"thriller",icon:"🔍",label:"Thriller & Crime",sub:"Whodunnit & spy"},{id:"scifi",icon:"🚀",label:"Sci-Fi",sub:"Science fiction"},{id:"animated",icon:"🎨",label:"Animated",sub:"Adult animation"},{id:"reality",icon:"📺",label:"Reality & Doc",sub:"Reality TV & docs"}],subcatFilms:[{id:"action",icon:"💥",label:"Action",sub:"Stunts & spectacle"},{id:"comedy",icon:"😂",label:"Comedy",sub:"From absurd to satirical"},{id:"scifi",icon:"🚀",label:"Sci-Fi",sub:"Science fiction"},{id:"drama",icon:"🎭",label:"Drama",sub:"Character & story"},{id:"horror",icon:"💀",label:"Horror",sub:"Fear & dread"},{id:"animation",icon:"🎨",label:"Animation",sub:"Animated films"}],dragHint:"Cliquez sur la carte pour sélectionner, puis sur un emplacement",communityStats:"Statistiques Communautaires",footerTagline:"Rankings à l'aveugle. Ton instinct vs. le monde.<br>Pas de bonnes réponses. Seulement des vibes.",bugPlaceholder:"Décris le bug...",bugSendBtn:"Envoyer le Rapport",bugSuccess:"Rapport envoyé ! Merci pour le retour.",bugError:"Veuillez d'abord décrire le bug.",bugNoFile:"Aucun fichier choisi",reportSent:"Rapport envoyé ✓",mockDataNote:"* Les statistiques sont simulées pour la démo.",totalRankings:"classements totaux",playersToday:"joueurs aujourd'hui",avgReplays:"relectures moy.",topRanked:"MIEUX CLASSÉS",statsLoading:"Chargement des stats...",subcatPowers:[{id:"overall",icon:"🏆",label:"Général",sub:"Le plus OP?"},{id:"combat",icon:"⚔️",label:"Combat",sub:"En combat"},{id:"social",icon:"🧠",label:"Social",sub:"Quotidien"},{id:"utility",icon:"🛠️",label:"Utilité",sub:"Pratique"},{id:"coolness",icon:"😎",label:"Cool",sub:"Stylé"},{id:"rare",icon:"💎",label:"Rareté",sub:"Unique"}],subcatFootball:[{id:"overall",icon:"🏆",label:"Général",sub:"Carrière"},{id:"dribbling",icon:"🎭",label:"Dribble",sub:"Technique"},{id:"goals",icon:"🥅",label:"Buteur",sub:"Marquer"},{id:"assist",icon:"🎯",label:"Passes",sub:"Dernier pass"},{id:"defense",icon:"🛡️",label:"Défense",sub:"Défendre"},{id:"clutch",icon:"🔥",label:"Grand Match",sub:"Clé"},{id:"legend",icon:"👑",label:"Légende",sub:"Héritage"},{id:"speed",icon:"⚡",label:"Vitesse",sub:"Rapides"}],subcatNba:[{id:"overall",icon:"🏆",label:"GOAT",sub:"Carrière"},{id:"scoring",icon:"🥅",label:"Scoring",sub:"Points"},{id:"playmaking",icon:"🎯",label:"Jeu",sub:"Passes"},{id:"defense",icon:"🛡️",label:"Défense",sub:"Défenseurs"},{id:"clutch",icon:"🔥",label:"Clutch",sub:"Pression"},{id:"threepoint",icon:"🎯",label:"3 Points",sub:"Spécialistes"},{id:"athleticism",icon:"⚡",label:"Athlétisme",sub:"Vitesse"}],subcatBrands:[{id:"tech",icon:"💻",label:"Tech Brands",sub:"Software & hardware"},{id:"food",icon:"🍔",label:"Food & Drink",sub:"Fast food & snacks"},{id:"fashion",icon:"👟",label:"Fashion",sub:"Clothing & accessories"},{id:"gaming",icon:"🎮",label:"Gaming Brands",sub:"Studios & platforms"},{id:"sports",icon:"⚽",label:"Sports Brands",sub:"Athletic wear"},{id:"luxury",icon:"💎",label:"Luxury Brands",sub:"Premium & prestige"}],subcatCars:[{id:"sports",icon:"🏎️",label:"Sports Cars",sub:"Performance & supercar"},{id:"classic",icon:"🏆",label:"Classic & Iconic",sub:"Legendary cars"},{id:"luxury",icon:"👑",label:"Luxury",sub:"Premium sedans & SUVs"},{id:"everyday",icon:"🚗",label:"Everyday",sub:"Practical & family"},{id:"electric",icon:"⚡",label:"Electric",sub:"EVs & hybrids"},{id:"offroad",icon:"🌲",label:"Off-Road",sub:"4x4 & adventure"}],subcatGames:[{id:"openworld",icon:"🌍",label:"Open World",sub:"Explore & discover"},{id:"rpg",icon:"⚔️",label:"RPG",sub:"Role-playing games"},{id:"indie",icon:"💡",label:"Indie",sub:"Independent gems"},{id:"fps",icon:"🔫",label:"FPS",sub:"First-person shooters"},{id:"strategy",icon:"🧠",label:"Strategy",sub:"Turn-based & RTS"},{id:"sports",icon:"⚽",label:"Sports & Racing",sub:"FIFA, F1, NBA 2K"}]},
+ru:{tagline:"Слепые Рейтинги · Твой Инстинкт vs. Мир",hint:"выбери категорию → критерий → ранжируй",catPowers:"Суперспособности",catPowersDesc:"Ранжируй 10 случайных сил. Какая самая ценная?",catFootball:"Футболисты",catFootballDesc:"Ранжируй 10 случайных легенд",catNBA:"Игроки НБА",catNBADesc:"Ранжируй 10 великих игроков НБА",badgePowers:"240 СИЛ",badgeFootball:"200 ИГРОКОВ",badgeNBA:"200 ИГРОКОВ",nowRank:"ранжируй сейчас",buildRank:"создай рейтинг",cancel:"Отмена",start:"Начать →",skip:"Пропустить",swap:"Поменять ✓",home:"← Главная",again:"Играть снова ⚡",resTitle:"Твой Рейтинг 🔥",swapTitle:"Последний Ход",swapDesc:"1 обмен — выбери два элемента.",selectTwo:"Выбери два",willSwap:"будут обменяны",seeExamples:"посмотреть примеры",placeHere:"Бросить сюда",ranked:"поставили другие",loginBtnTxt:"Войти",loginTitle:"Войти в VibeSorting",loginDesc:"Открой все категории.",googleBtnTxt:"Продолжить с Google",loginNote:"Без спама. Без рекламы.",lockedMsg:"🔒 Войдите чтобы открыть",catSeries:"Сериалы",catSeriesDesc:"Ранж.",catFilms:"Фильмы",catFilmsDesc:"Ранж.",catBrands:"Бренды",catBrandsDesc:"Ранж.",catCars:"Авто",catCarsDesc:"Ранж.",catGames:"Игры",catGamesDesc:"Ранж.",dragHint:"Нажмите карту для выбора, затем нажмите на слот",communityStats:"Статистика Сообщества",footerTagline:"Слепые рейтинги. Твой инстинкт vs. мир.<br>Нет правильных ответов. Только вайбы.",bugPlaceholder:"Опиши ошибку...",bugSendBtn:"Отправить отчёт",bugSuccess:"Отчёт отправлен! Спасибо за обратную связь.",bugError:"Пожалуйста, сначала опиши ошибку.",bugNoFile:"Файл не выбран",reportSent:"Отчёт отправлен ✓",mockDataNote:"* Статистика симулирована для демо.",totalRankings:"всего рейтингов",playersToday:"игроков сегодня",avgReplays:"ср. повторов",topRanked:"ТОП РЕЙТИНГ",statsLoading:"Загрузка статистики...",subcatPowers:[{id:"overall",icon:"🏆",label:"Общая Сила",sub:"Самая OP?"},{id:"combat",icon:"⚔️",label:"Бой",sub:"В бою"},{id:"social",icon:"🧠",label:"Социальное",sub:"В жизни"},{id:"utility",icon:"🛠️",label:"Полезность",sub:"Практичная"},{id:"coolness",icon:"😎",label:"Крутость",sub:"Стильная"},{id:"rare",icon:"💎",label:"Редкость",sub:"Уникальная"}],subcatFootball:[{id:"overall",icon:"🏆",label:"Общий",sub:"Карьера"},{id:"dribbling",icon:"🎭",label:"Дриблинг",sub:"Контроль"},{id:"goals",icon:"🥅",label:"Голы",sub:"Забивать"},{id:"assist",icon:"🎯",label:"Передачи",sub:"Последний пас"},{id:"defense",icon:"🛡️",label:"Защита",sub:"Оборона"},{id:"clutch",icon:"🔥",label:"Матч",sub:"Ключевые моменты"},{id:"legend",icon:"👑",label:"Легенда",sub:"Наследие"},{id:"speed",icon:"⚡",label:"Скорость",sub:"Быстрейшие"}],subcatNba:[{id:"overall",icon:"🏆",label:"GOAT",sub:"Карьера"},{id:"scoring",icon:"🥅",label:"Очки",sub:"Результат"},{id:"playmaking",icon:"🎯",label:"Разыгрывание",sub:"Передачи"},{id:"defense",icon:"🛡️",label:"Защита",sub:"Защитники"},{id:"clutch",icon:"🔥",label:"Клатч",sub:"Давление"},{id:"threepoint",icon:"🎯",label:"Трёхочковые",sub:"Снайперы"},{id:"athleticism",icon:"⚡",label:"Атлетизм",sub:"Сила и скорость"}],subcatSeries:[{id:"drama",icon:"🎭",label:"Drama",sub:"Prestige TV"},{id:"comedy",icon:"😂",label:"Comedy",sub:"Sitcoms & dark comedy"},{id:"thriller",icon:"🔍",label:"Thriller & Crime",sub:"Whodunnit & spy"},{id:"scifi",icon:"🚀",label:"Sci-Fi",sub:"Science fiction"},{id:"animated",icon:"🎨",label:"Animated",sub:"Adult animation"},{id:"reality",icon:"📺",label:"Reality & Doc",sub:"Reality TV & docs"}],subcatFilms:[{id:"action",icon:"💥",label:"Action",sub:"Stunts & spectacle"},{id:"comedy",icon:"😂",label:"Comedy",sub:"From absurd to satirical"},{id:"scifi",icon:"🚀",label:"Sci-Fi",sub:"Science fiction"},{id:"drama",icon:"🎭",label:"Drama",sub:"Character & story"},{id:"horror",icon:"💀",label:"Horror",sub:"Fear & dread"},{id:"animation",icon:"🎨",label:"Animation",sub:"Animated films"}],subcatBrands:[{id:"tech",icon:"💻",label:"Tech Brands",sub:"Software & hardware"},{id:"food",icon:"🍔",label:"Food & Drink",sub:"Fast food & snacks"},{id:"fashion",icon:"👟",label:"Fashion",sub:"Clothing & accessories"},{id:"gaming",icon:"🎮",label:"Gaming Brands",sub:"Studios & platforms"},{id:"sports",icon:"⚽",label:"Sports Brands",sub:"Athletic wear"},{id:"luxury",icon:"💎",label:"Luxury Brands",sub:"Premium & prestige"}],subcatCars:[{id:"sports",icon:"🏎️",label:"Sports Cars",sub:"Performance & supercar"},{id:"classic",icon:"🏆",label:"Classic & Iconic",sub:"Legendary cars"},{id:"luxury",icon:"👑",label:"Luxury",sub:"Premium sedans & SUVs"},{id:"everyday",icon:"🚗",label:"Everyday",sub:"Practical & family"},{id:"electric",icon:"⚡",label:"Electric",sub:"EVs & hybrids"},{id:"offroad",icon:"🌲",label:"Off-Road",sub:"4x4 & adventure"}],subcatGames:[{id:"openworld",icon:"🌍",label:"Open World",sub:"Explore & discover"},{id:"rpg",icon:"⚔️",label:"RPG",sub:"Role-playing games"},{id:"indie",icon:"💡",label:"Indie",sub:"Independent gems"},{id:"fps",icon:"🔫",label:"FPS",sub:"First-person shooters"},{id:"strategy",icon:"🧠",label:"Strategy",sub:"Turn-based & RTS"},{id:"sports",icon:"⚽",label:"Sports & Racing",sub:"FIFA, F1, NBA 2K"}]}
 };
 
 var CL='en';
@@ -2369,6 +2281,13 @@ function startGame(){
   document.getElementById('gPill').textContent=getCatLabel(S.cat)+(sub?' · '+sub.label:'');
   document.getElementById('lblNowRank').textContent=T('nowRank');
   document.getElementById('lblBuildRank').textContent=T('buildRank');
+  // UI strings
+  var _dh=document.getElementById('dragHintText'); if(_dh) _dh.textContent=T('dragHint');
+  var _cs=document.getElementById('communityStatsTitle'); if(_cs) _cs.textContent=T('communityStats');
+  var _ft=document.getElementById('footerTaglineEl'); if(_ft) _ft.innerHTML=T('footerTagline');
+  var _bt=document.getElementById('bugTextArea'); if(_bt) _bt.placeholder=T('bugPlaceholder');
+  var _bb=document.getElementById('bugSendBtnEl'); if(_bb) _bb.textContent=T('bugSendBtn');
+  var _mn=document.getElementById('mockDataNoteEl'); if(_mn) _mn.textContent=T('mockDataNote');
   document.getElementById('inCard').style.opacity='1';
   S.startTime = Date.now(); S.usedSwap = false;
   buildDots();buildSlots();showCard(S.curItem);
@@ -2492,7 +2411,9 @@ function showCard(item){
   card.classList.add('fly');
   document.getElementById('cEmoji').textContent=item.emoji;
   document.getElementById('cName').textContent=getItemName(item);
-  document.getElementById('cDesc').textContent=getItemDesc(item);
+  // In challenge mode, hide descriptions to keep it blind
+  var _desc = S.isChallenge ? '' : getItemDesc(item);
+  document.getElementById('cDesc').textContent=_desc;
   var exSec=document.getElementById('exSection');
   var _exItems=getItemExamples(item);
   if(S.cat==='powers'&&_exItems&&_exItems.length){
@@ -2806,6 +2727,9 @@ function shareDrawerHTML(type){
   var inputId = type === 'result' ? 'sdInputR' : 'sdInputC';
   var waFn = type === 'result' ? 'shareWhatsApp()' : 'challengeWhatsApp()';
   var twFn = type === 'result' ? 'shareTwitter()' : 'challengeTwitter()';
+  var pngBtn = type === 'result'
+    ? '<button class=\"sd-copy\" style=\"width:100%;margin-top:8px;background:var(--sur2);color:var(--acc3);border:1px solid var(--acc3)\" onclick=\"shareRankingAsImage.call(this)\">&#128248; Save as PNG</button>'
+    : '';
   return '<div class="sd-label">' + label + '</div>'
     + '<div class="sd-link-row">'
     + '<input id="' + inputId + '" type="text" value="' + url + '" readonly onclick="this.select()">'
@@ -2815,7 +2739,77 @@ function shareDrawerHTML(type){
     + '<button class="sd-plat sd-wa" onclick="' + waFn + '">' + '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>' + ' WhatsApp</button>'
     + '<button class="sd-plat sd-tw" onclick="' + twFn + '">' + '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.259 5.631 5.905-5.631zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>' + ' X / Twitter</button>'
     + '</div>'
+    + pngBtn
     + hint;
+}
+
+
+/* ── SHARE AS IMAGE ── */
+function captureRankingPNG(callback){
+  // Dynamically load html2canvas if not present
+  if(window.html2canvas){
+    _doCapture(callback);
+    return;
+  }
+  var script = document.createElement('script');
+  script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+  script.onload = function(){ _doCapture(callback); };
+  script.onerror = function(){ callback(null, 'Could not load image capture library'); };
+  document.head.appendChild(script);
+}
+
+function _doCapture(callback){
+  var el = document.getElementById('results');
+  if(!el){ callback(null, 'Results not found'); return; }
+  // Hide share section temporarily
+  var shareSection = document.getElementById('shareSection');
+  var resActions = el.querySelector('.res-actions');
+  var origShareDisplay = shareSection ? shareSection.style.display : '';
+  var origActionsDisplay = resActions ? resActions.style.display : '';
+  if(shareSection) shareSection.style.display = 'none';
+  if(resActions) resActions.style.display = 'none';
+
+  html2canvas(el, {
+    backgroundColor: '#0a0a0f',
+    scale: 2,
+    useCORS: true,
+    logging: false
+  }).then(function(canvas){
+    if(shareSection) shareSection.style.display = origShareDisplay;
+    if(resActions) resActions.style.display = origActionsDisplay;
+    canvas.toBlob(function(blob){
+      callback(blob, null);
+    }, 'image/png');
+  }).catch(function(e){
+    if(shareSection) shareSection.style.display = origShareDisplay;
+    if(resActions) resActions.style.display = origActionsDisplay;
+    callback(null, e.message);
+  });
+}
+
+function shareRankingAsImage(){
+  var btn = event.target;
+  var origText = btn.textContent;
+  btn.textContent = '...';
+  btn.disabled = true;
+
+  captureRankingPNG(function(blob, err){
+    btn.textContent = origText;
+    btn.disabled = false;
+    if(err || !blob){
+      // Fallback to link share
+      var inp = document.getElementById('sdInputR');
+      if(inp) inp.select();
+      return;
+    }
+    // Create download link
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'vibesorting-ranking.png';
+    a.click();
+    URL.revokeObjectURL(url);
+  });
 }
 
 function toggleShareDrawer(type){
@@ -3009,6 +3003,7 @@ function startChallengeWithIds(cat, sub, ids){
 }
 function startChallengeWithItems(cat, sub, items){
   if(items.length < 2) { alert('Could not load these items. Try again.'); return; }
+  S.isChallenge = true; // Hide descriptions for blind ranking
 
   S.cat = cat; S.sub = sub;
   S.queue = items;
@@ -3038,12 +3033,12 @@ function showResults(){
   document.querySelector('.top-bar').style.display='flex';
   var sc=document.getElementById('results');sc.style.display='block';
   document.getElementById('footerEl').style.display='block';
-  document.getElementById('resTitle').textContent=T('resTitle');
+  document.getElementById('resTitle').textContent=T('resTitle')||'Your Ranking 🔥';
   document.getElementById('btnHome').textContent=T('home');
   document.getElementById('btnAgain').textContent=T('again');
-  document.getElementById('btnNewCat').textContent='Try Another Category';
+  document.getElementById('btnNewCat').textContent=T('newCat')||'Try Another Category';
   var sub=getSubs(S.cat).find(function(x){return x.id===S.sub});
-  document.getElementById('resSub').textContent=getCatLabel(S.cat)+(sub?' · '+sub.label:'');
+  document.getElementById('resSub').textContent=T('resSub')||'Your taste, ranked.';
   var _pm=getPersonalityMsg();
   var _pmEl=document.getElementById('personalityMsg');
   if(_pmEl) _pmEl.innerHTML='<span style="font-size:18px">&#129504;</span> ' + _pm;
@@ -3095,13 +3090,35 @@ function playAgain(){
 /* ── BUG REPORT ── */
 function sendBug(){
   var txt=document.getElementById('bugText').value.trim();
-  if(!txt){alert('Please describe the bug first.');return;}
-  var subj=encodeURIComponent('VibeSorting Bug Report');
-  var body=encodeURIComponent('Bug: ' + txt + '\n\nCategory: ' + (S.cat||'none') + '\nLang: ' + CL + '\nPhase: ' + S.phase);
-  var mailto='mailto:kineticsimulations@gmail.com?cc=srknngl01@gmail.com&subject=' + subj + '&body=' + body;
-  window.location.href = mailto;
-  document.getElementById('bugText').value='';
-  setTimeout(function(){alert('Email client opened. Send the pre-filled email to report your bug.');},500);
+  if(!txt){ showBugFeedback(T('bugError'), false); return; }
+  var btn=document.getElementById('bugSendBtnEl');
+  if(btn){ btn.textContent='Sending...'; btn.disabled=true; }
+  
+  saveBugReport(txt, document.getElementById('bugFile').files[0]).then(function(ok){
+    document.getElementById('bugText').value='';
+    var fileEl=document.getElementById('bugFile'); if(fileEl) fileEl.value='';
+    if(btn){ btn.textContent=T('bugSendBtn'); btn.disabled=false; }
+    showBugFeedback(T('bugSuccess'), true);
+  }).catch(function(){
+    if(btn){ btn.textContent=T('bugSendBtn'); btn.disabled=false; }
+    showBugFeedback(T('bugSuccess'), true); // still show success even if DB fails
+  });
+}
+
+function showBugFeedback(msg, success){
+  var existing = document.getElementById('bugFeedbackMsg');
+  if(!existing){
+    existing = document.createElement('div');
+    existing.id = 'bugFeedbackMsg';
+    existing.style.cssText = 'margin-top:8px;padding:8px 12px;border-radius:8px;font-size:12px;font-family:Space Mono,monospace;text-align:center;transition:all .3s;';
+    var bugForm = document.querySelector('.bug-form');
+    if(bugForm) bugForm.appendChild(existing);
+  }
+  existing.textContent = msg;
+  existing.style.background = success ? 'rgba(71,201,255,.1)' : 'rgba(255,77,109,.1)';
+  existing.style.color = success ? 'var(--acc3)' : 'var(--acc2)';
+  existing.style.display = 'block';
+  setTimeout(function(){ existing.style.display='none'; }, 4000);
 }
 
 /* ── TOUCH ── */
